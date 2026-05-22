@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandRed: '#e5322d' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; }
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            border-color: #e5322d;
+            background-color: #fef2f2;
+        }
+        .file-item {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+                <i class="fas fa-heart text-brandRed text-2xl"></i>
+                <span class="font-bold text-2xl tracking-tight text-gray-900">ToolMitra</span>
+            </a>
+            <a href="../index.html" class="text-sm font-semibold text-gray-600 hover:text-brandRed flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Back to All Tools
+            </a>
+        </div>
+    </nav>
+
+    <div class="bg-white border-b border-gray-100 pt-12 pb-10">
+        <div class="max-w-3xl mx-auto text-center px-4">
+            <div class="w-16 h-16 mx-auto bg-red-50 text-brandRed rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm">
+                <i class="fas fa-object-group"></i>
+            </div>
+            <h1 class="text-[32px] font-bold text-gray-900 mb-3">Merge PDF files</h1>
+            <p class="text-gray-500 text-[18px]">Combine PDFs in the order you want with the easiest PDF merger available.</p>
+        </div>
+    </div>
+
+    <main class="flex-grow py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <div id="dropZone" class="upload-area bg-white rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[300px]" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-file-upload text-5xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">Select PDF files</h3>
+                <p class="text-gray-500 text-sm mb-6">or drop PDFs here</p>
+                <button class="bg-brandRed hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg shadow-md">
+                    Select PDF files
+                </button>
+                <input type="file" id="fileInput" class="hidden" multiple accept="application/pdf">
+            </div>
+
+            <div id="fileListContainer" class="hidden mt-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-gray-700 text-lg">Selected Files (<span id="fileCount">0</span>)</h3>
+                    <button onclick="clearFiles()" class="text-sm text-red-500 font-semibold hover:underline"><i class="fas fa-trash-alt"></i> Clear All</button>
+                </div>
+                
+                <div id="fileList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                    </div>
+
+                <div class="text-center bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <button id="mergeBtn" onclick="mergePdfs()" class="bg-brandRed hover:bg-red-700 text-white font-bold py-4 px-10 rounded-lg transition-colors text-xl shadow-lg flex items-center justify-center gap-3 w-full md:w-auto md:mx-auto">
+                        <i class="fas fa-object-group"></i> Merge PDF
+                    </button>
+                    <p id="statusText" class="text-gray-500 mt-3 hidden"><i class="fas fa-spinner fa-spin text-brandRed"></i> Processing... Please wait.</p>
+                </div>
+            </div>
+
+            <div id="downloadSection" class="hidden mt-8 text-center bg-white p-10 rounded-xl border border-gray-200 shadow-sm">
+                <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">PDFs have been merged!</h2>
+                <a id="downloadLink" href="#" download="ToolMitra_Merged.pdf" class="bg-brandRed hover:bg-red-700 text-white font-bold py-4 px-10 rounded-lg transition-colors text-xl shadow-lg inline-flex items-center gap-3">
+                    <i class="fas fa-download"></i> Download Merged PDF
+                </a>
+                <div class="mt-6">
+                    <button onclick="resetTool()" class="text-gray-500 hover:text-gray-700 font-semibold underline text-sm">Merge more PDFs</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let selectedFiles = [];
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        // Handle Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // Handle File Input Click
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].type === "application/pdf") {
+                    selectedFiles.push(files[i]);
+                } else {
+                    alert("Please select only PDF files.");
+                }
+            }
+            updateFileListUI();
+        }
+
+        function updateFileListUI() {
+            const container = document.getElementById('fileListContainer');
+            const fileListDiv = document.getElementById('fileList');
+            const countSpan = document.getElementById('fileCount');
+            
+            if (selectedFiles.length > 0) {
+                dropZone.classList.add('hidden');
+                container.classList.remove('hidden');
+                countSpan.innerText = selectedFiles.length;
+                
+                fileListDiv.innerHTML = '';
+                selectedFiles.forEach((file, index) => {
+                    fileListDiv.innerHTML += `
+                        <div class="file-item bg-white p-4 rounded-lg flex items-center justify-between relative group">
+                            <div class="flex items-center gap-3 overflow-hidden">
+                                <i class="fas fa-file-pdf text-brandRed text-3xl"></i>
+                                <span class="text-sm font-semibold text-gray-700 truncate">${file.name}</span>
+                            </div>
+                            <button onclick="removeFile(${index})" class="text-gray-400 hover:text-red-500 absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-times-circle text-lg"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            } else {
+                dropZone.classList.remove('hidden');
+                container.classList.add('hidden');
+            }
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileListUI();
+        }
+
+        function clearFiles() {
+            selectedFiles = [];
+            fileInput.value = "";
+            updateFileListUI();
+        }
+
+        // Merge Logic using pdf-lib
+        async function mergePdfs() {
+            if (selectedFiles.length < 2) {
+                alert("Please select at least 2 PDF files to merge.");
+                return;
+            }
+
+            const mergeBtn = document.getElementById('mergeBtn');
+            const statusText = document.getElementById('statusText');
+            
+            mergeBtn.classList.add('hidden');
+            statusText.classList.remove('hidden');
+
+            try {
+                const { PDFDocument } = PDFLib;
+                const mergedPdf = await PDFDocument.create();
+
+                for (let file of selectedFiles) {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFDocument.load(arrayBuffer);
+                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                }
+
+                const mergedPdfBytes = await mergedPdf.save();
+                
+                // Create a download link for the merged file
+                const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
+                const url = URL.createObjectURL(blob);
+                
+                document.getElementById('downloadLink').href = url;
+                
+                // Switch UI to Download screen
+                document.getElementById('fileListContainer').classList.add('hidden');
+                document.getElementById('downloadSection').classList.remove('hidden');
+
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred while merging PDFs.");
+                mergeBtn.classList.remove('hidden');
+                statusText.classList.add('hidden');
+            }
+        }
+
+        function resetTool() {
+            selectedFiles = [];
+            fileInput.value = "";
+            document.getElementById('downloadSection').classList.add('hidden');
+            document.getElementById('statusText').classList.add('hidden');
+            document.getElementById('mergeBtn').classList.remove('hidden');
+            updateFileListUI();
+        }
+    </script>
+</body>
+</html>
