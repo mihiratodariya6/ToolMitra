@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadhaar & Document Photo Resize - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandOrange: '#f0ad4e' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; }
+        .upload-area { border: 2px dashed #d1d5db; transition: all 0.3s ease; }
+        .upload-area.dragover { border-color: #f0ad4e; background-color: #fffdf5; }
+        #previewCanvas { max-width: 100%; max-height: 350px; background: #e9ecef; border-radius: 8px; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+                <i class="fas fa-heart text-[#e5322d] text-2xl"></i>
+                <span class="font-bold text-2xl tracking-tight text-gray-900">ToolMitra</span>
+            </a>
+            <a href="../index.html" class="text-sm font-semibold text-gray-600 hover:text-brandOrange flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Back to All Tools
+            </a>
+        </div>
+    </nav>
+
+    <div class="bg-white border-b border-gray-100 pt-10 pb-8">
+        <div class="max-w-3xl mx-auto text-center px-4">
+            <div class="w-16 h-16 mx-auto bg-orange-50 text-brandOrange rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <h1 class="text-[32px] font-bold text-gray-900 mb-2">Aadhaar & Govt Form Photo Maker</h1>
+            <p class="text-gray-500 text-[16px]">Crop, resize, and compress your photo or signature exactly to government specifications.</p>
+        </div>
+    </div>
+
+    <main class="flex-grow py-8 px-4">
+        <div class="max-w-5xl mx-auto">
+            
+            <div id="dropZone" class="upload-area bg-white rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[280px]" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-camera text-5xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">Upload Photo or Document Scan</h3>
+                <p class="text-gray-500 text-sm mb-6">Supports JPG, JPEG, or PNG images</p>
+                <button class="bg-brandOrange hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg shadow-md">
+                    Select Image
+                </button>
+                <input type="file" id="fileInput" class="hidden" accept="image/*">
+            </div>
+
+            <div id="workspaceSection" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
+                
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center justify-center">
+                    <h3 class="font-bold text-gray-700 mb-4 self-start flex items-center gap-2"><i class="fas fa-eye"></i> Image Preview</h3>
+                    <canvas id="previewCanvas"></canvas>
+                    <p class="text-xs text-gray-400 mt-3 font-mono" id="canvasDimensions">Size: 0 x 0 px</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6">
+                    <h3 class="font-bold text-gray-800 text-lg border-b pb-3 flex items-center gap-2"><i class="fas fa-sliders-h text-brandOrange"></i> Resize Settings</h3>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Govt Portal Presets</label>
+                        <select id="presetSelect" onchange="applyPreset()" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:outline-none focus:border-brandOrange font-semibold text-gray-700 bg-white">
+                            <option value="custom">Custom Dimensions</option>
+                            <option value="passport" selected>Passport Size (3.5 x 4.5 cm)</option>
+                            <option value="aadhaar">Aadhaar Card Photo (2x2 inches)</option>
+                            <option value="pan_sign">PAN Card Signature (2 x 4.5 cm)</option>
+                            <option value="govt_docs">General Govt Doc Upload</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Width (px)</label>
+                            <input type="number" id="imgWidth" value="413" oninput="customDimensionChange()" class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-brandOrange">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Height (px)</label>
+                            <input type="number" id="imgHeight" value="531" oninput="customDimensionChange()" class="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-brandOrange">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Max Target File Size</label>
+                        <select id="targetSizeLimit" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:outline-none focus:border-brandOrange font-semibold text-gray-700 bg-white">
+                            <option value="20">Under 20 KB (Signatures)</option>
+                            <option value="50" selected>Under 50 KB (Passport Photos)</option>
+                            <option value="100">Under 100 KB</option>
+                            <option value="200">Under 200 KB (Certificates)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="processAndResizeImage()" class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-4 rounded-lg transition-colors text-lg shadow-md flex items-center justify-center gap-2">
+                        <i class="fas fa-compress-arrows-alt"></i> Process & Resize
+                    </button>
+                </div>
+            </div>
+
+            <div id="downloadSection" class="hidden mt-8 text-center bg-white p-10 rounded-xl border border-gray-200 shadow-sm max-w-md mx-auto">
+                <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Image Resized Successfully!</h2>
+                <p class="text-sm text-gray-500 mb-6">Final Output File Size: <span id="finalSizeTxt" class="font-bold text-green-600">0 KB</span></p>
+                
+                <a id="downloadLink" href="#" download="ToolMitra_Govt_Photo.jpg" class="w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-lg transition-colors text-xl shadow-lg inline-flex items-center justify-center gap-3">
+                    <i class="fas fa-download"></i> Download Processed Image
+                </a>
+                <div class="mt-6">
+                    <button onclick="resetTool()" class="text-gray-500 hover:text-gray-700 font-semibold underline text-sm">Resize another photo</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let sourceImage = new Image();
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            loadImage(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => loadImage(e.target.files[0]));
+
+        function loadImage(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                alert("Please upload a valid image file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                sourceImage.onload = function() {
+                    dropZone.classList.add('hidden');
+                    document.getElementById('workspaceSection').classList.remove('hidden');
+                    applyPreset(); // Apply initial selection default
+                };
+                sourceImage.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applyPreset() {
+            const preset = document.getElementById('presetSelect').value;
+            const wInput = document.getElementById('imgWidth');
+            const hInput = document.getElementById('imgHeight');
+            const targetSize = document.getElementById('targetSizeLimit');
+
+            if (preset === 'passport') {
+                wInput.value = 413; // 3.5 cm in 300 DPI approx
+                hInput.value = 531; // 4.5 cm in 300 DPI approx
+                targetSize.value = "50";
+            } else if (preset === 'aadhaar') {
+                wInput.value = 600;
+                hInput.value = 600;
+                targetSize.value = "50";
+            } else if (preset === 'pan_sign') {
+                wInput.value = 531;
+                hInput.value = 236;
+                targetSize.value = "20";
+            } else if (preset === 'govt_docs') {
+                wInput.value = 800;
+                hInput.value = 1050;
+                targetSize.value = "100";
+            }
+            
+            updateCanvasPreview();
+        }
+
+        function customDimensionChange() {
+            document.getElementById('presetSelect').value = 'custom';
+            updateCanvasPreview();
+        }
+
+        function updateCanvasPreview() {
+            let targetWidth = parseInt(document.getElementById('imgWidth').value) || 300;
+            let targetHeight = parseInt(document.getElementById('imgHeight').value) || 300;
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            
+            // Draw clean background and stretch/fit image inside bounds
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(sourceImage, 0, 0, targetWidth, targetHeight);
+            
+            document.getElementById('canvasDimensions').innerText = `Dimensions: ${targetWidth} x ${targetHeight} px`;
+        }
+
+        function processAndResizeImage() {
+            let maxKb = parseFloat(document.getElementById('targetSizeLimit').value);
+            
+            // Interactive iterative compression algorithm on client-side
+            let quality = 0.95;
+            let dataUrl = "";
+            let blobSize = 0;
+
+            // Loop to crunch image quality until target file size limit is satisfied
+            do {
+                dataUrl = canvas.toDataURL('image/jpeg', quality);
+                
+                // Estimate size from Base64 string length
+                let head = "data:image/jpeg;base64,";
+                blobSize = Math.round((dataUrl.length - head.length) * 3 / 4);
+                
+                quality -= 0.05;
+            } while (blobSize > maxKb * 1024 && quality > 0.1);
+
+            // Output generated file data info
+            document.getElementById('finalSizeTxt').innerText = (blobSize / 1024).toFixed(1) + " KB";
+            document.getElementById('downloadLink').href = dataUrl;
+
+            document.getElementById('workspaceSection').classList.add('hidden');
+            document.getElementById('downloadSection').classList.remove('hidden');
+        }
+
+        function resetTool() {
+            fileInput.value = "";
+            document.getElementById('workspaceSection').classList.add('hidden');
+            document.getElementById('downloadSection').classList.add('hidden');
+            dropZone.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
