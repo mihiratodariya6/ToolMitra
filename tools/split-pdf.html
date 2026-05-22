@@ -142,14 +142,14 @@
     </main>
 
     <script>
-        let currentPdfBytes = null;
+        // FIXED: Using Uint8Array to prevent ArrayBuffer detachment issues
+        let currentPdfData = null; 
         let totalPdfPages = 0;
-        let activePages = []; // Array to store which pages are kept
+        let activePages = [];
         
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
 
-        // Drag & drop logic
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
         dropZone.addEventListener('drop', (e) => {
@@ -167,12 +167,14 @@
 
             dropZone.classList.add('hidden');
             document.getElementById('loadingSection').classList.remove('hidden');
-            
             document.getElementById('fileName').innerText = file.name;
-            currentPdfBytes = await file.arrayBuffer();
             
-            // Render Thumbnails using PDF.js
-            await renderThumbnails(currentPdfBytes);
+            // FIX: Convert arrayBuffer to Uint8Array so it can be safely used multiple times
+            const arrayBuffer = await file.arrayBuffer();
+            currentPdfData = new Uint8Array(arrayBuffer);
+            
+            // Pass a copy to PDF.js so it doesn't lock the original data
+            await renderThumbnails(currentPdfData.slice(0));
             
             document.getElementById('loadingSection').classList.add('hidden');
             document.getElementById('workspaceSection').classList.remove('hidden');
@@ -194,17 +196,15 @@
             document.getElementById('endPage').max = totalPdfPages;
 
             for (let pageNum = 1; pageNum <= totalPdfPages; pageNum++) {
-                activePages.push(pageNum); // Mark all pages as active initially
+                activePages.push(pageNum); 
                 
                 const page = await pdf.getPage(pageNum);
-                const viewport = page.getViewport({ scale: 0.5 }); // Lower scale for fast thumbnail
+                const viewport = page.getViewport({ scale: 0.5 });
                 
-                // Create container for thumbnail
                 const thumbDiv = document.createElement('div');
                 thumbDiv.className = 'page-thumbnail relative flex flex-col items-center bg-white p-2 rounded border border-gray-200 shadow-sm';
                 thumbDiv.id = `thumb-${pageNum}`;
                 
-                // Create Canvas
                 const canvas = document.createElement('canvas');
                 canvas.className = 'max-w-full h-auto border border-gray-100 mb-2';
                 canvas.height = viewport.height;
@@ -213,13 +213,11 @@
                 const renderContext = { canvasContext: canvas.getContext('2d'), viewport: viewport };
                 await page.render(renderContext).promise;
                 
-                // Create Delete Button
                 const delBtn = document.createElement('button');
                 delBtn.className = 'delete-btn absolute top-1 right-1 bg-gray-800/70 hover:bg-red-600 text-white w-7 h-7 rounded-full flex items-center justify-center opacity-0 shadow-md';
                 delBtn.innerHTML = '<i class="fas fa-trash-alt text-xs"></i>';
                 delBtn.onclick = () => togglePage(pageNum);
 
-                // Page Number Label
                 const label = document.createElement('span');
                 label.className = 'text-xs font-bold text-gray-500';
                 label.innerText = `Page ${pageNum}`;
@@ -236,13 +234,11 @@
             const index = activePages.indexOf(pageNum);
             
             if (index > -1) {
-                // Page is currently active, so DELETE it
                 activePages.splice(index, 1);
                 thumbDiv.classList.add('page-deleted');
             } else {
-                // Page is deleted, so RESTORE it
                 activePages.push(pageNum);
-                activePages.sort((a, b) => a - b); // keep sorted
+                activePages.sort((a, b) => a - b);
                 thumbDiv.classList.remove('page-deleted');
             }
         }
@@ -259,7 +255,6 @@
             let start = parseInt(document.getElementById('startPage').value) || 1;
             let end = parseInt(document.getElementById('endPage').value) || totalPdfPages;
 
-            // Combine both logics: Must be visually active AND within the range input
             let finalPagesToExtract = activePages.filter(p => p >= start && p <= end);
 
             if (finalPagesToExtract.length === 0) {
@@ -274,10 +269,10 @@
 
             try {
                 const { PDFDocument } = PDFLib;
-                const originalPdf = await PDFDocument.load(currentPdfBytes);
+                // FIX: Load PDF using the safe Uint8Array
+                const originalPdf = await PDFDocument.load(currentPdfData);
                 const newPdf = await PDFDocument.create();
 
-                // Convert 1-based page numbers to 0-based indices for pdf-lib
                 const indices = finalPagesToExtract.map(p => p - 1);
 
                 const copiedPages = await newPdf.copyPages(originalPdf, indices);
@@ -294,7 +289,7 @@
 
             } catch (error) {
                 console.error(error);
-                alert("Error extracting PDF pages.");
+                alert("Error extracting PDF pages. Check console for details.");
             } finally {
                 splitBtn.classList.remove('hidden');
                 statusText.classList.add('hidden');
@@ -302,7 +297,7 @@
         }
 
         function resetTool() {
-            currentPdfBytes = null;
+            currentPdfData = null;
             activePages = [];
             fileInput.value = "";
             document.getElementById('workspaceSection').classList.add('hidden');
