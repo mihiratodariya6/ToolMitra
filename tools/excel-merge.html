@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Excel Files - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandEmerald: '#10b981' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; }
+        .upload-area { border: 2px dashed #d1d5db; transition: all 0.3s ease; }
+        .upload-area.dragover { border-color: #10b981; background-color: #ecfdf5; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+                <i class="fas fa-heart text-[#e5322d] text-2xl"></i>
+                <span class="font-bold text-2xl tracking-tight text-gray-900">ToolMitra</span>
+            </a>
+            <a href="../index.html" class="text-sm font-semibold text-gray-600 hover:text-brandEmerald flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Back to All Tools
+            </a>
+        </div>
+    </nav>
+
+    <div class="bg-emerald-50 border-b border-emerald-100 pt-10 pb-8">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <div class="w-16 h-16 mx-auto bg-white text-brandEmerald rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm border border-emerald-100">
+                <i class="fas fa-file-excel"></i>
+            </div>
+            <h1 class="text-[32px] font-bold text-gray-900 mb-2">Merge Excel Files</h1>
+            <p class="text-gray-600 text-[16px]">Combine multiple Excel spreadsheets (XLSX, CSV) into a single file easily.</p>
+        </div>
+    </div>
+
+    <main class="flex-grow py-8 px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <div id="dropZone" class="upload-area bg-white rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[300px]" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-table text-5xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">Upload Excel Files</h3>
+                <p class="text-gray-500 text-sm mb-6">Select multiple .xlsx or .csv files to merge</p>
+                <button class="bg-brandEmerald hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg shadow-md">
+                    Select Files
+                </button>
+                <input type="file" id="fileInput" class="hidden" accept=".xlsx, .xls, .csv" multiple>
+            </div>
+
+            <div id="processingSection" class="hidden mt-8 text-center bg-white p-10 rounded-xl border border-gray-200 shadow-sm">
+                <i class="fas fa-spinner fa-spin text-4xl text-brandEmerald mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-800">Merging Files...</h3>
+            </div>
+
+            <div id="resultSection" class="hidden mt-8 text-center bg-white p-10 rounded-xl border border-gray-200 shadow-sm">
+                <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Files Merged Successfully!</h2>
+                <button onclick="downloadMergedFile()" class="bg-brandEmerald hover:bg-emerald-600 text-white font-bold py-4 px-10 rounded-lg transition-colors text-xl shadow-lg">
+                    Download Merged Excel
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let mergedData = [];
+        let headerRow = null;
+
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            document.getElementById('dropZone').classList.add('hidden');
+            document.getElementById('processingSection').classList.remove('hidden');
+
+            for (let file of files) {
+                const data = await file.arrayBuffer();
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                if (!headerRow) {
+                    headerRow = json[0];
+                    mergedData.push(headerRow);
+                }
+                
+                // Add rows (skip header)
+                for (let i = 1; i < json.length; i++) {
+                    mergedData.push(json[i]);
+                }
+            }
+
+            document.getElementById('processingSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('hidden');
+        });
+
+        function downloadMergedFile() {
+            const ws = XLSX.utils.aoa_to_sheet(mergedData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "MergedSheet");
+            XLSX.writeFile(wb, "Merged_ToolMitra.xlsx");
+        }
+
+        function resetTool() {
+            mergedData = [];
+            headerRow = null;
+            document.getElementById('fileInput').value = "";
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('dropZone').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

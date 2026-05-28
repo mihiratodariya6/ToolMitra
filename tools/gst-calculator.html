@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>GST Calculator - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 p-4 md:p-8">
+    <div class="max-w-md mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">GST Calculator</h2>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Amount (Rs.)</label>
+                <input type="number" id="amount" class="w-full p-3 border-2 border-gray-200 rounded-lg outline-none focus:border-orange-500" placeholder="1000">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">GST Rate (%)</label>
+                <input type="number" id="rate" class="w-full p-3 border-2 border-gray-200 rounded-lg outline-none focus:border-orange-500" placeholder="18">
+            </div>
+        </div>
+
+        <button onclick="calculateGST()" class="w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-lg transition">Calculate</button>
+
+        <div id="result" class="mt-6 p-4 bg-orange-50 rounded-lg text-center hidden">
+            <p class="text-sm text-orange-800 font-bold">GST Amount: <span id="gstVal"></span></p>
+            <p class="text-lg font-bold text-orange-900 mt-2">Total: <span id="totalVal"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function calculateGST() {
+            const amt = parseFloat(document.getElementById('amount').value);
+            const rate = parseFloat(document.getElementById('rate').value);
+            if(isNaN(amt) || isNaN(rate)) return alert("Please enter numbers");
+            const gst = (amt * rate) / 100;
+            document.getElementById('gstVal').innerText = 'Rs. ' + gst.toFixed(2);
+            document.getElementById('totalVal').innerText = 'Rs. ' + (amt + gst).toFixed(2);
+            document.getElementById('result').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

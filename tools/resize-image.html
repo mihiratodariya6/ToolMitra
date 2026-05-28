@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resize Image - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandOrange: '#f97316' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; }
+        .upload-area { border: 2px dashed #d1d5db; transition: all 0.3s ease; }
+        .upload-area.dragover { border-color: #f97316; background-color: #fff7ed; }
+        .custom-checkbox { width: 1.25rem; height: 1.25rem; accent-color: #f97316; cursor: pointer; }
+        
+        /* Preview Checkerboard Background for Transparent Images */
+        .checkerboard {
+            background-color: #e5e5f7;
+            background-image:  repeating-linear-gradient(45deg, #d1d5db 25%, transparent 25%, transparent 75%, #d1d5db 75%, #d1d5db), repeating-linear-gradient(45deg, #d1d5db 25%, #e5e5f7 25%, #e5e5f7 75%, #d1d5db 75%, #d1d5db);
+            background-position: 0 0, 10px 10px;
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandOrange"><i class="fas fa-arrow-left"></i> Back to All Tools</a>
+        </div>
+    </nav>
+
+    <div class="bg-orange-50 border-b border-orange-100 pt-10 pb-8 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="w-16 h-16 mx-auto bg-white text-brandOrange rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm border border-orange-100">
+                <i class="fas fa-expand-arrows-alt"></i>
+            </div>
+            <h1 class="text-[32px] font-bold text-gray-900 mb-2">Resize Image</h1>
+            <p class="text-gray-600 text-[16px]">Change the dimensions of your image in pixels perfectly without losing quality.</p>
+        </div>
+    </div>
+
+    <main class="flex-grow py-8 px-4">
+        <div class="max-w-6xl mx-auto">
+            
+            <div id="dropZone" class="upload-area bg-white rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[300px]" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-images text-5xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">Upload Image to Resize</h3>
+                <p class="text-gray-500 text-sm mb-6">Drag & drop your PNG, JPG, or WebP file here</p>
+                <button class="bg-brandOrange hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-colors text-lg">
+                    Select Image
+                </button>
+                <input type="file" id="fileInput" class="hidden" accept="image/png, image/jpeg, image/webp">
+            </div>
+
+            <div id="workspaceSection" class="hidden mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-4 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                    <h3 class="font-bold text-gray-800 text-lg mb-4 border-b pb-2"><i class="fas fa-sliders-h mr-2 text-brandOrange"></i> Resize Options</h3>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Width (px)</label>
+                            <div class="relative">
+                                <input type="number" id="imgWidth" class="w-full border-2 border-gray-200 rounded-lg p-3 pr-12 focus:outline-none focus:border-brandOrange text-lg font-semibold text-gray-800" oninput="handleDimensionChange('width')">
+                                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold">px</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Height (px)</label>
+                            <div class="relative">
+                                <input type="number" id="imgHeight" class="w-full border-2 border-gray-200 rounded-lg p-3 pr-12 focus:outline-none focus:border-brandOrange text-lg font-semibold text-gray-800" oninput="handleDimensionChange('height')">
+                                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold">px</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-100 flex items-center justify-between">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="lockRatio" checked class="custom-checkbox">
+                                <span class="text-gray-800 font-bold text-sm">Lock Aspect Ratio</span>
+                            </label>
+                            <i id="lockIcon" class="fas fa-lock text-brandOrange"></i>
+                        </div>
+                    </div>
+
+                    <hr class="my-6 border-gray-200">
+
+                    <button id="resizeBtn" onclick="resizeImage()" class="mt-auto w-full bg-brandOrange hover:bg-orange-600 text-white font-bold py-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-colors text-lg">
+                        <i class="fas fa-compress"></i> Resize & Download
+                    </button>
+                </div>
+
+                <div class="lg:col-span-8 bg-gray-100 p-6 rounded-xl border border-gray-200 shadow-inner flex flex-col items-center justify-center overflow-hidden min-h-[400px]">
+                    <div class="w-full flex justify-between items-center mb-4 bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="font-bold text-gray-700"><i class="fas fa-eye text-brandOrange mr-2"></i> Original Image Preview</h3>
+                        <span class="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded" id="origDimensions">0 x 0 px</span>
+                    </div>
+                    
+                    <div class="w-full h-full flex items-center justify-center p-4">
+                        <img id="imagePreview" class="max-w-full max-h-[500px] object-contain shadow-md rounded border border-gray-300 checkerboard" src="" alt="Preview">
+                    </div>
+                </div>
+            </div>
+
+            <div id="downloadSection" class="hidden mt-8 text-center bg-white p-10 rounded-xl border border-gray-200 shadow-sm">
+                <i class="fas fa-check-circle text-6xl text-green-500 mb-6"></i>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Image Resized Successfully!</h2>
+                <p class="text-gray-500 mb-6 font-semibold">New Size: <span id="finalDimensions" class="text-brandOrange"></span></p>
+                
+                <a id="downloadBtn" href="#" class="bg-brandOrange hover:bg-orange-600 text-white font-bold py-4 px-10 rounded-lg shadow-lg inline-flex items-center gap-3 transition-colors text-xl">
+                    <i class="fas fa-download"></i> Download Resized Image
+                </a>
+                <div class="mt-6">
+                    <button onclick="location.reload()" class="text-gray-500 hover:text-gray-700 font-semibold underline text-sm">Resize another image</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let originalImage = new Image();
+        let originalWidth = 0;
+        let originalHeight = 0;
+        let aspectRatio = 1;
+        let currentFileType = 'image/jpeg';
+        let currentFileName = 'image.jpg';
+
+        // Elements
+        const widthInput = document.getElementById('imgWidth');
+        const heightInput = document.getElementById('imgHeight');
+        const lockCheckbox = document.getElementById('lockRatio');
+        const lockIcon = document.getElementById('lockIcon');
+
+        // Toggle Lock Icon
+        lockCheckbox.addEventListener('change', (e) => {
+            if(e.target.checked) {
+                lockIcon.className = "fas fa-lock text-brandOrange";
+                // If locking, auto-adjust height based on current width
+                handleDimensionChange('width'); 
+            } else {
+                lockIcon.className = "fas fa-unlock text-gray-400";
+            }
+        });
+
+        // Handle File Upload
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            currentFileType = file.type;
+            currentFileName = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                originalImage.onload = function() {
+                    originalWidth = originalImage.width;
+                    originalHeight = originalImage.height;
+                    aspectRatio = originalWidth / originalHeight;
+
+                    // Set UI inputs
+                    widthInput.value = originalWidth;
+                    heightInput.value = originalHeight;
+                    document.getElementById('origDimensions').innerText = `${originalWidth} x ${originalHeight} px`;
+                    
+                    // Show Preview
+                    document.getElementById('imagePreview').src = originalImage.src;
+                    document.getElementById('dropZone').classList.add('hidden');
+                    document.getElementById('workspaceSection').classList.remove('hidden');
+                };
+                originalImage.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Handle Dimension Inputs dynamically
+        function handleDimensionChange(changed) {
+            if (!lockCheckbox.checked) return; // Do nothing if unlocked
+
+            let w = parseInt(widthInput.value) || 0;
+            let h = parseInt(heightInput.value) || 0;
+
+            if (changed === 'width') {
+                heightInput.value = Math.round(w / aspectRatio);
+            } else if (changed === 'height') {
+                widthInput.value = Math.round(h * aspectRatio);
+            }
+        }
+
+        // Generate Resized Image
+        function resizeImage() {
+            const newWidth = parseInt(widthInput.value);
+            const newHeight = parseInt(heightInput.value);
+
+            if (!newWidth || !newHeight || newWidth <= 0 || newHeight <= 0) {
+                return alert("Please enter valid width and height greater than 0.");
+            }
+
+            // Create off-screen canvas to draw resized image
+            const canvas = document.createElement('canvas');
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+            const ctx = canvas.getContext('2d');
+
+            // Draw image on canvas with new dimensions
+            ctx.drawImage(originalImage, 0, 0, newWidth, newHeight);
+
+            // Get Data URL (Keep original format, default to 0.92 quality for JPEG/WebP)
+            const dataUrl = canvas.toDataURL(currentFileType, 0.92);
+
+            // Setup Download
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.href = dataUrl;
+            
+            // Add "resized_" prefix to original filename
+            const nameParts = currentFileName.split('.');
+            const ext = nameParts.pop();
+            downloadBtn.download = nameParts.join('.') + "_resized." + ext;
+
+            // Update UI
+            document.getElementById('finalDimensions').innerText = `${newWidth} x ${newHeight} px`;
+            document.getElementById('workspaceSection').classList.add('hidden');
+            document.getElementById('downloadSection').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

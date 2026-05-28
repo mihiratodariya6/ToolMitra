@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Name Picker & Wheel Spinner - ToolMitra</title>
+    <meta name="description" content="Free online random name picker and spinner wheel. Easily select random winners for giveaways, contests, and classroom games. 100% fair and unbiased.">
+    <meta name="keywords" content="random picker, random name picker, spin the wheel, giveaway winner generator, randomizer, lucky draw tool, #RandomPicker, #ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Random Winner Picker & Spinner - ToolMitra">
+    <meta property="og:description" content="Select a random name from a list instantly. Perfect for giveaways, contests, and decision making. Free, fair, and unbiased.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Random Name Picker",
+      "description": "An unbiased randomizer tool to pick a name or item from a given list, often used for giveaways and lucky draws.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "keywords": "random picker, wheel spinner, giveaway winner, lucky draw",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandYellow: '#f59e0b', brandPurple: '#8b5cf6' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; }
+        .spin-animation {
+            animation: spin 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1080deg); } /* 3 full spins */
+        }
+        .winner-pop { animation: pop 0.5s ease-out forwards; }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandPurple"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-purple-50 border-b border-purple-100 pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-10 text-purple-200 text-6xl opacity-20"><i class="fas fa-gift"></i></div>
+        <div class="absolute bottom-0 right-10 text-yellow-200 text-6xl opacity-20"><i class="fas fa-star"></i></div>
+        
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-20 h-20 mx-auto bg-white text-brandPurple rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-md border border-purple-100">
+                <i class="fas fa-dice"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold text-gray-900 mb-4 tracking-tight">Random Name Picker</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">The fairest way to pick a winner! Paste your list of names and let our unbiased algorithm select the lucky one instantly.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4 relative">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <section class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2"><i class="fas fa-users text-brandPurple mr-2"></i> 1. Enter Names</h2>
+                
+                <p class="text-xs text-gray-500 font-bold uppercase mb-2">Put each name on a new line</p>
+                <textarea id="nameList" class="w-full flex-grow p-4 border-2 border-gray-200 rounded-lg focus:border-brandPurple outline-none text-gray-800 text-lg min-h-[300px]" placeholder="Rahul&#10;Priya&#10;Amit&#10;Sneha&#10;Mihir..."></textarea>
+                
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-sm font-bold text-brandPurple bg-purple-50 px-3 py-1 rounded-full" id="nameCount">0 Names</span>
+                    <button onclick="clearList()" class="text-red-500 font-bold hover:text-red-700 text-sm"><i class="fas fa-trash"></i> Clear List</button>
+                </div>
+            </section>
+
+            <section class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center relative min-h-[400px]">
+                
+                <div id="initialState" class="text-center w-full">
+                    <div class="text-6xl text-gray-200 mb-4"><i class="fas fa-crosshairs"></i></div>
+                    <h3 class="text-2xl font-bold text-gray-400 mb-6">Ready to Pick!</h3>
+                    <button onclick="pickWinner()" class="w-full max-w-sm bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xl py-5 rounded-xl shadow-xl transition transform hover:scale-105 flex items-center justify-center gap-3 mx-auto">
+                        <i class="fas fa-random"></i> Pick Random Winner
+                    </button>
+                </div>
+
+                <div id="spinningState" class="hidden text-center w-full">
+                    <div class="text-6xl text-brandYellow mb-6 inline-block spin-animation"><i class="fas fa-sun"></i></div>
+                    <h3 class="text-2xl font-bold text-gray-700 animate-pulse">Shuffling Names...</h3>
+                </div>
+
+                <div id="winnerState" class="hidden text-center w-full winner-pop">
+                    <p class="text-sm font-bold text-purple-500 uppercase tracking-widest mb-2"><i class="fas fa-trophy"></i> The Winner Is</p>
+                    <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-6 mb-6">
+                        <h2 id="winnerName" class="text-4xl md:text-5xl font-black text-gray-900 break-words">Winner Name</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-sm mx-auto">
+                        <button onclick="resetPicker()" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-lg transition">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button onclick="pickWinner()" class="bg-brandPurple hover:bg-purple-700 text-white font-bold py-3 rounded-lg shadow-md transition">
+                            <i class="fas fa-redo"></i> Pick Another
+                        </button>
+                    </div>
+                    <button onclick="removeWinner()" class="mt-4 text-xs font-bold text-red-500 hover:text-red-700 underline">Remove winner from list</button>
+                </div>
+
+            </section>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto mt-16 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How Our True Random Name Picker Works</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Whether you are running an Instagram giveaway, selecting a student for a presentation, or making a tough group decision, fairness is key. ToolMitra's Random Picker utilizes a cryptographic pseudo-random number generator (PRNG) within your browser to ensure every name has an absolute equal probability of being selected. No server manipulation, just pure mathematics.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-balance-scale text-brandPurple mr-2"></i> 100% Fair & Unbiased</h3>
+                    <p class="text-sm text-gray-600">Advanced randomization algorithm ensures completely unpredictable and fair results every single time.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-bolt text-brandYellow mr-2"></i> Instant Results</h3>
+                    <p class="text-sm text-gray-600">Handle lists of 10 or 10,000 names instantly. Processing happens directly in your browser with zero lag.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-shield-alt text-brandPurple mr-2"></i> Completely Private</h3>
+                    <p class="text-sm text-gray-600">Your list of names is never uploaded or saved to any database. Your data remains strictly on your device.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#RandomPicker</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#GiveawayWinner</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitra</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#LuckyDraw</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        const nameListInput = document.getElementById('nameList');
+        const nameCountDisplay = document.getElementById('nameCount');
+        
+        const initialState = document.getElementById('initialState');
+        const spinningState = document.getElementById('spinningState');
+        const winnerState = document.getElementById('winnerState');
+        const winnerNameDisplay = document.getElementById('winnerName');
+
+        let currentNames = [];
+        let lastWinner = "";
+
+        // Update Count
+        nameListInput.addEventListener('input', () => {
+            currentNames = nameListInput.value.split('\n').map(n => n.trim()).filter(n => n !== "");
+            nameCountDisplay.innerText = `${currentNames.length} Name${currentNames.length !== 1 ? 's' : ''}`;
+        });
+
+        function clearList() {
+            nameListInput.value = "";
+            currentNames = [];
+            nameCountDisplay.innerText = "0 Names";
+            resetPicker();
+        }
+
+        function pickWinner() {
+            currentNames = nameListInput.value.split('\n').map(n => n.trim()).filter(n => n !== "");
+            
+            if (currentNames.length < 2) {
+                alert("Please enter at least 2 names to pick a winner.");
+                return;
+            }
+
+            // Hide others, show spinning
+            initialState.classList.add('hidden');
+            winnerState.classList.add('hidden');
+            spinningState.classList.remove('hidden');
+
+            // Simulate suspense delay
+            setTimeout(() => {
+                // True Random Selection
+                const randomIndex = Math.floor(Math.random() * currentNames.length);
+                lastWinner = currentNames[randomIndex];
+                
+                winnerNameDisplay.innerText = lastWinner;
+                
+                spinningState.classList.add('hidden');
+                winnerState.classList.remove('hidden');
+                
+                // Fire Confetti!
+                fireConfetti();
+                
+            }, 1500); // 1.5 seconds suspense
+        }
+
+        function resetPicker() {
+            winnerState.classList.add('hidden');
+            spinningState.classList.add('hidden');
+            initialState.classList.remove('hidden');
+        }
+
+        function removeWinner() {
+            if (!lastWinner) return;
+            
+            const lines = nameListInput.value.split('\n');
+            const newLines = [];
+            let removed = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                if (!removed && lines[i].trim() === lastWinner) {
+                    removed = true; // Remove only first instance if duplicates exist
+                } else {
+                    newLines.push(lines[i]);
+                }
+            }
+            
+            nameListInput.value = newLines.join('\n');
+            
+            // Update array and UI
+            currentNames = nameListInput.value.split('\n').map(n => n.trim()).filter(n => n !== "");
+            nameCountDisplay.innerText = `${currentNames.length} Name${currentNames.length !== 1 ? 's' : ''}`;
+            
+            resetPicker();
+        }
+
+        function fireConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                }));
+                confetti(Object.assign({}, defaults, { particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>

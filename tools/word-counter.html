@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Word Counter - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans p-4 md:p-8">
+    
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center"><i class="fas fa-font text-slate-600 mr-2"></i> Word & Character Counter</h2>
+        
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-6">
+            <textarea id="textInput" rows="12" class="w-full p-4 border-2 border-gray-200 rounded-lg focus:border-slate-500 outline-none resize-none text-lg" placeholder="Type or paste your text here..."></textarea>
+            
+            <div class="flex justify-end mt-4">
+                <button onclick="clearText()" class="text-red-500 font-bold hover:text-red-700 underline text-sm"><i class="fas fa-trash mr-1"></i> Clear Text</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center shadow-sm">
+                <p class="text-xs text-gray-500 font-bold uppercase mb-1">Words</p>
+                <p id="wordCount" class="text-3xl font-bold text-slate-700">0</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center shadow-sm">
+                <p class="text-xs text-gray-500 font-bold uppercase mb-1">Characters</p>
+                <p id="charCount" class="text-3xl font-bold text-slate-700">0</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center shadow-sm">
+                <p class="text-xs text-gray-500 font-bold uppercase mb-1">Sentences</p>
+                <p id="sentenceCount" class="text-3xl font-bold text-slate-700">0</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 text-center shadow-sm">
+                <p class="text-xs text-gray-500 font-bold uppercase mb-1">Paragraphs</p>
+                <p id="paragraphCount" class="text-3xl font-bold text-slate-700">0</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('textInput');
+        input.addEventListener('input', updateStats);
+
+        function updateStats() {
+            const text = input.value.trim();
+            
+            // Words
+            const words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('wordCount').innerText = words;
+
+            // Chars
+            document.getElementById('charCount').innerText = text.length;
+
+            // Sentences
+            const sentences = text ? text.split(/[.!?]+/).filter(s => s.trim() !== '').length : 0;
+            document.getElementById('sentenceCount').innerText = sentences;
+
+            // Paragraphs
+            const paragraphs = text ? text.split(/\n+/).filter(p => p.trim() !== '').length : 0;
+            document.getElementById('paragraphCount').innerText = paragraphs;
+        }
+
+        function clearText() {
+            input.value = "";
+            updateStats();
+        }
+    </script>
+</body>
+</html>

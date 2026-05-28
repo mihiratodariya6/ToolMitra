@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Free Online Scientific Calculator - ToolMitra</title>
+    <meta name="description" content="Use our free online scientific calculator for advanced math problems. Includes trigonometry (sin, cos, tan), logarithms, square roots, and exponential functions.">
+    <meta name="keywords" content="scientific calculator, online calculator, advanced calculator, math solver, trigonometry calculator, log calculator, free scientific calculator, ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Advanced Scientific Calculator - ToolMitra">
+    <meta property="og:description" content="Solve complex math problems instantly. Free online scientific calculator with full trigonometric and logarithmic functions.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Scientific Calculator",
+      "description": "A comprehensive online scientific calculator for students, engineers, and professionals to solve complex mathematical equations.",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandDark: '#1e293b', brandAccent: '#3b82f6' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .calc-btn { 
+            transition: all 0.1s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .calc-btn:active { transform: scale(0.95); box-shadow: none; }
+        #display { font-family: 'Courier New', Courier, monospace; letter-spacing: 1px; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandAccent"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-slate-800 text-white pt-12 pb-10 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="w-16 h-16 mx-auto bg-slate-700 text-brandAccent rounded-2xl flex items-center justify-center text-3xl mb-4 border border-slate-600">
+                <i class="fas fa-square-root-alt"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight">Scientific Calculator</h1>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">Solve complex math, trigonometry, and logarithmic equations instantly directly in your browser.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        
+        <div class="max-w-md mx-auto bg-slate-900 p-6 rounded-3xl shadow-2xl border border-slate-700 mb-16">
+            
+            <div class="bg-slate-800 rounded-xl p-4 mb-6 shadow-inner border border-slate-700 text-right h-24 flex flex-col justify-end overflow-hidden">
+                <div id="equation" class="text-slate-400 text-sm h-5 overflow-hidden"></div>
+                <div id="display" class="text-white text-3xl font-bold mt-1 overflow-hidden truncate">0</div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-3">
+                <button onclick="appendFunc('sin(')" class="calc-btn bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg text-sm">sin</button>
+                <button onclick="appendFunc('cos(')" class="calc-btn bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg text-sm">cos</button>
+                <button onclick="appendFunc('tan(')" class="calc-btn bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg text-sm">tan</button>
+                <button onclick="appendFunc('log(')" class="calc-btn bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg text-sm">log</button>
+
+                <button onclick="appendValue('Math.PI')" class="calc-btn bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg text-sm">π</button>
+                <button onclick="appendValue('Math.E')" class="calc-btn bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg text-sm">e</button>
+                <button onclick="appendFunc('sqrt(')" class="calc-btn bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg text-sm">√</button>
+                <button onclick="appendValue('**')" class="calc-btn bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg text-sm">x^y</button>
+
+                <button onclick="appendValue('(')" class="calc-btn bg-slate-600 hover:bg-slate-500 text-white font-bold py-4 rounded-lg">(</button>
+                <button onclick="appendValue(')')" class="calc-btn bg-slate-600 hover:bg-slate-500 text-white font-bold py-4 rounded-lg">)</button>
+                <button onclick="deleteLast()" class="calc-btn bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-lg"><i class="fas fa-backspace"></i></button>
+                <button onclick="clearDisplay()" class="calc-btn bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-lg">AC</button>
+
+                <button onclick="appendValue('7')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">7</button>
+                <button onclick="appendValue('8')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">8</button>
+                <button onclick="appendValue('9')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">9</button>
+                <button onclick="appendValue('/')" class="calc-btn bg-brandAccent hover:bg-blue-600 text-white font-bold py-4 rounded-lg text-xl">÷</button>
+
+                <button onclick="appendValue('4')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">4</button>
+                <button onclick="appendValue('5')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">5</button>
+                <button onclick="appendValue('6')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">6</button>
+                <button onclick="appendValue('*')" class="calc-btn bg-brandAccent hover:bg-blue-600 text-white font-bold py-4 rounded-lg text-xl">×</button>
+
+                <button onclick="appendValue('1')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">1</button>
+                <button onclick="appendValue('2')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">2</button>
+                <button onclick="appendValue('3')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">3</button>
+                <button onclick="appendValue('-')" class="calc-btn bg-brandAccent hover:bg-blue-600 text-white font-bold py-4 rounded-lg text-xl">-</button>
+
+                <button onclick="appendValue('0')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl col-span-2">0</button>
+                <button onclick="appendValue('.')" class="calc-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold py-4 rounded-lg text-xl">.</button>
+                <button onclick="appendValue('+')" class="calc-btn bg-brandAccent hover:bg-blue-600 text-white font-bold py-4 rounded-lg text-xl">+</button>
+
+                <button onclick="calculate()" class="calc-btn bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg text-2xl col-span-4 shadow-lg">=</button>
+            </div>
+        </div>
+
+        <article class="max-w-5xl mx-auto bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Master Complex Math with Our Online Scientific Calculator</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Whether you are an engineering student dealing with calculus, a developer working on complex algorithms, or simply need to solve high-level mathematical equations, ToolMitra provides a precise, browser-based solution. No apps to download, just pure computational power instantly available on your device.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8 mt-8">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-3 border-b pb-2"><i class="fas fa-layer-group text-brandAccent mr-2"></i> Supported Functions</h3>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li><strong>Trigonometry:</strong> Sine (sin), Cosine (cos), Tangent (tan)</li>
+                        <li><strong>Logarithms:</strong> Base 10 Log (log)</li>
+                        <li><strong>Exponents & Roots:</strong> Powers (x^y), Square Roots (√)</li>
+                        <li><strong>Constants:</strong> Pi (π), Euler's Number (e)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-3 border-b pb-2"><i class="fas fa-lock text-brandAccent mr-2"></i> Privacy & Speed</h3>
+                    <p class="text-sm text-gray-600">Unlike other online calculators that send your data to a server to compute, ToolMitra's Scientific Calculator processes all mathematical operations locally within your browser using JavaScript's native Math object. This guarantees zero lag and 100% data privacy.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ScientificCalculator</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#MathSolver</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitra</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#OnlineCalculator</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        let currentExp = "";
+        let displayStr = "";
+        const display = document.getElementById('display');
+        const eqDisplay = document.getElementById('equation');
+
+        function updateDisplay() {
+            display.innerText = displayStr || "0";
+            // Auto scroll display to right
+            display.scrollLeft = display.scrollWidth;
+        }
+
+        function appendValue(val) {
+            if (val === 'Math.PI') {
+                currentExp += val;
+                displayStr += 'π';
+            } else if (val === 'Math.E') {
+                currentExp += val;
+                displayStr += 'e';
+            } else if (val === '**') {
+                currentExp += val;
+                displayStr += '^';
+            } else {
+                currentExp += val;
+                displayStr += val;
+            }
+            updateDisplay();
+        }
+
+        function appendFunc(funcName) {
+            let jsFunc = "";
+            let dispFunc = "";
+
+            if (funcName === 'sin(') { jsFunc = 'Math.sin('; dispFunc = 'sin('; }
+            else if (funcName === 'cos(') { jsFunc = 'Math.cos('; dispFunc = 'cos('; }
+            else if (funcName === 'tan(') { jsFunc = 'Math.tan('; dispFunc = 'tan('; }
+            else if (funcName === 'log(') { jsFunc = 'Math.log10('; dispFunc = 'log('; }
+            else if (funcName === 'sqrt(') { jsFunc = 'Math.sqrt('; dispFunc = '√('; }
+
+            currentExp += jsFunc;
+            displayStr += dispFunc;
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentExp = "";
+            displayStr = "";
+            eqDisplay.innerText = "";
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            // Simplified delete: removes last char from display and expression
+            // Note: complex functions like Math.sin( might need multiple clicks, but it's safe.
+            if(displayStr.length > 0) {
+                displayStr = displayStr.slice(0, -1);
+                // Basic cleanup for currentExp (not perfect for multi-char funcs, but prevents crashes)
+                currentExp = currentExp.slice(0, -1); 
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                if(!currentExp) return;
+                
+                eqDisplay.innerText = displayStr + " =";
+                
+                // Using new Function is safer than eval()
+                const result = new Function('return ' + currentExp)();
+                
+                // Handle formatting
+                if (!isFinite(result) || isNaN(result)) {
+                    displayStr = "Error";
+                    currentExp = "";
+                } else {
+                    // Format to prevent extreme long decimals
+                    const formattedResult = Number.isInteger(result) ? result : parseFloat(result.toFixed(8));
+                    displayStr = String(formattedResult);
+                    currentExp = String(formattedResult);
+                }
+                
+                updateDisplay();
+            } catch (error) {
+                displayStr = "Syntax Error";
+                currentExp = "";
+                updateDisplay();
+            }
+        }
+    </script>
+</body>
+</html>

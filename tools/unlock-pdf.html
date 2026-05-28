@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlock PDF - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandRed: '#e5322d' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; }
+        .upload-area { border: 2px dashed #d1d5db; transition: all 0.3s ease; }
+        .upload-area.dragover { border-color: #e5322d; background-color: #fff1f1; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+                <i class="fas fa-heart text-[#e5322d] text-2xl"></i>
+                <span class="font-bold text-2xl tracking-tight text-gray-900">ToolMitra</span>
+            </a>
+            <a href="../index.html" class="text-sm font-semibold text-gray-600 hover:text-brandRed flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Back to All Tools
+            </a>
+        </div>
+    </nav>
+
+    <div class="bg-red-50 border-b border-red-100 pt-10 pb-8">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <div class="w-16 h-16 mx-auto bg-white text-brandRed rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm border border-red-100">
+                <i class="fas fa-lock-open"></i>
+            </div>
+            <h1 class="text-[32px] font-bold text-gray-900 mb-2">Unlock PDF</h1>
+            <p class="text-gray-600 text-[16px]">Remove password security from your PDF files to make them accessible.</p>
+        </div>
+    </div>
+
+    <main class="flex-grow py-8 px-4">
+        <div class="max-w-3xl mx-auto">
+            
+            <div id="dropZone" class="upload-area bg-white rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[300px]" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-lock text-5xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">Select Locked PDF</h3>
+                <p class="text-gray-500 text-sm mb-6">Drag & drop your password-protected PDF here</p>
+                <button class="bg-brandRed hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg shadow-md">
+                    Select PDF
+                </button>
+                <input type="file" id="fileInput" class="hidden" accept="application/pdf">
+            </div>
+
+            <div id="workspaceSection" class="hidden mt-6 bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
+                    <i class="fas fa-file-pdf text-4xl text-brandRed"></i>
+                    <div>
+                        <h3 id="fileName" class="font-bold text-gray-800 text-lg">filename.pdf</h3>
+                        <p class="text-sm text-gray-500">This PDF is protected.</p>
+                    </div>
+                </div>
+
+                <label class="block text-sm font-bold text-gray-700 mb-2">Enter PDF Password</label>
+                <input type="password" id="pdfPassword" placeholder="Enter password here..." class="w-full border-2 border-gray-200 rounded-lg p-3 focus:outline-none focus:border-brandRed text-lg mb-6">
+
+                <button id="unlockBtn" onclick="unlockPdf()" class="w-full bg-brandRed hover:bg-red-700 text-white font-bold py-4 rounded-lg transition-colors text-lg shadow-lg flex items-center justify-center gap-2">
+                    <i class="fas fa-unlock"></i> Unlock PDF
+                </button>
+                <p id="statusText" class="text-center text-gray-500 mt-3 hidden"><i class="fas fa-spinner fa-spin text-brandRed"></i> Decrypting PDF...</p>
+            </div>
+
+            <div id="downloadSection" class="hidden mt-8 text-center bg-white p-10 rounded-xl border border-gray-200 shadow-sm">
+                <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">PDF Unlocked Successfully!</h2>
+                <a id="downloadBtn" href="#" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-10 rounded-lg transition-colors text-xl shadow-lg inline-flex items-center gap-3">
+                    <i class="fas fa-download"></i> Download Unlocked PDF
+                </a>
+                <div class="mt-6">
+                    <button onclick="resetTool()" class="text-gray-500 hover:text-gray-700 font-semibold underline text-sm">Unlock another file</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentFile = null;
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            currentFile = e.target.files[0];
+            document.getElementById('fileName').innerText = currentFile.name;
+            document.getElementById('dropZone').classList.add('hidden');
+            document.getElementById('workspaceSection').classList.remove('hidden');
+        });
+
+        async function unlockPdf() {
+            const password = document.getElementById('pdfPassword').value;
+            const convertBtn = document.getElementById('unlockBtn');
+            const statusText = document.getElementById('statusText');
+            
+            convertBtn.classList.add('hidden');
+            statusText.classList.remove('hidden');
+
+            try {
+                const arrayBuffer = await currentFile.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer, { password: password });
+                
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: "application/pdf" });
+                const url = URL.createObjectURL(blob);
+                
+                document.getElementById('downloadBtn').href = url;
+                document.getElementById('downloadBtn').download = "Unlocked_" + currentFile.name;
+                
+                document.getElementById('workspaceSection').classList.add('hidden');
+                document.getElementById('downloadSection').classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                
+                // Smart Error Handling
+                if(err.message.includes("AES")) {
+                    alert("Government/Strong Encryption detected! Browser cannot unlock files with AES-256 encryption. Please use desktop software like Adobe Acrobat.");
+                } else {
+                    alert("Incorrect password or PDF is corrupted.");
+                }
+                
+                convertBtn.classList.remove('hidden');
+                statusText.classList.add('hidden');
+            }
+        }
+
+        function resetTool() {
+            document.getElementById('fileInput').value = "";
+            document.getElementById('workspaceSection').classList.add('hidden');
+            document.getElementById('downloadSection').classList.add('hidden');
+            document.getElementById('dropZone').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

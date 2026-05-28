@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Video Extractor - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandSky: '#0284c7' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; }
+        .video-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .video-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandSky"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <div class="bg-sky-50 border-b border-sky-100 pt-10 pb-8 text-center">
+        <h1 class="text-[32px] font-bold text-gray-900 mb-2">Website Video Extractor</h1>
+        <p class="text-gray-600">Extract public videos from any webpage, or paste a direct video link to download.</p>
+    </div>
+
+    <main class="flex-grow py-8 px-4">
+        <div class="max-w-5xl mx-auto">
+            
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center">
+                <div class="relative w-full">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-link text-gray-400"></i>
+                    </div>
+                    <input type="url" id="urlInput" class="w-full pl-10 p-4 border-2 border-gray-200 rounded-lg focus:border-brandSky outline-none text-lg" placeholder="https://example.com or direct .mp4 link" required>
+                </div>
+                <button onclick="extractVideos()" class="w-full md:w-auto bg-brandSky hover:bg-sky-700 text-white font-bold py-4 px-8 rounded-lg transition shadow-md whitespace-nowrap flex items-center justify-center gap-2">
+                    <i class="fas fa-search"></i> Extract Videos
+                </button>
+            </div>
+
+            <div id="statusSection" class="text-center mb-8 hidden">
+                <div id="loadingSpinner" class="hidden text-brandSky font-bold text-lg"><i class="fas fa-circle-notch fa-spin mr-2"></i> Scanning website for videos...</div>
+                <div id="errorMessage" class="hidden text-red-500 font-bold bg-red-50 p-4 rounded-lg border border-red-100"></div>
+                <div id="successMessage" class="hidden text-green-600 font-bold bg-green-50 p-4 rounded-lg border border-green-100"></div>
+            </div>
+
+            <div id="videoGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+
+        </div>
+    </main>
+
+    <script>
+        async function extractVideos() {
+            const urlInput = document.getElementById('urlInput').value.trim();
+            const statusSection = document.getElementById('statusSection');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const videoGrid = document.getElementById('videoGrid');
+
+            errorMessage.classList.add('hidden');
+            successMessage.classList.add('hidden');
+            videoGrid.innerHTML = '';
+            
+            if (!urlInput) {
+                showError("Please enter a valid URL.");
+                return;
+            }
+
+            let targetUrl = urlInput;
+            if (!/^https?:\/\//i.test(targetUrl)) {
+                targetUrl = 'http://' + targetUrl;
+            }
+
+            statusSection.classList.remove('hidden');
+            loadingSpinner.classList.remove('hidden');
+
+            // Check if it's a direct video link
+            const isDirectVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(targetUrl);
+
+            if (isDirectVideo) {
+                loadingSpinner.classList.add('hidden');
+                successMessage.innerText = "Direct video link detected!";
+                successMessage.classList.remove('hidden');
+                renderVideoCard(targetUrl, 0);
+                return;
+            }
+
+            try {
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error("Network response was not ok");
+                
+                const data = await response.json();
+                if (!data.contents) throw new Error("Could not fetch the website content.");
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.contents, 'text/html');
+                
+                let validVideoUrls = [];
+                const targetBaseUrl = new URL(targetUrl);
+
+                // 1. Scan <video> tags and <source> tags
+                const videoElements = doc.querySelectorAll('video');
+                videoElements.forEach(video => {
+                    let src = video.getAttribute('src');
+                    if (src) validVideoUrls.push(src);
+                    
+                    const sources = video.querySelectorAll('source');
+                    sources.forEach(source => {
+                        let sSrc = source.getAttribute('src');
+                        if (sSrc) validVideoUrls.push(sSrc);
+                    });
+                });
+
+                // 2. Scan <a> tags pointing to video files
+                const anchorElements = doc.querySelectorAll('a');
+                anchorElements.forEach(a => {
+                    let href = a.getAttribute('href');
+                    if (href && /\.(mp4|webm|ogg)/i.test(href)) {
+                        validVideoUrls.push(href);
+                    }
+                });
+
+                // Resolve relative paths
+                let absoluteVideoUrls = [];
+                validVideoUrls.forEach(src => {
+                    try {
+                        const absoluteUrl = new URL(src, targetBaseUrl.origin).href;
+                        absoluteVideoUrls.push(absoluteUrl);
+                    } catch (e) {}
+                });
+
+                absoluteVideoUrls = [...new Set(absoluteVideoUrls)];
+                loadingSpinner.classList.add('hidden');
+
+                if (absoluteVideoUrls.length === 0) {
+                    showError("No public HTML5 videos found on this webpage.");
+                    return;
+                }
+
+                successMessage.innerText = `Successfully extracted ${absoluteVideoUrls.length} videos!`;
+                successMessage.classList.remove('hidden');
+
+                absoluteVideoUrls.forEach((videoUrl, index) => {
+                    renderVideoCard(videoUrl, index);
+                });
+
+            } catch (error) {
+                loadingSpinner.classList.add('hidden');
+                showError("Failed to extract videos. The website might be blocking access or does not contain direct video elements.");
+            }
+        }
+
+        function renderVideoCard(videoUrl, index) {
+            const videoGrid = document.getElementById('videoGrid');
+            const card = document.createElement('div');
+            card.className = "video-card bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col";
+            card.innerHTML = `
+                <div class="w-full bg-black rounded-lg overflow-hidden mb-3 flex items-center justify-center">
+                    <video src="${videoUrl}" controls class="w-full h-48 object-contain"></video>
+                </div>
+                <div class="mt-auto flex gap-2">
+                    <a href="${videoUrl}" target="_blank" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center font-bold py-2 rounded text-sm transition"><i class="fas fa-external-link-alt"></i> Open</a>
+                    <button onclick="downloadVideo('${videoUrl}')" class="flex-1 bg-brandSky hover:bg-sky-700 text-white text-center font-bold py-2 rounded text-sm transition"><i class="fas fa-download"></i> Save</button>
+                </div>
+            `;
+            videoGrid.appendChild(card);
+        }
+
+        function showError(msg) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.innerText = msg;
+            errorMessage.classList.remove('hidden');
+        }
+
+        async function downloadVideo(url) {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = "ToolMitra_Video.mp4";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+                window.open(url, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>

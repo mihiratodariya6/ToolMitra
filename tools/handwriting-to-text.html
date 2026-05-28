@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwriting & Image to Text Converter (OCR) - ToolMitra</title>
+    <meta name="description" content="Free online OCR tool to extract text from images, handwriting, scanned documents, and photos instantly. Supports English, Spanish, French, and multiple global languages.">
+    <meta name="keywords" content="image to text, handwriting to text, OCR online, extract text from image, photo to text, global OCR, multi-language image to text">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="High-Tech Image to Text (OCR) Converter - ToolMitra">
+    <meta property="og:description" content="Extract text from any image or handwriting instantly using advanced AI OCR technology directly in your browser. Supports multiple global languages.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Image to Text OCR",
+      "description": "An advanced optical character recognition tool to extract text from handwriting and images globally.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandIndigo: '#4f46e5' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .upload-area { border: 2px dashed #cbd5e1; transition: all 0.3s ease; }
+        .upload-area.dragover { border-color: #4f46e5; background-color: #e0e7ff; }
+        .progress-bar { transition: width 0.3s ease; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandIndigo"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-indigo-50 border-b border-indigo-100 pt-12 pb-10 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="w-20 h-20 mx-auto bg-white text-brandIndigo rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-md border border-indigo-100">
+                <i class="fas fa-file-signature"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold text-gray-900 mb-4 tracking-tight">Handwriting & Image to Text</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Extract text from scanned documents, photos, and clear handwriting using our advanced AI-powered OCR tool. 100% private and secure.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <section class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2"><i class="fas fa-cloud-upload-alt text-brandIndigo mr-2"></i> 1. Upload Image</h2>
+                
+                <div id="dropZone" class="upload-area rounded-xl p-8 text-center cursor-pointer flex flex-col items-center justify-center min-h-[300px] bg-gray-50 hover:bg-gray-100" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-image text-5xl text-gray-400 mb-4"></i>
+                    <h3 class="text-lg font-bold text-gray-700 mb-2">Click or Drag & Drop Image</h3>
+                    <p class="text-gray-500 text-sm mb-4">Supports JPG, PNG, WebP</p>
+                    <button class="bg-brandIndigo hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">Browse Files</button>
+                    <input type="file" id="fileInput" class="hidden" accept="image/png, image/jpeg, image/webp">
+                </div>
+
+                <div id="previewSection" class="hidden flex-col items-center w-full h-full">
+                    <div class="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 mb-4">
+                        <img id="imagePreview" src="" alt="Image to extract text from" class="w-full h-full object-contain">
+                        <button onclick="resetTool()" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md" title="Remove Image"><i class="fas fa-times"></i></button>
+                    </div>
+                    
+                    <label class="block w-full text-sm font-bold text-gray-700 mb-2">Select Language:</label>
+                    <select id="langSelect" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brandIndigo outline-none mb-4 font-semibold text-gray-700">
+                        <option value="eng">English</option>
+                        <option value="spa">Spanish (Español)</option>
+                        <option value="fra">French (Français)</option>
+                        <option value="deu">German (Deutsch)</option>
+                        <option value="chi_sim">Chinese (中文)</option>
+                        <option value="ara">Arabic (العربية)</option>
+                        <option value="hin">Hindi (हिंदी)</option>
+                        <option value="por">Portuguese (Português)</option>
+                        <option value="rus">Russian (Русский)</option>
+                        <option value="jpn">Japanese (日本語)</option>
+                    </select>
+
+                    <button id="extractBtn" onclick="extractText()" class="w-full bg-brandIndigo hover:bg-indigo-700 text-white font-bold py-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition text-lg mt-auto">
+                        <i class="fas fa-magic"></i> Extract Text Now
+                    </button>
+                </div>
+            </section>
+
+            <section class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2"><i class="fas fa-file-alt text-brandIndigo mr-2"></i> 2. Extracted Text</h2>
+                
+                <div id="progressSection" class="hidden w-full mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                    <div class="flex justify-between text-sm font-bold text-indigo-800 mb-2">
+                        <span id="statusText">Initializing AI Engine...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="w-full bg-indigo-200 rounded-full h-2.5">
+                        <div id="progressBar" class="bg-brandIndigo h-2.5 rounded-full progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <textarea id="resultText" class="w-full flex-grow p-4 border-2 border-gray-200 rounded-lg focus:border-brandIndigo outline-none text-gray-800 text-lg resize-none mb-4 min-h-[300px]" placeholder="Extracted text will appear here..." readonly></textarea>
+                
+                <div class="grid grid-cols-2 gap-4 mt-auto">
+                    <button id="copyBtn" onclick="copyText()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" disabled>
+                        <i class="fas fa-copy"></i> Copy Text
+                    </button>
+                    <button id="downloadBtn" onclick="downloadText()" class="bg-brandIndigo hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" disabled>
+                        <i class="fas fa-download"></i> Save .txt
+                    </button>
+                </div>
+            </section>
+
+        </div>
+
+        <article class="max-w-6xl mx-auto mt-16 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How does the Global Image to Text (OCR) Tool Work?</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">ToolMitra uses advanced Optical Character Recognition (OCR) technology to help users worldwide. When you upload an image, our client-side AI analyzes the pixels and converts them into editable digital text. Because the processing happens entirely in your browser, your sensitive documents never leave your device, ensuring 100% privacy.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-tachometer-alt text-brandIndigo mr-2"></i> Fast & Accurate</h3>
+                    <p class="text-sm text-gray-600">Extracts text from printed documents, screenshots, and clear handwriting in seconds.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-shield-alt text-brandIndigo mr-2"></i> 100% Private</h3>
+                    <p class="text-sm text-gray-600">No images are uploaded to any server. All text extraction happens securely on your local device.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-globe text-brandIndigo mr-2"></i> Global Support</h3>
+                    <p class="text-sm text-gray-600">Supports text extraction in English, Spanish, French, Chinese, Arabic, and many more global languages.</p>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        let currentImageFile = null;
+
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            if(e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if(!file.type.startsWith('image/')) {
+                alert("Please upload a valid image file (JPG, PNG).");
+                return;
+            }
+            currentImageFile = file;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('imagePreview').src = event.target.result;
+                document.getElementById('dropZone').classList.add('hidden');
+                document.getElementById('previewSection').classList.remove('hidden');
+                document.getElementById('previewSection').classList.add('flex');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetTool() {
+            currentImageFile = null;
+            document.getElementById('fileInput').value = "";
+            document.getElementById('imagePreview').src = "";
+            document.getElementById('previewSection').classList.add('hidden');
+            document.getElementById('previewSection').classList.remove('flex');
+            document.getElementById('dropZone').classList.remove('hidden');
+            document.getElementById('resultText').value = "";
+            document.getElementById('progressSection').classList.add('hidden');
+            disableButtons();
+        }
+
+        async function extractText() {
+            if(!currentImageFile) return;
+
+            const extractBtn = document.getElementById('extractBtn');
+            const progressSection = document.getElementById('progressSection');
+            const progressBar = document.getElementById('progressBar');
+            const statusText = document.getElementById('statusText');
+            const progressPercent = document.getElementById('progressPercent');
+            const resultText = document.getElementById('resultText');
+            const lang = document.getElementById('langSelect').value;
+
+            extractBtn.disabled = true;
+            extractBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            extractBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            progressSection.classList.remove('hidden');
+            resultText.value = "";
+            resultText.removeAttribute('readonly');
+            disableButtons();
+
+            try {
+                const worker = await Tesseract.createWorker(lang, 1, {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const p = Math.round(m.progress * 100);
+                            progressBar.style.width = p + '%';
+                            progressPercent.innerText = p + '%';
+                            statusText.innerText = "Extracting Text...";
+                        } else {
+                            statusText.innerText = "Loading Global AI Models...";
+                        }
+                    }
+                });
+                
+                const { data: { text } } = await worker.recognize(currentImageFile);
+                
+                if (text.trim() === "") {
+                    resultText.value = "No text could be found in the image. Please ensure the handwriting or text is clear.";
+                } else {
+                    resultText.value = text;
+                    enableButtons();
+                }
+                
+                await worker.terminate();
+                statusText.innerText = "Extraction Complete!";
+                progressBar.classList.add('bg-green-500');
+
+            } catch (error) {
+                console.error(error);
+                resultText.value = "An error occurred during text extraction. Please try a different image.";
+                statusText.innerText = "Error!";
+                progressBar.classList.add('bg-red-500');
+            } finally {
+                extractBtn.disabled = false;
+                extractBtn.innerHTML = '<i class="fas fa-magic"></i> Extract Text Now';
+                extractBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function enableButtons() {
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            copyBtn.disabled = false;
+            copyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            downloadBtn.disabled = false;
+            downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function disableButtons() {
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            copyBtn.disabled = true;
+            copyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            downloadBtn.disabled = true;
+            downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function copyText() {
+            const text = document.getElementById('resultText');
+            text.select();
+            document.execCommand("copy");
+            const btn = document.getElementById('copyBtn');
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i> Copy Text', 2000);
+        }
+
+        function downloadText() {
+            const text = document.getElementById('resultText').value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.href = URL.createObjectURL(blob);
+            anchor.download = "ToolMitra_Extracted_Text.txt";
+            anchor.click();
+            URL.revokeObjectURL(anchor.href);
+        }
+    </script>
+</body>
+</html>

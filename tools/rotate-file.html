@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotate PDF & Image - ToolMitra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandPurple: '#9333ea' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; }
+        .upload-area { border: 2px dashed #d1d5db; transition: all 0.3s ease; }
+        .upload-area.dragover { border-color: #9333ea; background-color: #faf5ff; }
+        #previewContainer { background: #e5e5f7; background-image: repeating-linear-gradient(45deg, #d1d5db 25%, transparent 25%, transparent 75%, #d1d5db 75%, #d1d5db), repeating-linear-gradient(45deg, #d1d5db 25%, #e5e5f7 25%, #e5e5f7 75%, #d1d5db 75%, #d1d5db); background-position: 0 0, 10px 10px; background-size: 20px 20px; }
+        
+        /* Custom Range Slider */
+        input[type=range] { accent-color: #9333ea; }
+        
+        /* Rotation Animation */
+        #imgPreview { transition: transform 0.1s ease-out; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandPurple"><i class="fas fa-arrow-left"></i> Back to All Tools</a>
+        </div>
+    </nav>
+
+    <div class="bg-purple-50 border-b border-purple-100 pt-10 pb-8 text-center">
+        <h1 class="text-[32px] font-bold text-gray-900 mb-2">Rotate PDF & Image</h1>
+        <p class="text-gray-600">Rotate specific PDF pages or free-rotate images instantly.</p>
+    </div>
+
+    <main class="flex-grow py-8 px-4">
+        <div class="max-w-7xl mx-auto">
+            
+            <div id="dropZone" class="upload-area bg-white rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[300px]" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-sync-alt text-5xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">Upload PDF or Image</h3>
+                <p class="text-gray-500 text-sm mb-6">Drag & drop your PDF, JPG, PNG, or WebP</p>
+                <button class="bg-brandPurple hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-colors text-lg">Select File</button>
+                <input type="file" id="fileInput" class="hidden" accept="application/pdf, image/png, image/jpeg, image/webp">
+            </div>
+
+            <div id="workspaceSection" class="hidden mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-4 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                        <i id="fileIcon" class="fas fa-file text-3xl text-brandPurple"></i>
+                        <span id="fileName" class="font-bold text-gray-800 truncate">filename</span>
+                    </div>
+
+                    <div id="pdfControls" class="hidden space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Apply Rotation To:</label>
+                            <select id="pdfApplyTo" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:outline-none focus:border-brandPurple text-gray-700 font-semibold" onchange="togglePdfRange()">
+                                <option value="current">Current Page</option>
+                                <option value="all">All Pages</option>
+                                <option value="range">Custom Range (e.g., 1-5, 8)</option>
+                            </select>
+                        </div>
+                        
+                        <div id="pdfRangeDiv" class="hidden">
+                            <input type="text" id="pdfRangeInput" placeholder="e.g. 1-3, 5, 8-10" class="w-full border-2 border-gray-200 rounded-lg p-3 focus:outline-none focus:border-brandPurple">
+                            <p class="text-xs text-gray-500 mt-1">Specify page numbers to rotate.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Rotate Direction</label>
+                            <div class="flex gap-4">
+                                <button onclick="rotatePdf(-90)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-lg shadow-sm transition"><i class="fas fa-undo mr-2"></i> Left 90°</button>
+                                <button onclick="rotatePdf(90)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-lg shadow-sm transition">Right 90° <i class="fas fa-redo ml-2"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="imgControls" class="hidden space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Quick Rotate</label>
+                            <div class="flex gap-4">
+                                <button onclick="changeImgRotation(-90)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-lg shadow-sm"><i class="fas fa-undo"></i> Left 90°</button>
+                                <button onclick="changeImgRotation(90)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 rounded-lg shadow-sm">Right 90° <i class="fas fa-redo"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="text-sm font-bold text-gray-700">Free Rotate Angle</label>
+                                <span id="angleValue" class="text-sm font-bold text-brandPurple bg-purple-100 px-2 rounded">0°</span>
+                            </div>
+                            <input type="range" id="imgRotationSlider" min="-180" max="180" value="0" step="1" oninput="updateImgPreviewRotation(this.value)" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>-180°</span><span>0°</span><span>180°</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-6 border-gray-200">
+
+                    <button id="processBtn" onclick="processFile()" class="mt-auto w-full bg-brandPurple hover:bg-purple-700 text-white font-bold py-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition">
+                        <i class="fas fa-save"></i> Save & Download
+                    </button>
+                    <p id="statusText" class="text-center text-brandPurple font-bold mt-3 hidden"><i class="fas fa-spinner fa-spin"></i> Processing...</p>
+                </div>
+
+                <div class="lg:col-span-8 bg-gray-100 p-6 rounded-xl border border-gray-200 shadow-inner flex flex-col items-center justify-center overflow-hidden min-h-[500px]">
+                    
+                    <div id="pdfPagination" class="hidden w-full flex justify-between items-center mb-4 bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="font-bold text-gray-700"><i class="fas fa-eye text-brandPurple mr-2"></i> Page Preview</h3>
+                        <div class="flex items-center gap-4">
+                            <button onclick="prevPage()" class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 font-bold"><i class="fas fa-chevron-left"></i></button>
+                            <span class="font-bold text-gray-700">Page <span id="pageNum" class="text-brandPurple">1</span> / <span id="totalPages">1</span></span>
+                            <button onclick="nextPage()" class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 font-bold"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div id="previewContainer" class="w-full h-full flex items-center justify-center p-4 rounded-lg overflow-hidden border border-gray-300">
+                        <canvas id="pdfCanvas" class="hidden shadow-md max-w-full max-h-[500px]"></canvas>
+                        <img id="imgPreview" class="hidden shadow-md max-w-full max-h-[500px] object-contain">
+                    </div>
+                </div>
+            </div>
+
+            <div id="downloadSection" class="hidden mt-8 text-center bg-white p-10 rounded-xl border border-gray-200 shadow-sm">
+                <i class="fas fa-check-circle text-6xl text-green-500 mb-6"></i>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Rotation Applied Successfully!</h2>
+                <a id="downloadBtn" href="#" class="bg-brandPurple hover:bg-purple-700 text-white font-bold py-4 px-10 rounded-lg shadow-lg inline-flex items-center gap-3 transition text-xl">
+                    <i class="fas fa-download"></i> Download File
+                </a>
+                <div class="mt-6">
+                    <button onclick="location.reload()" class="text-gray-500 hover:text-gray-700 font-semibold underline text-sm">Rotate another file</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let fileType = null;
+        let fileName = null;
+        
+        // PDF Variables
+        let currentFileBytes = null;
+        let pdfjsDoc = null;
+        let currentPageNum = 1;
+        let pageRotations = {}; // Store rotation angle for each page (0, 90, 180, 270)
+
+        // Image Variables
+        let imageElement = new Image();
+        let imgRotationAngle = 0;
+
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            fileName = file.name;
+            document.getElementById('fileName').innerText = fileName;
+            
+            document.getElementById('dropZone').classList.add('hidden');
+            document.getElementById('workspaceSection').classList.remove('hidden');
+
+            if(file.type === 'application/pdf') {
+                fileType = 'pdf';
+                document.getElementById('fileIcon').className = "fas fa-file-pdf text-3xl text-brandPurple";
+                document.getElementById('pdfControls').classList.remove('hidden');
+                document.getElementById('pdfPagination').classList.remove('hidden');
+                document.getElementById('pdfCanvas').classList.remove('hidden');
+                
+                currentFileBytes = await file.arrayBuffer();
+                const previewBytes = currentFileBytes.slice(0);
+                pdfjsDoc = await pdfjsLib.getDocument({ data: previewBytes }).promise;
+                
+                document.getElementById('totalPages').innerText = pdfjsDoc.numPages;
+                for(let i=1; i<=pdfjsDoc.numPages; i++) pageRotations[i] = 0; // Initialize
+                
+                renderPdfPage(1);
+            } 
+            else if(file.type.startsWith('image/')) {
+                fileType = 'image';
+                document.getElementById('fileIcon').className = "fas fa-file-image text-3xl text-brandPurple";
+                document.getElementById('imgControls').classList.remove('hidden');
+                document.getElementById('imgPreview').classList.remove('hidden');
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imageElement.src = event.target.result;
+                    document.getElementById('imgPreview').src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Unsupported format. Word documents cannot be rotated directly. Please convert Word to PDF first.");
+                location.reload();
+            }
+        });
+
+        // --- PDF LOGIC ---
+        function togglePdfRange() {
+            const val = document.getElementById('pdfApplyTo').value;
+            document.getElementById('pdfRangeDiv').classList.toggle('hidden', val !== 'range');
+        }
+
+        async function renderPdfPage(num) {
+            currentPageNum = num;
+            document.getElementById('pageNum').innerText = num;
+            
+            const page = await pdfjsDoc.getPage(num);
+            // Get rotation applied by user for this page
+            const currentRot = pageRotations[num] || 0;
+            
+            const containerWidth = document.getElementById('previewContainer').clientWidth - 48;
+            // Tell pdf.js to render with specific rotation
+            const viewportObj = page.getViewport({ scale: 1, rotation: currentRot });
+            
+            const scale = Math.min(1.5, containerWidth / viewportObj.width);
+            const viewport = page.getViewport({ scale: scale, rotation: currentRot });
+
+            const canvas = document.getElementById('pdfCanvas');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+        }
+
+        function prevPage() { if(currentPageNum > 1) renderPdfPage(currentPageNum - 1); }
+        function nextPage() { if(currentPageNum < pdfjsDoc.numPages) renderPdfPage(currentPageNum + 1); }
+
+        function parseRange(rangeStr, maxPages) {
+            let pages = new Set();
+            const parts = rangeStr.split(',');
+            for (let part of parts) {
+                part = part.trim();
+                if (part.includes('-')) {
+                    let [start, end] = part.split('-').map(Number);
+                    if(start && end && start <= end) {
+                        for(let i=start; i<=end; i++) if(i <= maxPages) pages.add(i);
+                    }
+                } else {
+                    let p = Number(part);
+                    if (p && p <= maxPages) pages.add(p);
+                }
+            }
+            return Array.from(pages);
+        }
+
+        function rotatePdf(angle) {
+            const applyTo = document.getElementById('pdfApplyTo').value;
+            let targetPages = [];
+
+            if (applyTo === 'current') {
+                targetPages.push(currentPageNum);
+            } else if (applyTo === 'all') {
+                for(let i=1; i<=pdfjsDoc.numPages; i++) targetPages.push(i);
+            } else if (applyTo === 'range') {
+                const rangeStr = document.getElementById('pdfRangeInput').value;
+                targetPages = parseRange(rangeStr, pdfjsDoc.numPages);
+                if(targetPages.length === 0) return alert("Please enter a valid page range.");
+            }
+
+            // Apply rotation logic (keep within 0-360)
+            targetPages.forEach(pNum => {
+                let r = pageRotations[pNum] + angle;
+                if (r >= 360) r -= 360;
+                if (r < 0) r += 360;
+                pageRotations[pNum] = r;
+            });
+
+            // Re-render if current page was affected
+            if(targetPages.includes(currentPageNum)) renderPdfPage(currentPageNum);
+        }
+
+        // --- IMAGE LOGIC ---
+        function changeImgRotation(angle) {
+            imgRotationAngle += angle;
+            if (imgRotationAngle > 180) imgRotationAngle -= 360;
+            if (imgRotationAngle < -180) imgRotationAngle += 360;
+            document.getElementById('imgRotationSlider').value = imgRotationAngle;
+            updateImgPreviewRotation(imgRotationAngle);
+        }
+
+        function updateImgPreviewRotation(angle) {
+            imgRotationAngle = parseInt(angle);
+            document.getElementById('angleValue').innerText = imgRotationAngle + '°';
+            document.getElementById('imgPreview').style.transform = `rotate(${imgRotationAngle}deg)`;
+        }
+
+        // --- PROCESSING AND DOWNLOAD ---
+        async function processFile() {
+            document.getElementById('processBtn').classList.add('hidden');
+            document.getElementById('statusText').classList.remove('hidden');
+
+            try {
+                if (fileType === 'pdf') {
+                    // Load raw bytes
+                    const pdfDoc = await PDFLib.PDFDocument.load(currentFileBytes.slice(0));
+                    const pages = pdfDoc.getPages();
+                    
+                    // Apply rotation metadata to each page
+                    for(let i=0; i<pages.length; i++) {
+                        const targetRot = pageRotations[i+1];
+                        if(targetRot !== 0) {
+                            // Current rotation + new rotation
+                            const currentPDFRot = pages[i].getRotation().angle;
+                            pages[i].setRotation(PDFLib.degrees(currentPDFRot + targetRot));
+                        }
+                    }
+
+                    const pdfBytes = await pdfDoc.save();
+                    triggerDownload(new Blob([pdfBytes], { type: "application/pdf" }), "Rotated_" + fileName);
+                
+                } else if (fileType === 'image') {
+                    // Canvas Math for Free Rotation
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const rads = imgRotationAngle * Math.PI / 180;
+                    const c = Math.cos(rads);
+                    const s = Math.sin(rads);
+                    
+                    // Calculate new bounding box dimensions so corners aren't cut off
+                    const w = imageElement.width;
+                    const h = imageElement.height;
+                    canvas.width = Math.abs(w * c) + Math.abs(h * s);
+                    canvas.height = Math.abs(w * s) + Math.abs(h * c);
+
+                    // Move to center, rotate, draw, move back
+                    ctx.translate(canvas.width/2, canvas.height/2);
+                    ctx.rotate(rads);
+                    ctx.drawImage(imageElement, -w/2, -h/2);
+
+                    const dataUrl = canvas.toDataURL("image/png", 0.95);
+                    
+                    const nameParts = fileName.split('.'); nameParts.pop();
+                    triggerDownloadUrl(dataUrl, nameParts.join('.') + "_rotated.png");
+                }
+
+                document.getElementById('workspaceSection').classList.add('hidden');
+                document.getElementById('downloadSection').classList.remove('hidden');
+
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred during processing.");
+                document.getElementById('processBtn').classList.remove('hidden');
+                document.getElementById('statusText').classList.add('hidden');
+            }
+        }
+
+        function triggerDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            triggerDownloadUrl(url, filename);
+        }
+
+        function triggerDownloadUrl(url, filename) {
+            const btn = document.getElementById('downloadBtn');
+            btn.href = url;
+            btn.download = filename;
+        }
+    </script>
+</body>
+</html>
