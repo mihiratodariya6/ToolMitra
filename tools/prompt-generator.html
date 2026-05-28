@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Free AI Prompt Generator - ChatGPT & Midjourney Prompts | ToolMitra</title>
+    <meta name="description" content="Generate expert-level prompts for ChatGPT, Gemini, Midjourney, and DALL-E instantly. Master AI prompt engineering with our free online prompt maker.">
+    <meta name="keywords" content="ai prompt generator, chatgpt prompt maker, midjourney prompt generator, prompt engineering tool, best chatgpt prompts, ToolMitra AI tools">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Expert AI Prompt Generator - ToolMitra">
+    <meta property="og:description" content="Create perfect prompts for ChatGPT and AI Image Generators. Unlock the true power of AI instantly.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra AI Prompt Generator",
+      "description": "An advanced prompt engineering utility that helps users formulate highly optimized, context-rich commands for Large Language Models (LLMs) and AI Image Generators.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    colors: { brandIndigo: '#6366f1', brandDark: '#0f172a', brandNeon: '#0ea5e9' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .cyber-border { border: 1px solid rgba(99, 102, 241, 0.3); box-shadow: 0 0 20px rgba(99, 102, 241, 0.1); }
+        .ai-pulse { animation: glow 2s infinite alternate; }
+        @keyframes glow { from { box-shadow: 0 0 10px #6366f1; } to { box-shadow: 0 0 20px #0ea5e9; } }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandIndigo"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-brandDark text-indigo-50 pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-10 text-indigo-500 text-9xl opacity-10"><i class="fas fa-terminal"></i></div>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-16 h-16 mx-auto bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-3xl mb-4 border border-indigo-400 ai-pulse">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight text-white">AI Prompt Generator</h1>
+            <p class="text-indigo-200 text-lg max-w-2xl mx-auto">Master Prompt Engineering. Generate expert-level commands for ChatGPT, Gemini, and Midjourney instantly.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+            
+            <section class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm lg:col-span-5 flex flex-col">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2"><i class="fas fa-sliders-h text-brandIndigo mr-2"></i> Prompt Parameters</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Target AI Model</label>
+                    <select id="aiModel" class="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-brandIndigo text-sm font-bold bg-gray-50 text-gray-800" onchange="toggleFields()">
+                        <option value="text">Text AI (ChatGPT, Gemini, Claude)</option>
+                        <option value="image">Image AI (Midjourney, DALL-E)</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Core Topic / Idea</label>
+                    <textarea id="topicInput" class="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-brandIndigo text-sm text-gray-800 resize-none h-20" placeholder="e.g. Write an email to my boss asking for a salary hike..."></textarea>
+                </div>
+
+                <div id="textFields" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Role / Persona</label>
+                            <select id="persona" class="w-full p-2.5 border-2 border-gray-200 rounded-xl outline-none text-sm bg-gray-50 text-gray-700">
+                                <option value="Expert Consultant">Expert Consultant</option>
+                                <option value="Creative Copywriter">Creative Copywriter</option>
+                                <option value="Senior Developer">Senior Developer</option>
+                                <option value="Friendly Assistant">Friendly Assistant</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tone</label>
+                            <select id="tone" class="w-full p-2.5 border-2 border-gray-200 rounded-xl outline-none text-sm bg-gray-50 text-gray-700">
+                                <option value="Professional & Formal">Professional</option>
+                                <option value="Persuasive & Engaging">Persuasive</option>
+                                <option value="Humorous & Witty">Humorous</option>
+                                <option value="Simple & Direct">Direct</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="imageFields" class="space-y-4 hidden">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Art Style</label>
+                            <select id="artStyle" class="w-full p-2.5 border-2 border-gray-200 rounded-xl outline-none text-sm bg-gray-50 text-gray-700">
+                                <option value="Cinematic Photography, 8k resolution">Cinematic Photography</option>
+                                <option value="Cyberpunk Digital Art, neon lighting">Cyberpunk Digital Art</option>
+                                <option value="Minimalist Vector Illustration">Minimalist Vector</option>
+                                <option value="Anime Studio Ghibli style">Anime / Ghibli</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Lighting/Mood</label>
+                            <select id="mood" class="w-full p-2.5 border-2 border-gray-200 rounded-xl outline-none text-sm bg-gray-50 text-gray-700">
+                                <option value="Dramatic volumetric lighting">Dramatic</option>
+                                <option value="Soft natural sunlight, golden hour">Golden Hour</option>
+                                <option value="Dark, moody, atmospheric">Moody</option>
+                                <option value="Bright, vibrant, studio lighting">Vibrant Studio</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="generatePrompt()" class="w-full mt-6 bg-brandIndigo hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-md">
+                    <i class="fas fa-magic"></i> Engineer Prompt
+                </button>
+            </section>
+
+            <section class="bg-gray-50 p-6 md:p-8 rounded-3xl border border-gray-200 shadow-inner lg:col-span-7 flex flex-col relative min-h-[450px]">
+                
+                <div class="flex justify-between items-center mb-4 border-b border-gray-200 pb-2">
+                    <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-code text-brandNeon mr-2"></i> Engineered Prompt</h2>
+                    <span id="copyStatus" class="text-xs font-bold text-green-600 hidden"><i class="fas fa-check"></i> Copied</span>
+                </div>
+
+                <div id="outputArea" class="flex-grow bg-slate-900 cyber-border rounded-xl p-6 text-emerald-400 font-mono text-sm leading-relaxed whitespace-pre-wrap overflow-y-auto shadow-inner relative">
+                    <span class="text-slate-500">// Your expertly crafted AI prompt will appear here...</span>
+                </div>
+
+                <button id="copyBtn" onclick="copyPrompt()" class="w-full mt-6 bg-slate-800 hover:bg-black text-white font-bold py-4 rounded-xl transition shadow flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" disabled>
+                    <i class="fas fa-copy"></i> Copy Prompt to Clipboard
+                </button>
+                
+            </section>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Mastering Prompt Engineering for AI</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Generative AI platforms like ChatGPT and Midjourney operate on strict linguistic logic. The quality of the output is entirely dependent on the specificity of the input. ToolMitra's AI Prompt Generator acts as a structural framework, automatically applying the "Act As" methodology, contextual constraints, and stylistic parameters to yield professional results.</p>
+            
+            <div class="grid md:grid-cols-2 gap-6 mt-8">
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
+                    <h3 class="font-bold text-indigo-900 text-lg mb-2"><i class="fas fa-comment-dots mr-2"></i> Text AI (ChatGPT / Gemini)</h3>
+                    <p class="text-sm text-indigo-800">For text models, providing a Persona (e.g., "Act as a Senior Developer") forces the LLM to access specific semantic networks. Defining the tone and exact output format prevents generic, robotic-sounding responses.</p>
+                </div>
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-slate-800 text-lg mb-2"><i class="fas fa-image mr-2"></i> Image AI (Midjourney / DALL-E)</h3>
+                    <p class="text-sm text-gray-600">Image generators rely on comma-separated descriptive tags. Our tool automatically structures the prompt starting with the main subject, followed by environmental context, art style, lighting parameters, and render quality (e.g., Unreal Engine 5, 8k).</p>
+                </div>
+            </div>
+
+            <div class="pt-6 mt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#PromptEngineering</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ChatGPT</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#MidjourneyPrompts</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitraAI</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        function toggleFields() {
+            const model = document.getElementById('aiModel').value;
+            const textFields = document.getElementById('textFields');
+            const imageFields = document.getElementById('imageFields');
+            
+            if (model === 'text') {
+                textFields.classList.remove('hidden');
+                imageFields.classList.add('hidden');
+            } else {
+                textFields.classList.add('hidden');
+                imageFields.classList.remove('hidden');
+            }
+        }
+
+        function generatePrompt() {
+            const model = document.getElementById('aiModel').value;
+            const topic = document.getElementById('topicInput').value.trim();
+            const outputArea = document.getElementById('outputArea');
+            const copyBtn = document.getElementById('copyBtn');
+
+            if (!topic) {
+                alert("Please enter a core topic or idea.");
+                return;
+            }
+
+            let finalPrompt = "";
+
+            if (model === 'text') {
+                const persona = document.getElementById('persona').value;
+                const tone = document.getElementById('tone').value;
+                
+                finalPrompt = `Act as an expert ${persona} with over 10 years of experience. \n\nI need you to complete the following task:\n"${topic}"\n\nGuidelines & Parameters:\n- Tone of voice: ${tone}.\n- Format: Please ensure the output is well-structured, easy to read, and formatted logically using headings or bullet points where necessary.\n- Target Audience: Keep the language appropriate and highly engaging for the intended recipient.\n- Avoid generic AI filler words and get straight to the point with high-value insights.`;
+                
+            } else if (model === 'image') {
+                const artStyle = document.getElementById('artStyle').value;
+                const mood = document.getElementById('mood').value;
+                
+                // Clean topic for image generation
+                const cleanTopic = topic.replace(/please/gi, '').replace(/generate/gi, '').trim();
+                
+                finalPrompt = `/imagine prompt: A highly detailed visual of ${cleanTopic}, ${artStyle}, ${mood}, highly detailed, masterpiece, stunning composition, --ar 16:9 --q 2 --v 6.0`;
+            }
+
+            // Display Output
+            outputArea.innerText = finalPrompt;
+            outputArea.classList.replace('text-slate-500', 'text-emerald-400');
+            
+            // Enable Copy Button
+            copyBtn.disabled = false;
+            copyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('copyStatus').classList.add('hidden');
+        }
+
+        function copyPrompt() {
+            const text = document.getElementById('outputArea').innerText;
+            if (text.includes('// Your expertly crafted')) return;
+
+            navigator.clipboard.writeText(text);
+            
+            const btn = document.getElementById('copyBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied to Clipboard!';
+            btn.classList.add('bg-emerald-600');
+            btn.classList.remove('bg-slate-800');
+            
+            document.getElementById('copyStatus').classList.remove('hidden');
+
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('bg-emerald-600');
+                btn.classList.add('bg-slate-800');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

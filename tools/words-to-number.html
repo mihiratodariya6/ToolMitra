@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Words to Number Converter - Free Online Number Translator | ToolMitra</title>
+    <meta name="description" content="Instantly convert English words into numerical digits. Supports both Indian (Lakhs, Crores) and International (Millions, Billions) numbering systems for free.">
+    <meta name="keywords" content="words to numbers, text to number converter, english words to digits, millions to numbers, lakhs to numbers, number translator, ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Words to Number Converter - ToolMitra">
+    <meta property="og:description" content="Convert English text like 'Two million five hundred' directly into numbers '2,500,000'. Free and instant.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Words to Number Converter",
+      "description": "A utility tool that translates English word representations of numbers into standard numerical digits, supporting both Indian and International formats.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    colors: { brandIndigo: '#4338ca', brandLight: '#e0e7ff' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .result-box { background: linear-gradient(135deg, #4338ca 0%, #312e81 100%); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandIndigo"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-brandLight border-b border-indigo-200 pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-16 h-16 mx-auto bg-brandIndigo text-white rounded-2xl flex items-center justify-center text-3xl mb-4 border border-indigo-500 shadow-lg">
+                <i class="fas fa-spell-check"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight text-gray-900">Words to Number Converter</h1>
+            <p class="text-indigo-800 text-lg max-w-2xl mx-auto">Translate written English numbers (e.g., "Two million fifty") into numerical digits instantly.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        
+        <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-xl mb-16">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="flex flex-col">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="text-sm font-bold text-gray-500 uppercase"><i class="fas fa-keyboard text-brandIndigo mr-1"></i> Enter Words</label>
+                    </div>
+                    <textarea id="wordInput" class="w-full flex-grow p-5 border-2 border-gray-200 rounded-xl outline-none focus:border-brandIndigo text-lg text-gray-800 placeholder-gray-300 resize-none min-h-[150px]" placeholder="e.g. One hundred twenty three thousand four hundred fifty six" oninput="convertWords()"></textarea>
+                    
+                    <div class="flex justify-between mt-3">
+                        <button onclick="clearInput()" class="text-xs font-bold text-red-500 hover:text-red-700 transition">Clear Text</button>
+                        <span id="errorMsg" class="text-xs font-bold text-red-500 hidden">Invalid word format</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="text-sm font-bold text-gray-500 uppercase"><i class="fas fa-hashtag text-brandIndigo mr-1"></i> Numerical Result</label>
+                        
+                        <div class="flex bg-gray-100 rounded-lg p-1">
+                            <button id="btnIntl" onclick="setFormat('intl')" class="px-3 py-1 text-xs font-bold rounded-md bg-white text-brandIndigo shadow-sm transition">International</button>
+                            <button id="btnInd" onclick="setFormat('ind')" class="px-3 py-1 text-xs font-bold rounded-md text-gray-500 hover:text-gray-700 transition">Indian</button>
+                        </div>
+                    </div>
+                    
+                    <div class="result-box rounded-xl p-6 flex flex-col justify-center items-center flex-grow min-h-[150px] relative overflow-hidden group">
+                        <div class="absolute right-0 bottom-0 opacity-10 text-9xl text-white transform translate-x-4 translate-y-4 pointer-events-none"><i class="fas fa-calculator"></i></div>
+                        
+                        <div id="numberOutput" class="text-4xl md:text-5xl font-mono text-white break-all text-center relative z-10 w-full overflow-hidden">0</div>
+                    </div>
+
+                    <button id="copyBtn" onclick="copyNumber()" class="w-full mt-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition flex items-center justify-center gap-2" disabled>
+                        <i class="fas fa-copy"></i> Copy Number
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <article class="max-w-4xl mx-auto bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How to Convert Words to Numbers</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Converting large financial figures or statistical data from text to numerical digits can be prone to human error. ToolMitra's AI-assisted parsing engine reads English numerical text and converts it into accurate digits instantly, saving time for accountants, bankers, and students.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-6">
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
+                    <h3 class="text-lg font-bold text-indigo-900 mb-2">International System</h3>
+                    <p class="text-sm text-indigo-700 mb-3">Groups numbers by thousands. Used globally.</p>
+                    <ul class="text-sm text-indigo-800 font-mono space-y-1">
+                        <li>1 Thousand = 1,000</li>
+                        <li>1 Million = 1,000,000</li>
+                        <li>1 Billion = 1,000,000,000</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Indian System</h3>
+                    <p class="text-sm text-gray-600 mb-3">Groups numbers by hundreds (after 1,000). Used in South Asia.</p>
+                    <ul class="text-sm text-gray-800 font-mono space-y-1">
+                        <li>1 Lakh = 1,00,000</li>
+                        <li>1 Crore = 1,00,00,000</li>
+                        <li>1 Arab = 1,00,00,00,000</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#WordsToNumbers</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#NumberConverter</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitra</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#AccountingTools</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        let currentFormat = 'intl'; // 'intl' or 'ind'
+        let currentRawNumber = 0;
+
+        const wordDict = {
+            'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9,
+            'ten': 10, 'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19,
+            'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90
+        };
+
+        const multipliers = {
+            'hundred': 100,
+            'thousand': 1000,
+            'lakh': 100000,
+            'lakhs': 100000,
+            'million': 1000000,
+            'crore': 10000000,
+            'crores': 10000000,
+            'billion': 1000000000,
+            'trillion': 1000000000000
+        };
+
+        function setFormat(fmt) {
+            currentFormat = fmt;
+            
+            // Update UI
+            document.getElementById('btnIntl').className = fmt === 'intl' ? "px-3 py-1 text-xs font-bold rounded-md bg-white text-brandIndigo shadow-sm transition" : "px-3 py-1 text-xs font-bold rounded-md text-gray-500 hover:text-gray-700 transition";
+            document.getElementById('btnInd').className = fmt === 'ind' ? "px-3 py-1 text-xs font-bold rounded-md bg-white text-brandIndigo shadow-sm transition" : "px-3 py-1 text-xs font-bold rounded-md text-gray-500 hover:text-gray-700 transition";
+            
+            updateDisplay();
+        }
+
+        function text2num(str) {
+            str = str.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/-/g, ' ');
+            const words = str.split(/\s+/).filter(w => w !== 'and' && w !== '');
+            
+            if (words.length === 0) return null;
+
+            let total = 0;
+            let current = 0;
+            
+            for (let i = 0; i < words.length; i++) {
+                let w = words[i];
+                
+                // If the word is a direct number (e.g. "100")
+                if (!isNaN(w)) {
+                    current += parseInt(w);
+                    continue;
+                }
+
+                if (wordDict[w] !== undefined) {
+                    current += wordDict[w];
+                } else if (multipliers[w] !== undefined) {
+                    if (current === 0) current = 1; // e.g., "hundred" means "1 hundred"
+                    
+                    if (w === 'hundred') {
+                        current *= multipliers[w];
+                    } else {
+                        current *= multipliers[w];
+                        total += current;
+                        current = 0;
+                    }
+                } else {
+                    return null; // Invalid word found
+                }
+            }
+            return total + current;
+        }
+
+        function convertWords() {
+            const inputStr = document.getElementById('wordInput').value.trim();
+            const outputEl = document.getElementById('numberOutput');
+            const errorEl = document.getElementById('errorMsg');
+            const copyBtn = document.getElementById('copyBtn');
+
+            if (!inputStr) {
+                currentRawNumber = 0;
+                errorEl.classList.add('hidden');
+                copyBtn.disabled = true;
+                updateDisplay();
+                return;
+            }
+
+            const num = text2num(inputStr);
+
+            if (num === null) {
+                currentRawNumber = 0;
+                errorEl.classList.remove('hidden');
+                outputEl.innerText = "Error";
+                copyBtn.disabled = true;
+            } else {
+                currentRawNumber = num;
+                errorEl.classList.add('hidden');
+                copyBtn.disabled = false;
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            const outputEl = document.getElementById('numberOutput');
+            
+            if (currentRawNumber === 0 && document.getElementById('wordInput').value.trim() === "") {
+                outputEl.innerText = "0";
+                return;
+            }
+            if (outputEl.innerText === "Error") return;
+
+            if (currentFormat === 'intl') {
+                outputEl.innerText = new Intl.NumberFormat('en-US').format(currentRawNumber);
+            } else {
+                outputEl.innerText = new Intl.NumberFormat('en-IN').format(currentRawNumber);
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('wordInput').value = "";
+            convertWords();
+        }
+
+        function copyNumber() {
+            const val = document.getElementById('numberOutput').innerText;
+            navigator.clipboard.writeText(val);
+            
+            const btn = document.getElementById('copyBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btn.classList.replace('text-gray-700', 'text-brandIndigo');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.replace('text-brandIndigo', 'text-gray-700');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

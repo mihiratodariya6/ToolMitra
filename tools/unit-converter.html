@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Universal Unit Converter Online - Free Multi-Category Converter | ToolMitra</title>
+    <meta name="description" content="Free online unit converter tool. Instantly convert length, weight, area, and temperature between metric and imperial units globally. Accurate and fast.">
+    <meta name="keywords" content="unit converter, convert units, length converter, weight converter, temperature converter, area converter, metric to imperial, online conversion tool, #UnitConverter, #ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Universal Unit Converter Online - ToolMitra">
+    <meta property="og:description" content="Convert any unit instantly. Free browser-based tool supporting length, weight, area, and temperature with high precision.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Universal Unit Converter",
+      "description": "An advanced, high-precision unit conversion tool supporting global measurements for length, weight, area, and temperature.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "keywords": "unit converter, metric conversion, length converter, weight converter",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandBlue: '#2563eb', brandTeal: '#0f766e' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .category-card { transition: all 0.2s ease-in-out; }
+        .category-card.active { border-color: #2563eb; background-color: #eff6ff; color: #1e40af; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandBlue"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-blue-50 border-b border-blue-100 pt-12 pb-10 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="w-16 h-16 mx-auto bg-white text-brandBlue rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm border border-blue-100">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold text-gray-900 mb-4 tracking-tight">Universal Unit Converter</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Convert dynamically between different metrics of length, weight, area, and temperature instantly with pinpoint accuracy.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        <div class="max-w-4xl mx-auto">
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <button onclick="switchCategory('length')" id="btn-length" class="category-card p-4 bg-white border-2 border-gray-200 rounded-xl font-bold flex flex-col items-center gap-2 text-gray-600 active">
+                    <i class="fas fa-ruler text-xl"></i> Length
+                </button>
+                <button onclick="switchCategory('weight')" id="btn-weight" class="category-card p-4 bg-white border-2 border-gray-200 rounded-xl font-bold flex flex-col items-center gap-2 text-gray-600">
+                    <i class="fas fa-weight-hanging text-xl"></i> Weight
+                </button>
+                <button onclick="switchCategory('temperature')" id="btn-temperature" class="category-card p-4 bg-white border-2 border-gray-200 rounded-xl font-bold flex flex-col items-center gap-2 text-gray-600">
+                    <i class="fas fa-thermometer-half text-xl"></i> Temperature
+                </button>
+                <button onclick="switchCategory('area')" id="btn-area" class="category-card p-4 bg-white border-2 border-gray-200 rounded-xl font-bold flex flex-col items-center gap-2 text-gray-600">
+                    <i class="fas fa-vector-square text-xl"></i> Area
+                </button>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-gray-500 uppercase mb-2">From</label>
+                        <input type="number" id="fromValue" class="w-full p-4 border-2 border-gray-200 rounded-xl outline-none focus:border-brandBlue text-xl font-bold text-gray-800" value="1" oninput="performConversion()">
+                        <select id="fromUnit" class="w-full mt-3 p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-brandBlue font-semibold text-gray-700 bg-gray-50" onchange="performConversion()">
+                            </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-500 uppercase mb-2">To</label>
+                        <input type="number" id="toValue" class="w-full p-4 border-2 border-gray-200 rounded-xl outline-none bg-gray-50 text-xl font-bold text-brandBlue" readonly>
+                        <select id="toUnit" class="w-full mt-3 p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-brandBlue font-semibold text-gray-700 bg-gray-50" onchange="performConversion()">
+                            </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <article class="mt-12 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Why Trust ToolMitra's Multi-Unit Conversion Tool?</h2>
+                <p class="text-gray-600 mb-6 leading-relaxed">Accurate mathematical conversion parameters are vital for global standardizations. ToolMitra's calculation matrix applies strict physical unit constants defined by international telemetry standards. Every operation executes client-side inside the browser sandbox, preventing computational delay and guaranteeing complete analytical security.</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 text-sm text-gray-600">
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h3 class="font-bold text-gray-800 mb-1">Metric & Imperial Balance</h3>
+                        <p>Seamlessly scale metric units (meters, kilograms, celsius) to imperial units (feet, pounds, fahrenheit) with zero complex setup.</p>
+                    </div>
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h3 class="font-bold text-gray-800 mb-1">Algorithmic Precision</h3>
+                        <p>Calculations avoid native JavaScript floating-point standard rounding anomalies to deliver clean, standard decimal data up to 6 places.</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                    <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#UnitConverter</span>
+                    <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#MetricConversion</span>
+                    <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitra</span>
+                    <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ImperialConverter</span>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <script>
+        // Definitive Conversion Matrix Data
+        const unitData = {
+            length: {
+                units: {
+                    m: { label: "Meters (m)", factor: 1 },
+                    km: { label: "Kilometers (km)", factor: 1000 },
+                    cm: { label: "Centimeters (cm)", factor: 0.01 },
+                    mm: { label: "Millimeters (mm)", factor: 0.001 },
+                    mile: { label: "Miles (mi)", factor: 1609.344 },
+                    yard: { label: "Yards (yd)", factor: 0.9144 },
+                    foot: { label: "Feet (ft)", factor: 0.3048 },
+                    inch: { label: "Inches (in)", factor: 0.0254 }
+                }
+            },
+            weight: {
+                units: {
+                    kg: { label: "Kilograms (kg)", factor: 1 },
+                    g: { label: "Grams (g)", factor: 0.001 },
+                    mg: { label: "Milligrams (mg)", factor: 0.000001 },
+                    lb: { label: "Pounds (lbs)", factor: 0.45359237 },
+                    oz: { label: "Ounces (oz)", factor: 0.028349523 }
+                }
+            },
+            area: {
+                units: {
+                    sqm: { label: "Square Meters (m²)", factor: 1 },
+                    sqkm: { label: "Square Kilometers (km²)", factor: 1000000 },
+                    sqmile: { label: "Square Miles (mi²)", factor: 2589988.11 },
+                    acre: { label: "Acres (ac)", factor: 4046.85642 },
+                    hectare: { label: "Hectares (ha)", factor: 10000 }
+                }
+            },
+            temperature: {
+                units: {
+                    C: { label: "Celsius (°C)" },
+                    F: { label: "Fahrenheit (°F)" },
+                    K: { label: "Kelvin (K)" }
+                }
+            }
+        };
+
+        let currentCategory = "length";
+
+        function populateSelects() {
+            const fromSelect = document.getElementById('fromUnit');
+            const toSelect = document.getElementById('toUnit');
+            const categoryUnits = unitData[currentCategory].units;
+
+            fromSelect.innerHTML = "";
+            toSelect.innerHTML = "";
+
+            Object.keys(categoryUnits).forEach((key, index) => {
+                const opt1 = document.createElement('option');
+                opt1.value = key;
+                opt1.innerText = categoryUnits[key].label;
+                fromSelect.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = key;
+                opt2.innerText = categoryUnits[key].label;
+                // Auto-select the second unit for the 'To' drop-down to keep UI fresh
+                if(index === 1) opt2.selected = true;
+                toSelect.appendChild(opt2);
+            });
+        }
+
+        function switchCategory(cat) {
+            currentCategory = cat;
+            
+            // Toggle Active Classes
+            document.querySelectorAll('.category-card').forEach(card => card.classList.remove('active'));
+            document.getElementById(`btn-${cat}`).classList.add('active');
+
+            populateSelects();
+            performConversion();
+        }
+
+        function performConversion() {
+            const fromVal = parseFloat(document.getElementById('fromValue').value);
+            const toInput = document.getElementById('toValue');
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+
+            if (isNaN(fromVal)) {
+                toInput.value = "";
+                return;
+            }
+
+            if (fromUnit === toUnit) {
+                toInput.value = fromVal;
+                return;
+            }
+
+            // Temperature uses complex non-linear offset logic
+            if (currentCategory === "temperature") {
+                let celsiusValue = 0;
+                
+                // First convert everything to Base (Celsius)
+                if (fromUnit === "C") celsiusValue = fromVal;
+                else if (fromUnit === "F") celsiusValue = (fromVal - 32) * 5 / 9;
+                else if (fromUnit === "K") celsiusValue = fromVal - 273.15;
+
+                // Then convert Celsius to destination unit
+                let finalResult = 0;
+                if (toUnit === "C") finalResult = celsiusValue;
+                else if (toUnit === "F") finalResult = (celsiusValue * 9 / 5) + 32;
+                else if (toUnit === "K") finalResult = celsiusValue + 273.15;
+
+                toInput.value = parseFloat(finalResult.toFixed(4));
+            } else {
+                // Linear system calculation using factor metrics
+                const units = unitData[currentCategory].units;
+                const valueInBase = fromVal * units[fromUnit].factor;
+                const finalResult = valueInBase / units[toUnit].factor;
+                
+                // Clean rounding to prevent JS binary translation leaks
+                toInput.value = parseFloat(finalResult.toFixed(6));
+            }
+        }
+
+        // Initialization
+        window.onload = function() {
+            populateSelects();
+            performConversion();
+        };
+    </script>
+</body>
+</html>

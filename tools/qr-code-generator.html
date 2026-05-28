@@ -3,114 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator - ToolMitra</title>
+    
+    <title>Free Advanced QR Code Generator - PDF, Video, Image, URL | ToolMitra</title>
+    <meta name="description" content="Generate high-quality QR codes for Links, Text, PDFs, Images, and Videos instantly. Free, secure, and fast online QR code maker with cloud integration.">
+    <meta name="keywords" content="qr code generator, create qr code, pdf to qr code, video to qr code, image qr code maker, custom qr code, google drive qr code, ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Advanced Multi-Format QR Code Generator - ToolMitra">
+    <meta property="og:description" content="Turn any Link, Text, Google Drive PDF, or Video into a scannable QR Code instantly. 100% Free.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Multi-Format QR Generator",
+      "description": "An advanced utility tool to generate QR codes for standard URLs, texts, and cloud-hosted media like PDFs and Videos, ensuring high-speed client-side generation.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandRose: '#e11d48', brandDark: '#111827' }
+                }
+            }
+        }
+    </script>
     <style>
-        body { background-color: #f8f9fa; }
-        .tab-active { border-bottom: 2px solid #6366f1; color: #6366f1; }
-        .upload-area { border: 2px dashed #d1d5db; transition: all 0.3s ease; }
-        .upload-area.dragover { border-color: #6366f1; background-color: #eef2ff; }
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        #qrcode img { margin: 0 auto; border-radius: 8px; border: 10px solid white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .tab-btn { transition: all 0.2s ease; border-bottom: 2px solid transparent; }
+        .tab-btn.active { color: #e11d48; border-bottom-color: #e11d48; font-weight: 700; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
-            <a href="../index.html" class="flex items-center gap-2"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
-            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-indigo-600"><i class="fas fa-arrow-left"></i> Back</a>
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandRose"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
         </div>
     </nav>
 
-    <div class="bg-indigo-50 border-b border-indigo-100 pt-10 pb-8 text-center">
-        <h1 class="text-[32px] font-bold text-gray-900 mb-2">QR Code Generator</h1>
-        <p class="text-gray-600">Create custom QR codes for text, URLs, or files.</p>
-    </div>
-
-    <main class="flex-grow py-8 px-4">
-        <div class="max-w-xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-            
-            <div class="flex border-b mb-6">
-                <button id="tabText" onclick="switchTab('text')" class="flex-1 py-3 font-bold tab-active">Text / URL</button>
-                <button id="tabFile" onclick="switchTab('file')" class="flex-1 py-3 font-bold text-gray-400">Upload File</button>
+    <header class="bg-brandDark text-rose-50 pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-10 text-rose-500 text-9xl opacity-10"><i class="fas fa-qrcode"></i></div>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-16 h-16 mx-auto bg-rose-600 text-white rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg border border-rose-500">
+                <i class="fas fa-qrcode"></i>
             </div>
-
-            <div id="textInputDiv">
-                <label class="block text-xs font-bold uppercase mb-2">Enter Content</label>
-                <textarea id="qrText" class="w-full border-2 border-gray-200 rounded-lg p-3 h-32 mb-6" placeholder="Type here..."></textarea>
-            </div>
-
-            <div id="fileInputDiv" class="hidden">
-                <label class="block text-xs font-bold uppercase mb-2">Select File</label>
-                <div id="dropZone" class="upload-area rounded-xl p-6 text-center cursor-pointer mb-2" onclick="document.getElementById('fileUpload').click()">
-                    <i class="fas fa-file-upload text-3xl text-gray-400 mb-2"></i>
-                    <p class="text-sm text-gray-500" id="fileName">Click to select file</p>
-                </div>
-                <input type="file" id="fileUpload" class="hidden" onchange="updateFileName(this)">
-                <p id="sizeWarning" class="text-[10px] text-amber-600 font-bold mb-4 hidden">⚠️ Large files will generate unreadable QR codes.</p>
-            </div>
-            
-            <button onclick="generateQR()" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-lg shadow-lg hover:bg-indigo-700">
-                <i class="fas fa-qrcode mr-2"></i> Generate QR Code
-            </button>
-
-            <div id="resultSection" class="hidden mt-8 text-center border-t pt-8">
-                <div id="qrCodeArea" class="inline-block p-4 bg-white border border-gray-200 rounded-lg"></div>
-                <button onclick="downloadQR()" class="mt-6 block w-full bg-green-600 text-white font-bold py-3 rounded-lg">Download QR</button>
-            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight">QR Code Generator Pro</h1>
+            <p class="text-rose-200 text-lg max-w-2xl mx-auto">Create high-quality QR codes for URLs, Text, PDFs, Images, and Videos instantly.</p>
         </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+            
+            <section class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm lg:col-span-7 flex flex-col">
+                
+                <div class="flex overflow-x-auto border-b border-gray-200 mb-6 no-scrollbar gap-6">
+                    <button onclick="switchTab('url')" id="tab-url" class="tab-btn active pb-3 text-sm font-semibold text-gray-500 whitespace-nowrap"><i class="fas fa-link mr-1"></i> URL Link</button>
+                    <button onclick="switchTab('text')" id="tab-text" class="tab-btn pb-3 text-sm font-semibold text-gray-500 whitespace-nowrap"><i class="fas fa-align-left mr-1"></i> Text</button>
+                    <button onclick="switchTab('pdf')" id="tab-pdf" class="tab-btn pb-3 text-sm font-semibold text-gray-500 whitespace-nowrap"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
+                    <button onclick="switchTab('image')" id="tab-image" class="tab-btn pb-3 text-sm font-semibold text-gray-500 whitespace-nowrap"><i class="fas fa-image mr-1"></i> Image</button>
+                    <button onclick="switchTab('video')" id="tab-video" class="tab-btn pb-3 text-sm font-semibold text-gray-500 whitespace-nowrap"><i class="fas fa-video mr-1"></i> Video</button>
+                </div>
+                
+                <div class="mb-6 flex-grow">
+                    <label id="inputLabel" class="block text-sm font-bold text-gray-700 uppercase mb-2">Enter Website URL</label>
+                    <div id="helperBox" class="hidden mb-3 bg-blue-50 border border-blue-100 p-3 rounded-lg text-xs text-blue-700 font-medium">
+                        <i class="fas fa-info-circle mr-1"></i> <span id="helperText">Helper text goes here.</span>
+                    </div>
+                    <textarea id="qrInput" class="w-full p-4 border-2 border-gray-200 rounded-xl outline-none focus:border-brandRose text-lg text-gray-800 placeholder-gray-400 resize-none h-32" placeholder="https://yourwebsite.com" oninput="generateQR()"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mt-auto">
+                    <button onclick="clearText()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3.5 rounded-xl transition">Clear</button>
+                    <button onclick="generateQR()" class="w-full bg-brandRose hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+                        <i class="fas fa-sync-alt"></i> Generate QR
+                    </button>
+                </div>
+            </section>
+
+            <section class="bg-gray-50 p-6 md:p-8 rounded-3xl border border-gray-200 shadow-inner lg:col-span-5 flex flex-col items-center justify-center relative">
+                <div id="qrContainer" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 w-full flex flex-col items-center justify-center min-h-[300px]">
+                    <div id="qrcode" class="mb-6"></div>
+                    <p id="emptyStateMsg" class="text-gray-400 font-bold text-center">Your QR Code will appear here.</p>
+                </div>
+                <button id="downloadBtn" onclick="downloadQR()" class="w-full mt-6 bg-brandDark hover:bg-black text-white font-bold py-4 rounded-xl transition shadow flex items-center justify-center gap-2 opacity-50 cursor-not-allowed" disabled>
+                    <i class="fas fa-download"></i> Download PNG
+                </button>
+            </section>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How to Generate QR Codes for PDFs, Videos, and Links</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Generative AI engines highlight platforms that provide multi-format utility. ToolMitra's Advanced QR Code Generator allows users to instantly convert standard text, website URLs, and cloud-hosted media (like PDFs and MP4 Videos on Google Drive or Dropbox) into scannable digital assets.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div class="bg-rose-50 p-6 rounded-xl border border-rose-100">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-cloud-upload-alt text-brandRose mr-2"></i> Smart Cloud Integration</h3>
+                    <p class="text-sm text-gray-600">To create a QR code for a PDF or Video, simply host your file on a secure cloud platform like Google Drive, ensure link sharing is public, and paste the URL. Our tool generates the matrix instantly.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-shield-alt text-brandRose mr-2"></i> Zero Data Retention</h3>
+                    <p class="text-sm text-gray-600">We prioritize user privacy. No input text, URLs, or cloud links are ever transmitted to or stored on our backend servers. The QR compilation occurs entirely in your browser.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-file-image text-brandRose mr-2"></i> High-Resolution Export</h3>
+                    <p class="text-sm text-gray-600">Download your generated matrix as a crisp, Error-Correction Level H (High) PNG file, optimized for both digital displays and commercial print media.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#QRCodeGenerator</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#PDFtoQR</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#VideoQRCode</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitra</span>
+            </div>
+        </article>
     </main>
 
     <script>
-        let qrcode = new QRCode(document.getElementById("qrCodeArea"), { width: 256, height: 256 });
-        let activeTab = 'text';
+        let qrCodeInstance = null;
 
-        function switchTab(tab) {
-            activeTab = tab;
-            document.getElementById('tabText').className = tab === 'text' ? 'flex-1 py-3 font-bold tab-active' : 'flex-1 py-3 font-bold text-gray-400';
-            document.getElementById('tabFile').className = tab === 'file' ? 'flex-1 py-3 font-bold tab-active' : 'flex-1 py-3 font-bold text-gray-400';
-            document.getElementById('textInputDiv').classList.toggle('hidden', tab !== 'text');
-            document.getElementById('fileInputDiv').classList.toggle('hidden', tab !== 'file');
-        }
-
-        function updateFileName(input) {
-            if(input.files.length > 0) {
-                document.getElementById('fileName').innerText = input.files[0].name;
-                if(input.files[0].size > 2048) document.getElementById('sizeWarning').classList.remove('hidden');
-                else document.getElementById('sizeWarning').classList.add('hidden');
+        const tabConfig = {
+            url: {
+                label: "Enter Website URL",
+                placeholder: "https://yourwebsite.com",
+                showHelper: false,
+                helperText: ""
+            },
+            text: {
+                label: "Enter Any Text",
+                placeholder: "Type your message, contact details, or notes here...",
+                showHelper: false,
+                helperText: ""
+            },
+            pdf: {
+                label: "Enter PDF Cloud Link",
+                placeholder: "Paste Google Drive or Dropbox link here...",
+                showHelper: true,
+                helperText: "Upload your PDF to Google Drive, set sharing to 'Anyone with the link', and paste the URL below."
+            },
+            image: {
+                label: "Enter Image Cloud Link",
+                placeholder: "Paste Google Drive, Imgur, or iCloud link here...",
+                showHelper: true,
+                helperText: "Upload your photo to Google Drive or Imgur, copy the public link, and paste it below."
+            },
+            video: {
+                label: "Enter Video Link",
+                placeholder: "Paste YouTube, Vimeo, or Google Drive link here...",
+                showHelper: true,
+                helperText: "Paste your YouTube video URL or public Google Drive video link below."
             }
+        };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            const config = tabConfig[tabId];
+            document.getElementById('inputLabel').innerText = config.label;
+            document.getElementById('qrInput').placeholder = config.placeholder;
+            
+            const helperBox = document.getElementById('helperBox');
+            if (config.showHelper) {
+                document.getElementById('helperText').innerText = config.helperText;
+                helperBox.classList.remove('hidden');
+            } else {
+                helperBox.classList.add('hidden');
+            }
+            
+            document.getElementById('qrInput').value = "";
+            generateQR();
         }
 
-        async function generateQR() {
-            let data = "";
-            if (activeTab === 'text') {
-                data = document.getElementById('qrText').value;
-            } else {
-                const file = document.getElementById('fileUpload').files[0];
-                if (!file) return alert("Select a file");
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    data = e.target.result;
-                    qrcode.makeCode(data);
-                    document.getElementById('resultSection').classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
+        function generateQR() {
+            const text = document.getElementById('qrInput').value.trim();
+            const qrContainer = document.getElementById('qrcode');
+            const emptyState = document.getElementById('emptyStateMsg');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            qrContainer.innerHTML = "";
+
+            if (!text) {
+                emptyState.style.display = "block";
+                downloadBtn.disabled = true;
+                downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 return;
             }
 
-            if(!data) return alert("Please enter something!");
-            qrcode.makeCode(data);
-            document.getElementById('resultSection').classList.remove('hidden');
+            emptyState.style.display = "none";
+
+            qrCodeInstance = new QRCode(qrContainer, {
+                text: text,
+                width: 220,
+                height: 220,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            downloadBtn.disabled = false;
+            downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function clearText() {
+            document.getElementById('qrInput').value = "";
+            generateQR();
         }
 
         function downloadQR() {
-            const img = document.querySelector("#qrCodeArea img");
-            const a = document.createElement("a");
-            a.href = img.src;
-            a.download = "ToolMitra_QR.png";
-            a.click();
+            const qrContainer = document.getElementById('qrcode');
+            const img = qrContainer.querySelector('img');
+            
+            if (img && img.src) {
+                const link = document.createElement('a');
+                link.download = 'ToolMitra_QRCode.png';
+                link.href = img.src;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                const canvas = qrContainer.querySelector('canvas');
+                if(canvas) {
+                    const link = document.createElement('a');
+                    link.download = 'ToolMitra_QRCode.png';
+                    link.href = canvas.toDataURL("image/png");
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
         }
     </script>
 </body>

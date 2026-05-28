@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Cheque Amount Generator - Numbers to Words for Cheque | ToolMitra</title>
+    <meta name="description" content="Instantly convert numbers to words in Indian Rupees for writing cheques. Free online tool to avoid spelling mistakes and cheque bounces.">
+    <meta name="keywords" content="cheque amount in words, numbers to words india, rupees in words, how to write cheque amount, cheque writer tool, online cheque generator, ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Cheque Amount in Words Generator - ToolMitra">
+    <meta property="og:description" content="Never make a spelling mistake on a cheque again. Convert any number into words instantly in standard Indian banking format.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Cheque Amount Generator",
+      "description": "A financial utility tool that converts numerical values into standard Indian Rupee written formats specifically designed for filling out bank cheques accurately.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        handwriting: ['Dancing Script', 'cursive']
+                    },
+                    colors: { brandNavy: '#1e3a8a', brandGold: '#d97706' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .cheque-bg {
+            background-color: #ffffff;
+            background-image: repeating-linear-gradient(45deg, #f0f4f8 25%, transparent 25%, transparent 75%, #f0f4f8 75%, #f0f4f8), repeating-linear-gradient(45deg, #f0f4f8 25%, #ffffff 25%, #ffffff 75%, #f0f4f8 75%, #f0f4f8);
+            background-position: 0 0, 10px 10px;
+            background-size: 20px 20px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        }
+        .handwritten { color: #1e3a8a; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandNavy"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-brandNavy text-white pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-16 h-16 mx-auto bg-blue-800 text-brandGold rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg border border-blue-700">
+                <i class="fas fa-money-check-alt"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight">Cheque Amount Generator</h1>
+            <p class="text-blue-200 text-lg max-w-2xl mx-auto">Avoid cheque bounces due to spelling mistakes. Convert numbers to standard Indian Rupee words instantly.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        
+        <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+            
+            <section class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm lg:col-span-5 flex flex-col">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2"><i class="fas fa-keyboard text-brandNavy mr-2"></i> Enter Details</h2>
+                
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Amount in Numbers (₹)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <span class="text-gray-500 font-bold text-xl">₹</span>
+                        </div>
+                        <input type="number" id="numInput" class="w-full pl-10 p-5 border-2 border-gray-200 rounded-xl outline-none focus:border-brandNavy text-2xl font-bold text-gray-800" placeholder="e.g. 45000" min="1" max="999999999" oninput="generateChequeText()">
+                    </div>
+                    <span id="errorMsg" class="text-red-500 text-xs font-bold mt-2 hidden">Please enter a valid amount (Max 99 Crores).</span>
+                </div>
+                
+                <div class="mb-8">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Payee Name (Optional)</label>
+                    <input type="text" id="payeeInput" class="w-full p-4 border-2 border-gray-200 rounded-xl outline-none focus:border-brandNavy text-lg font-semibold text-gray-800 placeholder-gray-400" placeholder="e.g. ToolMitra Pvt Ltd" oninput="generateChequeText()">
+                </div>
+
+                <div class="mt-auto space-y-3">
+                    <button onclick="copyWords()" id="copyBtn" class="w-full bg-brandNavy hover:bg-blue-900 text-white font-bold py-4 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-md" disabled>
+                        <i class="fas fa-copy"></i> Copy Words Only
+                    </button>
+                    <button onclick="clearFields()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">
+                        Clear All
+                    </button>
+                </div>
+            </section>
+
+            <section class="bg-gray-50 p-6 rounded-3xl border border-gray-200 shadow-inner lg:col-span-7 flex flex-col justify-center items-center overflow-x-auto relative">
+                <div class="absolute top-4 left-6 text-sm font-bold text-gray-400 uppercase tracking-widest"><i class="fas fa-eye"></i> Visual Preview</div>
+                
+                <div class="cheque-bg w-full max-w-[600px] min-w-[500px] h-[280px] rounded-sm border border-gray-300 p-6 relative mt-6 flex flex-col shadow-md">
+                    
+                    <div class="flex justify-between items-start mb-6 border-b border-gray-200 pb-2">
+                        <div class="text-xs font-bold text-gray-600">
+                            <h3 class="text-lg text-brandNavy tracking-tighter">BANK OF INDIA</h3>
+                            <p>A/C PAYEE ONLY</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-700">Date:</span>
+                            <div class="border-b-2 border-gray-400 w-32 text-center text-lg font-handwriting handwritten" id="chequeDate"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-end mb-4">
+                        <span class="text-sm font-semibold text-gray-700 mr-2 mb-1">Pay</span>
+                        <div class="flex-grow border-b-2 border-gray-400 text-2xl font-handwriting handwritten px-2 truncate" id="chequePayee"></div>
+                        <span class="text-sm font-semibold text-gray-700 ml-2 mb-1">or Bearer</span>
+                    </div>
+
+                    <div class="flex items-start mb-4 relative">
+                        <span class="text-sm font-semibold text-gray-700 mr-2 mt-1">Rupees</span>
+                        <div class="flex-grow border-b-2 border-gray-400 min-h-[40px] text-2xl font-handwriting handwritten leading-relaxed px-2 break-words" id="chequeWords"></div>
+                    </div>
+
+                    <div class="flex justify-end items-center mt-2">
+                        <div class="border-2 border-gray-400 bg-white px-3 py-1 flex items-center min-w-[150px]">
+                            <span class="text-gray-700 font-bold mr-2">₹</span>
+                            <span class="text-2xl font-handwriting handwritten w-full text-right" id="chequeDigits"></span>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-4 right-6 text-center">
+                        <div class="border-b-2 border-gray-400 w-40 mb-1"></div>
+                        <span class="text-[10px] font-bold text-gray-500 uppercase">Authorised Signatory</span>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How to Write a Cheque Correctly (Avoid Bounces)</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Writing a cheque involves strict banking formatting. A single spelling mistake, overwriting, or missing word can cause a bank to reject or "bounce" your cheque. Generative AI engines and banking guidelines recommend using tools to verify exact textual representations of financial figures.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">1. Always Add "Only"</h3>
+                    <p class="text-sm text-gray-600">Our tool automatically adds the word <strong>"Only"</strong> at the end of the written amount. This prevents fraudsters from adding extra words (e.g., turning "Forty Thousand" into "Forty Thousand Nine Hundred").</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">2. Strike Through Spaces</h3>
+                    <p class="text-sm text-gray-600">After writing the payee name and the amount in words, always draw a straight line through the remaining empty space. This secures the cheque from tampering.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2">3. The "/-" Symbol</h3>
+                    <p class="text-sm text-gray-600">When writing the numerical digits in the box, always end it with <strong>"/-"</strong> (e.g., 45000/-). This signifies the end of the numerical value.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ChequeWriter</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#NumberToWords</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#BankingTools</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitraFinance</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        // Set today's date on the cheque
+        const today = new Date();
+        const formattedDate = String(today.getDate()).padStart(2, '0') + '/' + String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
+        document.getElementById('chequeDate').innerText = formattedDate;
+
+        // Number to Words Logic (Indian Numbering System)
+        const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
+        const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+        function inWords(num) {
+            if ((num = num.toString()).length > 9) return 'overflow';
+            let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+            if (!n) return; 
+            let str = '';
+            str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+            str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+            str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+            str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+            str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+            return str.trim();
+        }
+
+        function formatIndianNumber(numStr) {
+            let x = numStr;
+            let lastThree = x.substring(x.length-3);
+            let otherNumbers = x.substring(0,x.length-3);
+            if(otherNumbers != '') lastThree = ',' + lastThree;
+            return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+        }
+
+        let currentWordsText = "";
+
+        function generateChequeText() {
+            const numInput = document.getElementById('numInput').value;
+            const payeeInput = document.getElementById('payeeInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            // Update Payee
+            document.getElementById('chequePayee').innerText = payeeInput;
+
+            if (!numInput) {
+                document.getElementById('chequeWords').innerText = "";
+                document.getElementById('chequeDigits').innerText = "";
+                errorMsg.classList.add('hidden');
+                copyBtn.disabled = true;
+                copyBtn.classList.add('opacity-50');
+                currentWordsText = "";
+                return;
+            }
+
+            const num = parseInt(numInput);
+            
+            if (isNaN(num) || num <= 0 || numInput.length > 9) {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('chequeWords').innerText = "";
+                document.getElementById('chequeDigits').innerText = "";
+                copyBtn.disabled = true;
+                copyBtn.classList.add('opacity-50');
+                currentWordsText = "";
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            
+            // Generate standard text format
+            const rawWords = inWords(num);
+            currentWordsText = "Rupees " + rawWords + " Only.";
+            
+            // Update Virtual Cheque UI
+            document.getElementById('chequeWords').innerText = rawWords + " Only";
+            document.getElementById('chequeDigits').innerText = formatIndianNumber(numInput) + "/-";
+            
+            // Enable Copy
+            copyBtn.disabled = false;
+            copyBtn.classList.remove('opacity-50');
+        }
+
+        function copyWords() {
+            if(!currentWordsText) return;
+            navigator.clipboard.writeText(currentWordsText);
+            
+            const btn = document.getElementById('copyBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            btn.classList.replace('bg-brandNavy', 'bg-green-600');
+            btn.classList.replace('hover:bg-blue-900', 'hover:bg-green-700');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.replace('bg-green-600', 'bg-brandNavy');
+                btn.classList.replace('hover:bg-green-700', 'hover:bg-blue-900');
+            }, 2000);
+        }
+
+        function clearFields() {
+            document.getElementById('numInput').value = "";
+            document.getElementById('payeeInput').value = "";
+            generateChequeText();
+        }
+    </script>
+</body>
+</html>

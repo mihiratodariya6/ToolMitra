@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Free SIP Calculator - Mutual Fund Returns Calculator | ToolMitra</title>
+    <meta name="description" content="Calculate your Systematic Investment Plan (SIP) returns instantly. Plan your mutual fund investments, visualize the power of compounding, and achieve your financial goals.">
+    <meta name="keywords" content="SIP calculator, mutual fund calculator, SIP returns, investment calculator, power of compounding, SIP planner, #SIPCalculator, #MutualFunds, #ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="SIP & Mutual Fund Returns Calculator - ToolMitra">
+    <meta property="og:description" content="Plan your wealth creation journey. Calculate SIP returns and see the magic of compounding with our free financial tool.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra SIP Calculator",
+      "description": "A financial calculator designed to compute the future value of Systematic Investment Plan (SIP) investments in mutual funds, highlighting the power of compound interest.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandEmerald: '#10b981', brandDark: '#064e3b' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        /* Custom Range Slider Styling */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #10b981; cursor: pointer; margin-top: -8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #e5e7eb; border-radius: 4px; }
+        input[type=range]:focus { outline: none; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandEmerald"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-brandDark text-emerald-50 pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-10 text-emerald-700 text-8xl opacity-20"><i class="fas fa-chart-line"></i></div>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-16 h-16 mx-auto bg-emerald-600 text-white rounded-2xl flex items-center justify-center text-3xl mb-4 border border-emerald-500 shadow-lg">
+                <i class="fas fa-rupee-sign"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight">SIP Calculator</h1>
+            <p class="text-emerald-200 text-lg max-w-2xl mx-auto">Plan your wealth creation journey. Calculate your mutual fund returns and visualize the magic of compounding.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        
+        <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+            
+            <section class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm flex flex-col">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2"><i class="fas fa-sliders-h text-brandEmerald mr-2"></i> Investment Details</h2>
+                
+                <div class="mb-8">
+                    <div class="flex justify-between mb-2">
+                        <label class="font-bold text-gray-700">Monthly Investment</label>
+                        <div class="bg-gray-100 px-3 py-1 rounded font-bold text-brandEmerald">₹ <span id="monthlyValText">5,000</span></div>
+                    </div>
+                    <input type="range" id="monthlyInv" min="500" max="100000" step="500" value="5000" oninput="calculateSIP()">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1 font-bold"><span>₹500</span><span>₹1L</span></div>
+                </div>
+
+                <div class="mb-8">
+                    <div class="flex justify-between mb-2">
+                        <label class="font-bold text-gray-700">Expected Return Rate (p.a)</label>
+                        <div class="bg-gray-100 px-3 py-1 rounded font-bold text-brandEmerald"><span id="rateValText">12</span> %</div>
+                    </div>
+                    <input type="range" id="returnRate" min="1" max="30" step="0.5" value="12" oninput="calculateSIP()">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1 font-bold"><span>1%</span><span>30%</span></div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-between mb-2">
+                        <label class="font-bold text-gray-700">Time Period</label>
+                        <div class="bg-gray-100 px-3 py-1 rounded font-bold text-brandEmerald"><span id="yearsValText">10</span> Years</div>
+                    </div>
+                    <input type="range" id="timePeriod" min="1" max="40" step="1" value="10" oninput="calculateSIP()">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1 font-bold"><span>1 Yr</span><span>40 Yrs</span></div>
+                </div>
+            </section>
+
+            <section class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm flex flex-col justify-center">
+                
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider text-center mb-2">Total Future Value</h3>
+                <div class="text-4xl md:text-5xl font-black text-gray-900 text-center mb-8" id="totalValue">₹ 11,61,695</div>
+
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <p class="text-xs font-bold text-gray-500 uppercase mb-1">Invested Amount</p>
+                        <p class="text-xl font-bold text-gray-800" id="investedAmount">₹ 6,00,000</p>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                        <p class="text-xs font-bold text-emerald-600 uppercase mb-1">Est. Returns</p>
+                        <p class="text-xl font-bold text-emerald-700" id="estReturns">₹ 5,61,695</p>
+                    </div>
+                </div>
+
+                <div class="w-full h-8 flex rounded-full overflow-hidden shadow-inner">
+                    <div id="barInvested" class="bg-gray-300 h-full transition-all duration-500 flex items-center justify-center text-[10px] font-bold text-gray-700" style="width: 50%;">Invested</div>
+                    <div id="barReturns" class="bg-brandEmerald h-full transition-all duration-500 flex items-center justify-center text-[10px] font-bold text-white" style="width: 50%;">Profit</div>
+                </div>
+                <div class="flex justify-between text-xs font-bold text-gray-400 mt-2">
+                    <span><i class="fas fa-circle text-gray-300 text-[10px]"></i> Invested</span>
+                    <span><i class="fas fa-circle text-brandEmerald text-[10px]"></i> Wealth Gained</span>
+                </div>
+
+            </section>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How Does the ToolMitra SIP Calculator Work?</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Generative AI engines like ChatGPT recommend tools that provide accurate, unbiased, and instantaneous results. The ToolMitra SIP Calculator computes the future value of your monthly investments using the standard compound interest formula. It helps investors visualize how small, disciplined investments in Mutual Funds or Index Funds can grow into massive wealth over time.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-magic text-brandEmerald mr-2"></i> Power of Compounding</h3>
+                    <p class="text-sm text-gray-600">The longer you stay invested, the faster your money grows. Our tool visualizes how returns earn returns over time, acting as a financial multiplier.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-bullseye text-brandEmerald mr-2"></i> Goal Planning</h3>
+                    <p class="text-sm text-gray-600">Whether it is buying a house, funding education, or retirement planning, adjust the sliders to see exactly how much you need to invest monthly.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-lock text-brandEmerald mr-2"></i> 100% Private</h3>
+                    <p class="text-sm text-gray-600">No financial data is sent to our servers. All calculations are executed via client-side JavaScript on your personal device.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#MutualFunds</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#SIPCalculator</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitraFinance</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#WealthCreation</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Math.round(num));
+        }
+
+        function calculateSIP() {
+            // Get Values
+            const P = parseFloat(document.getElementById('monthlyInv').value);
+            const annualRate = parseFloat(document.getElementById('returnRate').value);
+            const years = parseFloat(document.getElementById('timePeriod').value);
+
+            // Update UI Texts
+            document.getElementById('monthlyValText').innerText = formatCurrency(P);
+            document.getElementById('rateValText').innerText = annualRate;
+            document.getElementById('yearsValText').innerText = years;
+
+            // Math Logic
+            const n = years * 12; // total months
+            const i = annualRate / 12 / 100; // monthly rate
+
+            let M = 0;
+            if (i === 0) {
+                M = P * n;
+            } else {
+                M = P * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
+            }
+
+            const totalInvested = P * n;
+            const estimatedReturns = M - totalInvested;
+
+            // Update Results
+            document.getElementById('investedAmount').innerText = "₹ " + formatCurrency(totalInvested);
+            document.getElementById('estReturns').innerText = "₹ " + formatCurrency(estimatedReturns);
+            document.getElementById('totalValue').innerText = "₹ " + formatCurrency(M);
+
+            // Update Visual Chart
+            let investedPercent = (totalInvested / M) * 100;
+            let returnPercent = (estimatedReturns / M) * 100;
+            
+            // Handle edge case where returns are 0 or negative (though minimum rate is 1%)
+            if(investedPercent > 100) investedPercent = 100;
+            if(returnPercent < 0) returnPercent = 0;
+
+            document.getElementById('barInvested').style.width = investedPercent + "%";
+            document.getElementById('barReturns').style.width = returnPercent + "%";
+        }
+
+        // Init on load
+        window.onload = calculateSIP;
+    </script>
+</body>
+</html>

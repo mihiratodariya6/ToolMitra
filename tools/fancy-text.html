@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Fancy Text Generator - Stylish Fonts & Translation | ToolMitra</title>
+    <meta name="description" content="Convert normal text into 1000+ stylish fonts, translate to Hindi/Gujarati, and copy-paste instantly. Perfect for Instagram Bios, WhatsApp, and gaming names.">
+    <meta name="keywords" content="fancy text generator, stylish font maker, instagram bio fonts, copy paste fonts, cool text generator, bgmi name generator, translate to stylish hindi, gujarati fonts">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Viral Fancy Text Generator - ToolMitra">
+    <meta property="og:description" content="Type any name, translate it instantly, and get unlimited stylish, copy-paste ready fonts for your social media bios.">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Fancy Text Generator",
+      "description": "An advanced text styling utility featuring real-time translation and extensive Unicode character mapping for social media and gaming aliases.",
+      "applicationCategory": "UtilitiesApplication"
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandFuchsia: '#d946ef', brandDark: '#0f172a' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .neon-shadow { box-shadow: 0 0 25px rgba(217, 70, 239, 0.4); }
+        .font-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .font-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(217, 70, 239, 0.2); border-color: #f0abfc; }
+        /* Language Tab active state */
+        .lang-btn.active { background-color: #d946ef; color: white; border-color: #d946ef; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandFuchsia"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-brandDark text-fuchsia-50 pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-10 text-fuchsia-500 text-9xl opacity-10"><i class="fas fa-font"></i></div>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-16 h-16 mx-auto bg-fuchsia-600 text-white rounded-2xl flex items-center justify-center text-3xl mb-4 border border-fuchsia-400 neon-shadow">
+                <i class="fas fa-magic"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight text-white">Fancy Text Generator</h1>
+            <p class="text-fuchsia-200 text-lg max-w-2xl mx-auto">Convert normal text into cool fonts, translate to Hindi/Gujarati, and copy-paste instantly for Social Media & Gaming.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        
+        <div class="max-w-5xl mx-auto mb-16">
+            
+            <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-lg sticky top-20 z-40 mb-8">
+                
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button onclick="setLanguage('en', this)" class="lang-btn active px-4 py-2 rounded-lg border border-gray-300 text-sm font-bold text-gray-600 transition">🇺🇸 English</button>
+                    <button onclick="setLanguage('hi', this)" class="lang-btn px-4 py-2 rounded-lg border border-gray-300 text-sm font-bold text-gray-600 transition">🇮🇳 Hindi</button>
+                    <button onclick="setLanguage('gu', this)" class="lang-btn px-4 py-2 rounded-lg border border-gray-300 text-sm font-bold text-gray-600 transition">🇮🇳 Gujarati</button>
+                    <span id="translatingStatus" class="ml-2 text-xs font-bold text-fuchsia-500 hidden self-center animate-pulse"><i class="fas fa-spinner fa-spin"></i> Translating...</span>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <div class="w-full relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-pen text-fuchsia-400"></i>
+                        </div>
+                        <input type="text" id="textInput" class="w-full pl-12 p-5 border-2 border-fuchsia-100 rounded-2xl outline-none focus:border-brandFuchsia text-xl font-bold text-gray-800 placeholder-gray-400 bg-fuchsia-50/50" placeholder="Type your text or name here..." oninput="handleInput()" autocomplete="off">
+                    </div>
+                    <button onclick="clearText()" class="text-gray-400 hover:text-red-500 font-bold px-4 transition whitespace-nowrap">
+                        <i class="fas fa-times-circle text-xl"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-full text-center py-10 text-gray-400 font-bold empty-state">
+                    <i class="fas fa-keyboard text-5xl mb-4 opacity-50"></i>
+                    <p>Start typing above to see the magic happen...</p>
+                </div>
+            </div>
+
+            <div id="showMoreContainer" class="hidden mt-8 text-center">
+                <button onclick="showMoreFonts()" class="bg-gray-900 hover:bg-black text-white font-bold py-4 px-10 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                    <i class="fas fa-layer-group"></i> Show 100+ More Styles
+                </button>
+            </div>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">The Ultimate Unicode & Translation Engine</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">ToolMitra merges real-time language translation with advanced Unicode character mapping. Whether you are typing in English, or translating your name to Gujarati or Hindi, our script wraps your text in globally recognized aesthetic symbols compatible with Instagram, Facebook, and modern multiplayer games like BGMI.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div class="bg-fuchsia-50 p-6 rounded-xl border border-fuchsia-100">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-language text-brandFuchsia mr-2"></i> Auto-Translation</h3>
+                    <p class="text-sm text-gray-600">Type in English, click the Hindi or Gujarati tab, and watch as your text is instantly translated and stylized simultaneously.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-gamepad text-brandFuchsia mr-2"></i> Unlimited Combinations</h3>
+                    <p class="text-sm text-gray-600">By combining standard Unicode math-fonts with aesthetic "kaomoji" borders and decorations, the possibilities extend into the thousands.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-copy text-brandFuchsia mr-2"></i> 1-Click Copy</h3>
+                    <p class="text-sm text-gray-600">Every single card features a fast-copy mechanism that places the exact Unicode string directly into your clipboard, ready to paste anywhere.</p>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        let currentLang = 'en';
+        let isShowingAll = false;
+        let lastInputText = "";
+        let translatedCache = "";
+
+        // Core English Unicode Maps
+        const fonts = {
+            "Math Bold": "𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟗𝟖𝟗",
+            "Math Italic": "𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍0123456789",
+            "Script / Cursive": "𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩0123456789",
+            "Double Struck": "𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡",
+            "Gothic / Fraktur": "𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷𝔄𝔅𝔆𝔇𝔈𝔉𝔊𝔋𝔩𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ0123456789",
+            "Bold Gothic": "𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟𝕬𝕭𝕮𝕯𝕰𝕱𝕲𝕳𝕴𝕵𝕶𝕷𝕸𝕹𝕺𝕻𝕼𝕽𝕾𝕿𝖀𝖁𝖂𝖃𝖄𝖅0123456789",
+            "Circled": "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ⓪①②③④⑤⑥⑦⑧⑨",
+            "Squared": "🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉0123456789",
+            "Vaporwave": "ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ０１２３４５６７８９",
+            "Upside Down": "ɐqɔpǝɟƃɥıɾʞlɯuodbɹsʇnʌʍxʎz∀qƆPƎℲפHIſ⋊˥WNOԀQᴚS⊥∩ΛMX⅄Z0123456789",
+            "Small Caps": "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ0123456789",
+            "Monospace": "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿"
+        };
+
+        const normalChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        // Decorations (Works on ALL languages including Hindi/Gujarati)
+        const decorations = [
+            ["꧁༒ ", " ༒꧂"], ["★彡 ", " 彡★"], ["╰☆☆ ", " ☆☆╮"], ["【 ", " 】"], 
+            ["『 ", " 』"], ["░▒▓█ ", " █▓▒░"], ["ıllıllı ", " ıllıllı"], ["(¯`·.¸¸.-> ", " <-.¸¸.·´¯)"],
+            ["♔ ", " ♔"], ["⚡ ", " ⚡"], ["🔥 ", " 🔥"], ["☠️ ", " ☠️"],
+            ["✧ ", " ✧"], ["«-(¯`v´¯)-« ", " »-(¯`v´¯)-»"], ["•?((¯°·._.• ", " •._.·°¯))?•"],
+            ["† ", " †"], ["❤ ", " ❤"], ["♛ ", " ♛"], ["✿ ", " ✿"], ["★ ", " ★"]
+        ];
+
+        let translationTimeout;
+
+        function setLanguage(lang, btn) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            handleInput(); // Re-trigger with new language
+        }
+
+        function clearText() {
+            document.getElementById('textInput').value = "";
+            lastInputText = "";
+            translatedCache = "";
+            document.getElementById('resultsGrid').innerHTML = `
+                <div class="col-span-full text-center py-10 text-gray-400 font-bold empty-state">
+                    <i class="fas fa-keyboard text-5xl mb-4 opacity-50"></i>
+                    <p>Start typing above to see the magic happen...</p>
+                </div>`;
+            document.getElementById('showMoreContainer').classList.add('hidden');
+        }
+
+        function handleInput() {
+            const text = document.getElementById('textInput').value.trim();
+            if (text === "") {
+                clearText();
+                return;
+            }
+
+            if (text === lastInputText && currentLang === 'en') {
+                renderGrid(text);
+                return;
+            }
+
+            lastInputText = text;
+
+            if (currentLang !== 'en') {
+                // Debounce translation API call to prevent rate limiting
+                clearTimeout(translationTimeout);
+                document.getElementById('translatingStatus').classList.remove('hidden');
+                
+                translationTimeout = setTimeout(() => {
+                    translateText(text, currentLang).then(res => {
+                        translatedCache = res;
+                        document.getElementById('translatingStatus').classList.add('hidden');
+                        renderGrid(translatedCache);
+                    });
+                }, 800); // 800ms delay after typing stops
+            } else {
+                translatedCache = text;
+                document.getElementById('translatingStatus').classList.add('hidden');
+                renderGrid(translatedCache);
+            }
+        }
+
+        // Google Free Translate API (GTX)
+        async function translateText(text, targetLang) {
+            try {
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                return data[0][0][0]; // Extract translated string
+            } catch (error) {
+                console.error("Translation Error:", error);
+                return text; // Fallback to original
+            }
+        }
+
+        function mapText(text, styleChars) {
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                let index = normalChars.indexOf(char);
+                if (index !== -1 && index < Array.from(styleChars).length) {
+                    const styleArray = Array.from(styleChars);
+                    result += styleArray[index] || char;
+                } else {
+                    result += char; 
+                }
+            }
+            return result;
+        }
+
+        function renderGrid(textToRender) {
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = ""; 
+
+            let count = 0;
+            const maxInitial = 12; // Show only 12 initially
+
+            // 1. Render Core Fonts (If English, or if it has english letters mixed in)
+            if (currentLang === 'en') {
+                for (const [fontName, fontMap] of Object.entries(fonts)) {
+                    if (!isShowingAll && count >= maxInitial) break;
+                    let stylizedText = mapText(textToRender, fontMap);
+                    grid.appendChild(createCard(fontName, stylizedText));
+                    count++;
+                }
+            }
+
+            // 2. Render Decorations (Works beautifully on Hindi/Gujarati/English)
+            decorations.forEach((dec, index) => {
+                if (!isShowingAll && count >= maxInitial) return;
+                
+                let decoratedText = dec[0] + textToRender + dec[1];
+                let label = `Gamer Style ${index + 1}`;
+                grid.appendChild(createCard(label, decoratedText));
+                count++;
+            });
+
+            // 3. Combined: Fancy Font + Decoration (Extended mode)
+            if (isShowingAll && currentLang === 'en') {
+                for (const [fontName, fontMap] of Object.entries(fonts)) {
+                    let stylizedText = mapText(textToRender, fontMap);
+                    // Add 3 random decorations to each font
+                    for(let i=0; i<3; i++) {
+                        let dec = decorations[Math.floor(Math.random() * decorations.length)];
+                        let ultraText = dec[0] + stylizedText + dec[1];
+                        grid.appendChild(createCard(`Pro ${fontName}`, ultraText));
+                    }
+                }
+            }
+
+            // Show 'Show More' button if not showing all
+            if (!isShowingAll) {
+                document.getElementById('showMoreContainer').classList.remove('hidden');
+            } else {
+                document.getElementById('showMoreContainer').classList.add('hidden');
+            }
+        }
+
+        function createCard(label, text) {
+            const card = document.createElement('div');
+            card.className = "bg-white p-5 rounded-2xl border border-gray-200 font-card flex items-center justify-between gap-4";
+            
+            // Escape quotes for the onclick function
+            const safeText = text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            
+            card.innerHTML = `
+                <div class="flex-grow overflow-hidden">
+                    <p class="text-xs font-bold text-gray-400 uppercase mb-1 tracking-wider">${label}</p>
+                    <p class="text-xl text-gray-900 break-all truncate">${text}</p>
+                </div>
+                <button onclick="copyToClipboard(this, '${safeText}')" class="bg-fuchsia-50 hover:bg-fuchsia-100 text-brandFuchsia font-bold py-3 px-5 rounded-xl transition shadow-sm flex-shrink-0">
+                    <i class="fas fa-copy"></i>
+                </button>
+            `;
+            return card;
+        }
+
+        function showMoreFonts() {
+            isShowingAll = true;
+            renderGrid(translatedCache || lastInputText);
+        }
+
+        function copyToClipboard(btn, text) {
+            navigator.clipboard.writeText(text);
+            
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check text-green-500"></i>';
+            btn.classList.add('bg-green-50');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('bg-green-50');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

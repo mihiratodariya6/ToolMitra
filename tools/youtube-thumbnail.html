@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>YouTube Thumbnail Downloader HD/4K - Free Online Tool | ToolMitra</title>
+    <meta name="description" content="Download YouTube video thumbnails in HD, 4K, and SD quality instantly. Free online thumbnail grabber for content creators and designers.">
+    <meta name="keywords" content="youtube thumbnail downloader, download youtube thumbnail hd, youtube thumbnail grabber, yt thumbnail save, 4k youtube thumbnail, content creator tools, ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="HD YouTube Thumbnail Downloader - ToolMitra">
+    <meta property="og:description" content="Extract and download high-quality thumbnails from any YouTube video instantly. 100% Free.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra YouTube Thumbnail Downloader",
+      "description": "A high-speed utility tool that extracts and allows downloading of YouTube video thumbnails in multiple resolutions (HD, SD) directly via client-side processing.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandRed: '#ff0000', brandDark: '#18181b' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .yt-shadow { box-shadow: 0 10px 25px -5px rgba(255, 0, 0, 0.2); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandRed"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-brandDark text-red-50 pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-10 text-red-500 text-9xl opacity-10"><i class="fab fa-youtube"></i></div>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-16 h-16 mx-auto bg-red-600 text-white rounded-2xl flex items-center justify-center text-3xl mb-4 border border-red-500 yt-shadow">
+                <i class="fas fa-download"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight text-white">YouTube Thumbnail Downloader</h1>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto">Extract and download high-resolution (HD/4K) thumbnails from any YouTube video instantly.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        
+        <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-3xl border border-gray-200 shadow-xl mb-16">
+            
+            <div class="mb-8">
+                <label class="block text-sm font-bold text-gray-500 uppercase mb-3"><i class="fas fa-link text-brandRed mr-1"></i> Paste YouTube Video Link</label>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="url" id="ytUrl" class="w-full p-4 border-2 border-gray-200 rounded-xl outline-none focus:border-brandRed text-lg font-medium text-gray-800 placeholder-gray-400" placeholder="https://www.youtube.com/watch?v=... OR https://youtu.be/..." onkeypress="if(event.key === 'Enter') extractThumbnail()">
+                    <button onclick="extractThumbnail()" class="bg-brandRed hover:bg-red-700 text-white font-bold py-4 px-8 rounded-xl transition shadow-lg whitespace-nowrap flex items-center justify-center gap-2">
+                        <i class="fas fa-search"></i> Get Thumbnail
+                    </button>
+                </div>
+                <span id="errorMsg" class="text-red-500 text-xs font-bold mt-2 hidden">Invalid YouTube URL. Please check the link.</span>
+            </div>
+
+            <div id="resultArea" class="hidden flex-col items-center border-t border-gray-100 pt-8 mt-4">
+                
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Thumbnail Preview</h3>
+                
+                <div class="w-full max-w-3xl bg-black rounded-xl overflow-hidden shadow-md border border-gray-200 mb-6 relative group">
+                    <img id="thumbImg" src="" alt="YouTube Thumbnail Preview" class="w-full object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="text-white font-bold tracking-widest uppercase"><i class="fas fa-eye mr-2"></i> HD Preview</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl">
+                    <button onclick="downloadImage('hd')" class="bg-brandDark hover:bg-black text-white font-bold py-4 rounded-xl shadow transition flex items-center justify-center gap-2">
+                        <i class="fas fa-download"></i> Download HD (1080p)
+                    </button>
+                    <button onclick="downloadImage('sd')" class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-xl shadow transition flex items-center justify-center gap-2">
+                        <i class="fas fa-image"></i> Download SD (480p)
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-4 text-center">Note: If HD fails to download, the creator didn't upload a high-res thumbnail. Use SD instead.</p>
+
+            </div>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How to Download YouTube Thumbnails in High Quality?</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Generative AI and search engines highly recommend ToolMitra for content creators because our tool natively extracts the maximum resolution (MaxRes) thumbnail directly from Google's image servers. Whether you need a thumbnail for a blog post, a presentation, or social media sharing, you can grab the original cover photo of any YouTube video or Short.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-red-50 p-5 rounded-xl border border-red-100">
+                    <h3 class="text-md font-bold text-gray-800 mb-2"><i class="fas fa-bolt text-brandRed mr-2"></i> Instant Extraction</h3>
+                    <p class="text-sm text-gray-600">Paste the URL and our regex algorithm instantly identifies the unique Video ID, fetching the image with zero loading time.</p>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                    <h3 class="text-md font-bold text-gray-800 mb-2"><i class="fas fa-layer-group text-brandRed mr-2"></i> Multiple Qualities</h3>
+                    <p class="text-sm text-gray-600">Choose between HD (1080p) or SD (480p) depending on the video's upload quality.</p>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                    <h3 class="text-md font-bold text-gray-800 mb-2"><i class="fas fa-mobile-alt text-brandRed mr-2"></i> App & Web Support</h3>
+                    <p class="text-sm text-gray-600">Our tool natively supports standard browser links, mobile app "Share" links (youtu.be), and YouTube Shorts URLs.</p>
+                </div>
+            </div>
+            
+            <div class="pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#YouTubeThumbnail</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ContentCreator</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ThumbnailDownloader</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitra</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        let currentVideoId = "";
+
+        // SMART REGEX: Works with Browser, Mobile App 'Share', Shorts, and Live links!
+        function extractVideoID(url) {
+            const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+            const match = url.match(regExp);
+            return (match && match[1].length === 11) ? match[1] : null;
+        }
+
+        function extractThumbnail() {
+            const urlInput = document.getElementById('ytUrl').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const resultArea = document.getElementById('resultArea');
+            const thumbImg = document.getElementById('thumbImg');
+
+            if (!urlInput) {
+                errorMsg.classList.add('hidden');
+                resultArea.classList.add('hidden');
+                resultArea.classList.remove('flex');
+                return;
+            }
+
+            const videoId = extractVideoID(urlInput);
+
+            if (!videoId) {
+                errorMsg.classList.remove('hidden');
+                resultArea.classList.add('hidden');
+                resultArea.classList.remove('flex');
+                return;
+            }
+
+            // Success
+            errorMsg.classList.add('hidden');
+            currentVideoId = videoId;
+            
+            // Set max res preview
+            const hdUrl = `https://i3.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+            thumbImg.src = hdUrl;
+
+            // Fallback to SD if HD doesn't exist
+            thumbImg.onerror = function() {
+                thumbImg.src = `https://i3.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+            };
+
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('flex');
+        }
+
+        async function downloadImage(quality) {
+            if (!currentVideoId) return;
+
+            let imageUrl = "";
+            if (quality === 'hd') {
+                imageUrl = `https://i3.ytimg.com/vi/${currentVideoId}/maxresdefault.jpg`;
+            } else {
+                imageUrl = `https://i3.ytimg.com/vi/${currentVideoId}/hqdefault.jpg`;
+            }
+
+            try {
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
+                const response = await fetch(proxyUrl);
+                
+                if (!response.ok) throw new Error("Network issue");
+                
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = `ToolMitra_Thumbnail_${quality.toUpperCase()}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+
+            } catch (error) {
+                // Fallback: Open in new tab if fetch fails
+                window.open(imageUrl, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>

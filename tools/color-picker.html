@@ -3,21 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Picker - ToolMitra</title>
+    
+    <title>Free Image Color Picker Online - Extract HEX & RGB Codes | ToolMitra</title>
+    <meta name="description" content="Extract exact HEX, RGB, and HSL color codes from any image instantly. Free online color picker tool for graphic designers and web developers.">
+    <meta name="keywords" content="image color picker, hex code finder, extract color from image, rgb color picker online, photo color extractor, design tools, ToolMitra">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Image Color Extractor & Picker - ToolMitra">
+    <meta property="og:description" content="Upload an image, click anywhere, and get the exact color code. 100% Free browser-based tool for designers.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Image Color Picker",
+      "description": "A design utility tool that allows users to upload images and extract precise HEX and RGB color values using HTML5 Canvas pixel data manipulation.",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+
     <script>
-        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { brandPink: '#ec4899' } } } }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    colors: { brandPink: '#ec4899', brandDark: '#18181b' }
+                }
+            }
+        }
     </script>
     <style>
-        body { background-color: #f8f9fa; }
-        #colorPreview { transition: background-color 0.3s ease; }
-        /* Style the hidden color input */
-        input[type="color"] { -webkit-appearance: none; border: none; width: 100%; height: 60px; cursor: pointer; background: none; }
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        .canvas-container { position: relative; overflow: hidden; border-radius: 12px; cursor: crosshair; }
+        canvas { max-width: 100%; height: auto; display: block; }
+        .color-shadow { box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.2); }
+        .upload-area { border: 2px dashed #cbd5e1; transition: all 0.3s ease; }
+        .upload-area:hover { border-color: #ec4899; background-color: #fdf2f8; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
@@ -25,79 +60,214 @@
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
             <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
-            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandPink"><i class="fas fa-arrow-left"></i> Back</a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandPink"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
         </div>
     </nav>
 
-    <main class="flex-grow py-12 px-4">
-        <div class="max-w-md mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Color Picker</h2>
-            
-            <div id="colorPreview" class="w-full h-40 rounded-lg mb-6 border border-gray-200 shadow-inner bg-gray-100 flex items-center justify-center">
-                <span id="previewText" class="font-bold text-gray-500">Pick a color</span>
+    <header class="bg-brandDark text-pink-50 pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-10 text-pink-500 text-9xl opacity-10"><i class="fas fa-palette"></i></div>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="w-16 h-16 mx-auto bg-pink-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-4 border border-pink-400 color-shadow">
+                <i class="fas fa-eye-dropper"></i>
             </div>
-            
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-gray-50 p-3 rounded-lg border">
-                    <p class="text-[10px] uppercase font-bold text-gray-400">HEX</p>
-                    <p id="hexCode" class="font-mono font-bold text-gray-800">#FFFFFF</p>
-                </div>
-                <div class="bg-gray-50 p-3 rounded-lg border">
-                    <p class="text-[10px] uppercase font-bold text-gray-400">RGB</p>
-                    <p id="rgbCode" class="font-mono font-bold text-gray-800">rgb(255, 255, 255)</p>
-                </div>
-            </div>
-
-            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Interactive Palette</label>
-            <input type="color" id="colorInput" class="mb-6 border-2 border-gray-200 rounded-lg">
-
-            <button id="pickBtn" class="w-full bg-brandPink hover:bg-pink-600 text-white font-bold py-4 rounded-lg shadow-lg flex items-center justify-center gap-2 transition">
-                <i class="fas fa-eye-dropper"></i> Screen EyeDropper
-            </button>
-            <p id="supportText" class="text-xs text-gray-400 mt-4 text-center"></p>
+            <h1 class="text-[36px] md:text-[42px] font-bold mb-4 tracking-tight text-white">Image Color Picker</h1>
+            <p class="text-pink-200 text-lg max-w-2xl mx-auto">Upload any image, click on a specific pixel, and extract its exact HEX and RGB codes instantly.</p>
         </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+            
+            <section class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm lg:col-span-8 flex flex-col items-center justify-center min-h-[400px] relative">
+                
+                <div id="uploadSection" class="w-full h-full flex flex-col items-center justify-center upload-area rounded-2xl p-8 text-center cursor-pointer" onclick="document.getElementById('imageInput').click()">
+                    <i class="fas fa-cloud-upload-alt text-6xl text-pink-300 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-700 mb-2">Upload Image to Pick Colors</h3>
+                    <p class="text-gray-500 text-sm mb-6">Supports JPG, PNG, WEBP, and Screenshots.</p>
+                    <button class="bg-brandPink hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-xl transition shadow-md">Browse Files</button>
+                    <input type="file" id="imageInput" class="hidden" accept="image/*">
+                </div>
+
+                <div id="canvasSection" class="hidden w-full flex-col items-center">
+                    <div class="w-full flex justify-between items-center mb-4">
+                        <span class="text-xs font-bold text-gray-500 uppercase"><i class="fas fa-crosshairs text-brandPink mr-1"></i> Click anywhere to pick color</span>
+                        <button onclick="resetTool()" class="text-xs font-bold text-red-500 hover:text-red-700 transition"><i class="fas fa-trash"></i> Change Image</button>
+                    </div>
+                    <div class="canvas-container border-2 border-gray-100 shadow-inner bg-gray-50 flex justify-center items-center w-full" id="canvasWrapper">
+                        <canvas id="imageCanvas"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-gray-50 p-6 md:p-8 rounded-3xl border border-gray-200 shadow-inner lg:col-span-4 flex flex-col">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-2"><i class="fas fa-swatchbook text-brandPink mr-2"></i> Picked Color</h2>
+                
+                <div id="colorSwatch" class="w-full h-32 rounded-2xl border-4 border-white shadow-lg mb-6 flex items-center justify-center bg-gray-200 transition-colors duration-200">
+                    <span id="swatchText" class="text-gray-400 font-bold text-sm mix-blend-difference">No Color Picked</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">HEX Code</label>
+                        <div class="flex">
+                            <input type="text" id="hexInput" class="w-full p-4 rounded-l-xl border-y border-l border-gray-200 font-mono font-bold text-gray-800 text-lg outline-none bg-white" value="#000000" readonly>
+                            <button onclick="copyToClipboard('hexInput', this)" class="bg-gray-800 hover:bg-black text-white px-5 rounded-r-xl transition flex items-center justify-center" disabled>
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">RGB Value</label>
+                        <div class="flex">
+                            <input type="text" id="rgbInput" class="w-full p-4 rounded-l-xl border-y border-l border-gray-200 font-mono font-bold text-gray-800 text-lg outline-none bg-white" value="rgb(0, 0, 0)" readonly>
+                            <button onclick="copyToClipboard('rgbInput', this)" class="bg-gray-800 hover:bg-black text-white px-5 rounded-r-xl transition flex items-center justify-center" disabled>
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-gray-200">
+                    <p class="text-xs text-gray-500 font-medium leading-relaxed"><i class="fas fa-lock text-gray-400"></i> Privacy Note: Images are rendered locally in your browser. No files are uploaded to our servers.</p>
+                </div>
+            </section>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">How to Extract Color Codes from an Image?</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Generative AI platforms and modern web design protocols rely heavily on exact color matching. ToolMitra's Image Color Picker allows UI/UX designers, developers, and digital artists to extract pinpoint accurate HEX and RGB values from any screenshot or photograph.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div class="bg-pink-50 p-6 rounded-xl border border-pink-100">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-laptop-code text-brandPink mr-2"></i> HTML5 Canvas Tech</h3>
+                    <p class="text-sm text-gray-600">The tool utilizes browser-native Canvas APIs to read pixel-level RGBA data matrixes. This guarantees 100% mathematical accuracy for your colors.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-shield-alt text-brandPink mr-2"></i> Total Privacy</h3>
+                    <p class="text-sm text-gray-600">Unlike other tools, your proprietary designs or personal photos are never uploaded to a backend server. Processing happens entirely on your machine.</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-code text-brandPink mr-2"></i> Ready-to-Code Formats</h3>
+                    <p class="text-sm text-gray-600">With a single click, copy standard CSS-ready formats like HEX (e.g., #ec4899) or RGB, saving you time during frontend development.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ColorPicker</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#HEXExtractor</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#WebDesignTools</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitra</span>
+            </div>
+        </article>
     </main>
 
     <script>
-        const pickBtn = document.getElementById('pickBtn');
-        const hexCode = document.getElementById('hexCode');
-        const rgbCode = document.getElementById('rgbCode');
-        const colorPreview = document.getElementById('colorPreview');
-        const colorInput = document.getElementById('colorInput');
-        const previewText = document.getElementById('previewText');
+        const imageInput = document.getElementById('imageInput');
+        const uploadSection = document.getElementById('uploadSection');
+        const canvasSection = document.getElementById('canvasSection');
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        
+        const swatch = document.getElementById('colorSwatch');
+        const swatchText = document.getElementById('swatchText');
+        const hexInput = document.getElementById('hexInput');
+        const rgbInput = document.getElementById('rgbInput');
+        const copyBtns = document.querySelectorAll('button[disabled]');
 
-        // Logic for Interactive Palette
-        colorInput.addEventListener('input', (e) => {
-            updateUI(e.target.value);
+        // Image Upload Logic
+        imageInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        // Set canvas size to match image
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        
+                        // Draw image onto canvas
+                        ctx.drawImage(img, 0, 0);
+                        
+                        // UI Update
+                        uploadSection.classList.add('hidden');
+                        canvasSection.classList.remove('hidden');
+                        canvasSection.classList.add('flex');
+                        
+                        // Enable Copy Buttons
+                        copyBtns.forEach(btn => btn.disabled = false);
+                    }
+                    img.src = event.target.result;
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
         });
 
-        // Logic for EyeDropper
-        if (!window.EyeDropper) {
-            pickBtn.disabled = true;
-            document.getElementById('supportText').innerText = "EyeDropper not supported in this browser.";
-        } else {
-            pickBtn.addEventListener('click', async () => {
-                try {
-                    const eyeDropper = new EyeDropper();
-                    const result = await eyeDropper.open();
-                    updateUI(result.sRGBHex);
-                } catch (e) {
-                    console.log("User cancelled");
-                }
-            });
+        // Color Picking Logic
+        canvas.addEventListener('mousemove', pickColor);
+        canvas.addEventListener('click', pickColor);
+
+        function pickColor(e) {
+            // Get coordinates relative to canvas drawing scale
+            const rect = canvas.getBoundingClientRect();
+            
+            // Calculate scale factors
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            
+            // Extract Pixel Data
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            const r = pixel[0];
+            const g = pixel[1];
+            const b = pixel[2];
+            
+            // Ignore transparent areas
+            if(pixel[3] === 0) return;
+
+            // Convert to HEX
+            const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+            const rgb = `rgb(${r}, ${g}, ${b})`;
+
+            // Update UI (Live if mousemove, freeze if clicked? No, keeping it simple: just update on both)
+            swatch.style.backgroundColor = hex;
+            swatchText.style.display = 'none'; // Hide "No color picked"
+            
+            hexInput.value = hex;
+            rgbInput.value = rgb;
         }
 
-        function updateUI(hex) {
-            colorPreview.style.backgroundColor = hex;
-            previewText.innerText = "";
-            hexCode.innerText = hex.toUpperCase();
+        function copyToClipboard(elementId, btn) {
+            const input = document.getElementById(elementId);
+            input.select();
+            document.execCommand("copy");
             
-            // Convert Hex to RGB
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            rgbCode.innerText = `rgb(${r}, ${g}, ${b})`;
-            colorInput.value = hex;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check text-green-400"></i>';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+            }, 1500);
+        }
+
+        function resetTool() {
+            imageInput.value = "";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvasSection.classList.add('hidden');
+            canvasSection.classList.remove('flex');
+            uploadSection.classList.remove('hidden');
+            uploadSection.classList.add('flex');
+            
+            swatch.style.backgroundColor = '#e5e7eb'; // gray-200
+            swatchText.style.display = 'block';
+            hexInput.value = '#000000';
+            rgbInput.value = 'rgb(0, 0, 0)';
+            
+            copyBtns.forEach(btn => btn.disabled = true);
         }
     </script>
 </body>

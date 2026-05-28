@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Free Online Receipt Maker - Custom Invoice & Bill Generator | ToolMitra</title>
+    <meta name="description" content="Create professional business receipts and invoices instantly with our free online receipt maker. Customize items, taxes, discounts, and download or print PDFs.">
+    <meta name="keywords" content="receipt maker, free receipt generator, online bill maker, invoice generator, custom receipt template, cash receipt creator, ToolMitra, #ReceiptMaker, #InvoiceGenerator">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Professional Online Receipt Maker - ToolMitra">
+    <meta property="og:description" content="Generate, print, and download professional business receipts instantly for free. Fully customizable with auto-calculations.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Universal Receipt Maker",
+      "description": "A high-precision, free online receipt and invoice generator that allows users to create itemized financial receipts, calculate taxes, and print documents.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "keywords": "receipt maker, invoice generator, bill creator, business utility",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        receipt: ['Courier Prime', 'monospace']
+                    },
+                    colors: { brandTeal: '#0f766e', brandSlate: '#334155' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8f9fa; color: #333333; scroll-behavior: smooth; }
+        
+        /* Print optimization styles */
+        @media print {
+            body * { visibility: hidden; background: transparent !important; }
+            #printableArea, #printableArea * { visibility: visible; }
+            #printableArea { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 no-print">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-600 hover:text-brandTeal"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="bg-teal-50 border-b border-teal-100 pt-12 pb-10 text-center no-print">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="w-16 h-16 mx-auto bg-white text-brandTeal rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm border border-teal-100">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <h1 class="text-[36px] md:text-[42px] font-bold text-gray-900 mb-4 tracking-tight">Instant Receipt Maker</h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">Fill in the fields, add your items, and generate a clean, customizable receipt to print or save as PDF instantly.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-10 px-4">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <section class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm lg:col-span-5 space-y-4 no-print">
+                <h2 class="text-xl font-bold text-gray-800 border-b pb-2"><i class="fas fa-cog text-brandTeal mr-2"></i> Customize Details</h2>
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Business Name</label>
+                    <input type="text" id="inputBusiness" class="w-full p-3 border border-gray-200 rounded-lg outline-none focus:border-brandTeal text-sm font-semibold" value="My Business Ltd." oninput="updateReceipt()">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Receipt No.</label>
+                        <input type="text" id="inputReceiptNo" class="w-full p-3 border border-gray-200 rounded-lg outline-none focus:border-brandTeal text-sm font-semibold" value="TM-1001" oninput="updateReceipt()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Currency Symbol</label>
+                        <select id="inputCurrency" class="w-full p-3 border border-gray-200 rounded-lg outline-none focus:border-brandTeal text-sm font-bold bg-gray-50" onchange="updateReceipt()">
+                            <option value="₹">INR (₹)</option>
+                            <option value="$">USD ($)</option>
+                            <option value="€">EUR (€)</option>
+                            <option value="£">GBP (£)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Customer Name</label>
+                    <input type="text" id="inputCustomer" class="w-full p-3 border border-gray-200 rounded-lg outline-none focus:border-brandTeal text-sm font-semibold" value="John Doe" oninput="updateReceipt()">
+                </div>
+
+                <div class="pt-2">
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-2 border-b pb-1">Items & Products</label>
+                    <div id="itemsContainer" class="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                        <div class="flex gap-2 item-row">
+                            <input type="text" placeholder="Item description" class="flex-grow p-2 border rounded-lg text-xs font-medium row-desc" value="Premium Consulting" oninput="updateReceipt()">
+                            <input type="number" placeholder="Qty" class="w-16 p-2 border rounded-lg text-xs font-bold text-center row-qty" value="1" min="1" oninput="updateReceipt()">
+                            <input type="number" placeholder="Price" class="w-24 p-2 border rounded-lg text-xs font-bold text-right row-price" value="1500" min="0" oninput="updateReceipt()">
+                            <button onclick="removeItemRow(this)" class="text-red-500 hover:text-red-700 px-1"><i class="fas fa-times-circle"></i></button>
+                        </div>
+                    </div>
+                    <button onclick="addItemRow()" class="mt-3 text-xs font-bold text-brandTeal hover:underline flex items-center gap-1"><i class="fas fa-plus-circle"></i> Add Item Line</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tax Rate (%)</label>
+                        <input type="number" id="inputTax" class="w-full p-2.5 border border-gray-200 rounded-lg outline-none focus:border-brandTeal text-sm font-bold" value="18" min="0" oninput="updateReceipt()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Discount (%)</label>
+                        <input type="number" id="inputDiscount" class="w-full p-2.5 border border-gray-200 rounded-lg outline-none focus:border-brandTeal text-sm font-bold" value="5" min="0" oninput="updateReceipt()">
+                    </div>
+                </div>
+
+                <button onclick="window.print()" class="w-full bg-brandTeal hover:bg-teal-800 text-white font-bold py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-md">
+                    <i class="fas fa-print"></i> Print or Save PDF
+                </button>
+            </section>
+
+            <section class="lg:col-span-7 flex justify-center">
+                <div id="printableArea" class="w-full max-w-[450px] bg-white border border-gray-300 p-6 md:p-8 rounded-none shadow-md font-receipt text-gray-800 text-sm tracking-wide relative">
+                    
+                    <div class="text-center space-y-1 mb-6 border-b border-dashed border-gray-400 pb-4">
+                        <h3 id="receiptBusName" class="text-xl font-bold text-gray-900 uppercase">MY BUSINESS LTD.</h3>
+                        <p class="text-xs text-gray-500">Official Transaction Receipt</p>
+                    </div>
+
+                    <div class="space-y-1 text-xs border-b border-dashed border-gray-400 pb-4 mb-4">
+                        <div class="flex justify-between"><span>RECEIPT NO:</span><span id="receiptNoText" class="font-bold">TM-1001</span></div>
+                        <div class="flex justify-between"><span>DATE:</span><span id="receiptDateText">2026-05-23</span></div>
+                        <div class="flex justify-between"><span>CUSTOMER:</span><span id="receiptCustText" class="font-bold">JOHN DOE</span></div>
+                    </div>
+
+                    <div class="grid grid-cols-12 font-bold text-xs border-b border-gray-400 pb-2 mb-2">
+                        <div class="col-span-6">ITEM DESCRIPTION</div>
+                        <div class="col-span-2 text-center">QTY</div>
+                        <div class="col-span-4 text-right">AMOUNT</div>
+                    </div>
+
+                    <div id="receiptItemsList" class="space-y-2 text-xs border-b border-dashed border-gray-400 pb-4 mb-4">
+                        </div>
+
+                    <div class="space-y-1.5 text-xs text-right max-w-[250px] ml-auto mb-6">
+                        <div class="flex justify-between"><span>Subtotal:</span><span id="receiptSubtotal">₹ 1,500.00</span></div>
+                        <div class="flex justify-between text-red-600"><span>Discount (<span id="receiptDiscountRate">5</span>%):</span><span id="receiptDiscountAmount">-₹ 75.00</span></div>
+                        <div class="flex justify-between"><span>Tax (<span id="receiptTaxRate">18</span>%):</span><span id="receiptTaxAmount">+₹ 256.50</span></div>
+                        <div class="flex justify-between font-bold text-sm text-gray-900 border-t border-gray-400 pt-1.5 mt-1.5">
+                            <span>TOTAL AMOUNT:</span>
+                            <span id="receiptTotal">₹ 1,681.50</span>
+                        </div>
+                    </div>
+
+                    <div class="text-center text-[11px] text-gray-500 border-t border-dashed border-gray-400 pt-4">
+                        <p class="font-bold">THANK YOU FOR YOUR BUSINESS!</p>
+                        <p class="text-[9px] mt-1 text-gray-400">Generated securely via ToolMitra</p>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+        <article class="max-w-5xl mx-auto mt-16 bg-white p-8 rounded-3xl border border-gray-200 shadow-sm no-print">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Why Use Our Professional Online Receipt Generator?</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">Modern enterprise solutions require streamlined, fast, and secure tools. ToolMitra's Receipt Maker is engineered to serve freelancers, retail managers, and corporate consultants globally. By eliminating complex account sign-ups and paid premium paywalls, you can structure complete financial bills with customized parameters within seconds.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-calculator text-brandTeal mr-2"></i> Automated Math Matrix</h3>
+                    <p class="text-sm text-gray-600">Every single ledger line automatically scales with total item amounts, tax rates, and discount bounds precisely without rounding errors.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-print text-brandTeal mr-2"></i> Print & Save Architecture</h3>
+                    <p class="text-sm text-gray-600">Our code contains dynamic print queries that intelligently hide browser bars and settings inputs, printing only the pristine transaction voucher paper.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg mb-2"><i class="fas fa-shield-alt text-brandTeal mr-2"></i> Local Device Security</h3>
+                    <p class="text-sm text-gray-600">Client details, inventory listings, and business transactions never touch any remote network cloud database. Complete client confidentiality is assured.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ReceiptMaker</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#InvoiceGenerator</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#ToolMitraBusiness</span>
+                <span class="text-xs font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">#BillGenerator</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        // Set dynamic modern date on initialization
+        document.getElementById('receiptDateText').innerText = new Date().toISOString().split('T')[0];
+
+        function addItemRow() {
+            const container = document.getElementById('itemsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = "flex gap-2 item-row";
+            newRow.innerHTML = `
+                <input type="text" placeholder="Item description" class="flex-grow p-2 border rounded-lg text-xs font-medium row-desc" oninput="updateReceipt()">
+                <input type="number" placeholder="Qty" class="w-16 p-2 border rounded-lg text-xs font-bold text-center row-qty" value="1" min="1" oninput="updateReceipt()">
+                <input type="number" placeholder="Price" class="w-24 p-2 border rounded-lg text-xs font-bold text-right row-price" value="0" min="0" oninput="updateReceipt()">
+                <button onclick="removeItemRow(this)" class="text-red-500 hover:text-red-700 px-1"><i class="fas fa-times-circle"></i></button>
+            `;
+            container.appendChild(newRow);
+            updateReceipt();
+        }
+
+        function removeItemRow(btn) {
+            const rows = document.querySelectorAll('.item-row');
+            if (rows.length > 1) {
+                btn.closest('.item-row').remove();
+                updateReceipt();
+            } else {
+                alert("At least one item line must remain on the receipt.");
+            }
+        }
+
+        function formatMoney(amount, symbol) {
+            return symbol + " " + amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function updateReceipt() {
+            // Fetch configuration fields
+            const busName = document.getElementById('inputBusiness').value || "BUSINESS NAME";
+            const receiptNo = document.getElementById('inputReceiptNo').value || "0000";
+            const customer = document.getElementById('inputCustomer').value || "VALUED CUSTOMER";
+            const currency = document.getElementById('inputCurrency').value;
+            const taxRate = parseFloat(document.getElementById('inputTax').value) || 0;
+            const discRate = parseFloat(document.getElementById('inputDiscount').value) || 0;
+
+            // Apply global metadata text updates
+            document.getElementById('receiptBusName').innerText = busName.toUpperCase();
+            document.getElementById('receiptNoText').innerText = receiptNo.toUpperCase();
+            document.getElementById('receiptCustText').innerText = customer.toUpperCase();
+            document.getElementById('receiptTaxRate').innerText = taxRate;
+            document.getElementById('receiptDiscountRate').innerText = discRate;
+
+            // Mathematical calculation variables
+            let subtotal = 0;
+            const receiptItemsList = document.getElementById('receiptItemsList');
+            receiptItemsList.innerHTML = "";
+
+            const rows = document.querySelectorAll('.item-row');
+            rows.forEach(row => {
+                const desc = row.querySelector('.row-desc').value || "Unlabeled Item";
+                const qty = parseInt(row.querySelector('.row-qty').value) || 0;
+                const price = parseFloat(row.querySelector('.row-price').value) || 0;
+                const totalItemAmount = qty * price;
+                subtotal += totalItemAmount;
+
+                // Inject specific row onto virtual ticket paper
+                const receiptRow = document.createElement('div');
+                receiptRow.className = "grid grid-cols-12 py-0.5";
+                receiptRow.innerHTML = `
+                    <div class="col-span-6 truncate">${desc.toUpperCase()}</div>
+                    <div class="col-span-2 text-center">${qty}</div>
+                    <div class="col-span-4 text-right">${formatMoney(totalItemAmount, currency)}</div>
+                `;
+                receiptItemsList.appendChild(receiptRow);
+            });
+
+            // Percentages math calculations
+            const discountAmount = (subtotal * discRate) / 100;
+            const taxableAmount = subtotal - discountAmount;
+            const taxAmount = (taxableAmount * taxRate) / 100;
+            const finalTotal = taxableAmount + taxAmount;
+
+            // Update financial view text values
+            document.getElementById('receiptSubtotal').innerText = formatMoney(subtotal, currency);
+            document.getElementById('receiptDiscountAmount').innerText = "-" + formatMoney(discountAmount, currency);
+            document.getElementById('receiptTaxAmount').innerText = "+" + formatMoney(taxAmount, currency);
+            document.getElementById('receiptTotal').innerText = formatMoney(finalTotal, currency);
+        }
+
+        // Run primary calculation metrics on launch
+        window.onload = updateReceipt;
+    </script>
+</body>
+</html>

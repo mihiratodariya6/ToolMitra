@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Free AI Text to Speech Converter - Lifelike Voice Generator | ToolMitra</title>
+    <meta name="description" content="Convert text to lifelike, natural speech online for free. Supports multiple languages, premium voices, custom speed, and pitch settings. Perfect ElevenLabs free alternative.">
+    <meta name="keywords" content="text to speech, AI voice generator, free voiceover maker, elevenlabs alternative, realistic text to speech, speech synthesis online, ToolMitra AI">
+    <meta name="author" content="ToolMitra">
+    
+    <meta property="og:title" content="Universal AI Text to Speech Generator - ToolMitra">
+    <meta property="og:description" content="Turn text into realistic audio formats instantly. Choose from multiple global voices and accents completely for free.">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra AI Text to Speech Converter",
+      "description": "An advanced, browser-native text-to-speech engine that converts text documents into high-quality spoken audio in multiple global accents.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brandDark: '#0f172a', brandNeon: '#6366f1', cyberGreen: '#10b981' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #090d16; color: #f1f5f9; scroll-behavior: smooth; }
+        .eleven-box { background-color: #111827; border: 1px solid #1f2937; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        /* Sliders */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #6366f1; cursor: pointer; margin-top: -6px; box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #374151; border-radius: 4px; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <nav class="bg-[#111827]/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><i class="fas fa-heart text-[#e5322d] text-2xl"></i> <span class="font-bold text-2xl text-white">ToolMitra</span></a>
+            <a href="../index.html" class="text-sm font-bold text-gray-400 hover:text-brandNeon"><i class="fas fa-arrow-left mr-2"></i> Back to Tools</a>
+        </div>
+    </nav>
+
+    <header class="pt-12 pb-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-1/4 text-indigo-500/5 text-[200px] pointer-events-none"><i class="fas fa-volume-up"></i></div>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <div class="inline-block bg-indigo-500/10 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest text-brandNeon mb-4 border border-indigo-500/20 uppercase">
+                <i class="fas fa-wave-square mr-1"></i> Next-Gen Audio Architecture
+            </div>
+            <h1 class="text-[36px] md:text-[46px] font-black text-white mb-4 tracking-tight leading-none">AI Text-to-Speech Studio</h1>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto">Generate realistic voiceovers instantly. Turn text into speech across multiple models and accents absolutely free.</p>
+        </div>
+    </header>
+
+    <main class="flex-grow py-6 px-4">
+        
+        <div class="max-w-4xl mx-auto eleven-box p-6 md:p-8 rounded-3xl mb-16">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2"><i class="fas fa-microphone text-brandNeon mr-1"></i> Choose AI Voice</label>
+                    <select id="voiceSelect" class="w-full p-3 bg-slate-900 border border-gray-700 rounded-xl outline-none focus:border-brandNeon text-sm font-bold text-gray-200">
+                        </select>
+                </div>
+
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"><i class="fas fa-tachometer-alt mr-1"></i> Pacing / Speed</label>
+                        <span id="speedVal" class="text-xs font-bold text-brandNeon">1.0x</span>
+                    </div>
+                    <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1" oninput="document.getElementById('speedVal').innerText = this.value + 'x'">
+                </div>
+
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"><i class="fas fa-sliders-h mr-1"></i> Voice Tone (Pitch)</label>
+                        <span id="pitchVal" class="text-xs font-bold text-brandNeon">1.0</span>
+                    </div>
+                    <input type="range" id="pitchSlider" min="0.5" max="1.5" step="0.1" value="1" oninput="document.getElementById('pitchVal').innerText = this.value">
+                </div>
+            </div>
+
+            <div class="relative mb-6">
+                <textarea id="textInput" class="w-full bg-slate-900 border-2 border-gray-800 rounded-2xl p-5 outline-none focus:border-brandNeon text-white text-lg placeholder-gray-600 resize-none h-60" placeholder="Type or paste your script here to synthesize natural speech waves..."></textarea>
+                
+                <div class="absolute bottom-4 right-4 text-xs font-bold text-gray-500" id="charCount">0 / 5000 Chars</div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-center bg-slate-900/50 p-4 rounded-2xl border border-gray-800">
+                <div class="flex items-center gap-2 text-xs font-bold text-gray-400">
+                    <span class="w-2 h-2 rounded-full bg-cyberGreen animate-ping"></span>
+                    <span>Ready to process local client synthesis</span>
+                </div>
+                
+                <div class="flex gap-3 w-full md:w-auto">
+                    <button onclick="stopSpeech()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold px-6 py-3 rounded-xl transition flex items-center gap-2 text-sm">
+                        <i class="fas fa-stop"></i> Stop
+                    </button>
+                    <button onclick="speakText()" id="generateBtn" class="flex-grow md:flex-grow-0 bg-brandNeon hover:bg-indigo-700 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-indigo-500/20 transition flex items-center justify-center gap-2 text-sm">
+                        <i class="fas fa-play"></i> Synthesize Speech
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <article class="max-w-4xl mx-auto bg-slate-900 p-8 rounded-3xl border border-gray-800 shadow-xl">
+            <h2 class="text-2xl font-bold text-white mb-4">The Science Behind Generative AI Text-to-Speech</h2>
+            <p class="text-gray-400 mb-6 leading-relaxed">Modern content architectures rely extensively on acoustic accuracy. ToolMitra's AI Speech Studio applies specialized high-velocity synthesis protocols that run directly inside the system container of your client sandbox. This ensures absolute processing safety and delivers instantaneous zero-latency voice outputs without cloud database tracking.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div class="bg-slate-950 p-5 rounded-2xl border border-gray-800">
+                    <h3 class="font-bold text-white text-md mb-2"><i class="fas fa-globe text-brandNeon mr-2"></i> Global Polyglot Setup</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">The internal parsing engine adapts system voices instantly across English (US/UK), Hindi, Gujarati, Spanish, and European telemetry configurations.</p>
+                </div>
+                <div class="bg-slate-950 p-5 rounded-2xl border border-gray-800">
+                    <h3 class="font-bold text-white text-md mb-2"><i class="fas fa-sliders-h text-brandNeon mr-2"></i> Custom Telemetry</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Fine-tune acoustic models by shifting pacing sliders from 0.5x to 2.0x alongside custom wave pitch variations for perfect creative synchronization.</p>
+                </div>
+                <div class="bg-slate-950 p-5 rounded-2xl border border-gray-800">
+                    <h3 class="font-bold text-white text-md mb-2"><i class="fas fa-user-shield text-brandNeon mr-2"></i> Sovereign Data Privacy</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">Your intellectual scripts, text files, and video drafts remain entirely inside your device. Zero bytes are uploaded to remote systems.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-800 flex flex-wrap gap-2 justify-center">
+                <span class="text-xs font-bold text-gray-500 bg-slate-950 px-3 py-1 rounded-full border border-gray-800">#TextToSpeech</span>
+                <span class="text-xs font-bold text-gray-500 bg-slate-950 px-3 py-1 rounded-full border border-gray-800">#AIStudio</span>
+                <span class="text-xs font-bold text-gray-500 bg-slate-950 px-3 py-1 rounded-full border border-gray-800">#VoiceGenerator</span>
+                <span class="text-xs font-bold text-gray-500 bg-slate-950 px-3 py-1 rounded-full border border-gray-800">#ToolMitraAI</span>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        const synth = window.speechSynthesis;
+        const textInput = document.getElementById('textInput');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const rateSlider = document.getElementById('rateSlider');
+        const pitchSlider = document.getElementById('pitchSlider');
+        const charCount = document.getElementById('charCount');
+        const generateBtn = document.getElementById('generateBtn');
+
+        let voices = [];
+
+        function populateVoiceList() {
+            if (typeof synth === 'undefined') return;
+            
+            voices = synth.getVoices();
+            voiceSelect.innerHTML = '';
+
+            voices.forEach((voice, i) => {
+                const option = document.createElement('option');
+                option.value = i;
+                // Clean look like ElevenLabs premium tag labels
+                option.innerText = `${voice.name} (${voice.lang})`;
+                
+                if (voice.default) {
+                    option.selected = true;
+                }
+                voiceSelect.appendChild(option);
+            });
+            
+            // Fallback text if no voices loaded yet
+            if(voices.length === 0) {
+                const option = document.createElement('option');
+                option.innerText = "Loading Native AI Models...";
+                voiceSelect.appendChild(option);
+            }
+        }
+
+        populateVoiceList();
+        if (typeof synth !== 'undefined' && synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = populateVoiceList;
+        }
+
+        // Live Count Metrics
+        textInput.addEventListener('input', () => {
+            const length = textInput.value.length;
+            charCount.innerText = `${length} / 5000 Chars`;
+            if(length > 5000) {
+                charCount.classList.add('text-red-500');
+            } else {
+                charCount.classList.remove('text-red-500');
+            }
+        });
+
+        function speakText() {
+            if (synth.speaking) {
+                console.error('speechSynthesis.speaking');
+                return;
+            }
+
+            const text = textInput.value.trim();
+            if (!text) {
+                alert("Please input text to translate into vocal waveforms.");
+                return;
+            }
+
+            if(text.length > 5000) {
+                alert("Text limits bounds exceeded (Max 5000 characters).");
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Set Selected Voice Model Map
+            if(voices.length > 0) {
+                utterance.voice = voices[voiceSelect.value];
+            }
+            
+            utterance.rate = parseFloat(rateSlider.value);
+            utterance.pitch = parseFloat(pitchSlider.value);
+
+            // Change UI Button to Reflect Matrix Activity
+            utterance.onstart = function() {
+                generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Streaming Audio...';
+                generateBtn.classList.add('bg-green-600');
+            };
+
+            utterance.onend = function() {
+                generateBtn.innerHTML = '<i class="fas fa-play"></i> Synthesize Speech';
+                generateBtn.classList.remove('bg-green-600');
+            };
+
+            utterance.onerror = function() {
+                generateBtn.innerHTML = '<i class="fas fa-play"></i> Synthesize Speech';
+                generateBtn.classList.remove('bg-green-600');
+            };
+
+            synth.speak(utterance);
+        }
+
+        function stopSpeech() {
+            synth.cancel();
+            generateBtn.innerHTML = '<i class="fas fa-play"></i> Synthesize Speech';
+            generateBtn.classList.remove('bg-green-600');
+        }
+    </script>
+</body>
+</html>
