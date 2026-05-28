@@ -36,37 +36,44 @@
         .icon-box { display: inline-flex; position: relative; }
         .icon-box .main-icon { font-size: 1.8rem; }
         .icon-box .sub-icon { position: absolute; bottom: -4px; right: -8px; font-size: 0.8rem; background: white; border-radius: 50%; padding: 2px; }
+        
+        /* Smooth Animation for Live Filtering */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .show-card {
+            display: block;
+            animation: popIn 0.3s ease forwards;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
     <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-[1400px] mx-auto px-4">
-            <div class="flex justify-between h-16 items-center">
+            <div class="flex justify-between items-center h-16 w-full">
+                
                 <div class="flex items-center gap-8">
-                    <a href="#" class="flex items-center gap-2 hover:opacity-80 transition">
-    <img src="ToolMitra_NoBG_HD.png" alt="ToolMitra Logo" class="h-14 w-auto object-contain transform scale-110 origin-left">
-    <span class="font-bold text-2xl tracking-tight text-gray-900">ToolMitra</span>
-</a>
+                    <a href="index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+                        <img src="ToolMitra_NoBG_HD.png" alt="ToolMitra Logo" class="h-14 w-auto object-contain transform scale-110 origin-left">
+                        <span class="font-bold text-2xl tracking-tight text-gray-900">ToolMitra</span>
+                    </a>
                     
-                    <div class="hidden lg:flex space-x-6 text-[13px] font-bold text-gray-700 tracking-wide">
+                    <div class="hidden lg:flex space-x-6 text-[13px] font-bold text-gray-700 tracking-wide items-center">
                         <a href="tools/merge-pdf.html" class="hover:text-brandRed transition">MERGE PDF</a>
                         <a href="tools/split-pdf.html" class="hover:text-brandRed transition">SPLIT PDF</a>
                         <a href="tools/compress-pdf.html" class="hover:text-brandRed transition">COMPRESS PDF</a>
-                        <div class="hover:text-brandRed transition cursor-pointer flex items-center gap-1">
-                            CONVERT PDF <i class="fas fa-chevron-down text-[10px]"></i>
-                        </div>
-                        <div class="hover:text-brandRed transition cursor-pointer flex items-center gap-1">
-                            ALL TOOLS <i class="fas fa-chevron-down text-[10px]"></i>
-                        </div>
+                        <a href="tools/remove-bg.html" class="hover:text-brandRed transition">REMOVE BG</a>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4 ml-auto">
                     <a href="#" class="text-sm font-bold text-gray-700 hover:text-brandRed hidden sm:block">Login</a>
                     <a href="#" class="bg-brandRed hover:bg-red-700 text-white px-5 py-2 rounded text-sm font-bold transition">Sign up</a>
                     <button class="lg:hidden text-gray-600 text-xl"><i class="fas fa-bars"></i></button>
                 </div>
+                
             </div>
         </div>
     </nav>
@@ -80,402 +87,368 @@
                 Every tool you need to use PDFs, manage numbers, and Indian utilities, at your fingertips. All are 100% FREE and easy to use! Merge, split, compress, and convert with just a few clicks.
             </p>
             
-            <div class="flex flex-wrap justify-center gap-2 mb-10">
-                <button class="bg-gray-800 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm">All</button>
-                <button class="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">Workflows</button>
-                <button class="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">Indian Spec</button>
-                <button class="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">Image Tools</button>
-                <button class="bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">AI Tools</button>
+            <div class="flex flex-wrap justify-center gap-2 mb-10" id="categoryFilters">
+                <button onclick="filterTools('all', this)" class="filter-btn active bg-gray-800 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm transition">All</button>
+                <button onclick="filterTools('pdf', this)" class="filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">PDF Tools</button>
+                <button onclick="filterTools('image', this)" class="filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">Image & Media</button>
+                <button onclick="filterTools('ai', this)" class="filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">AI Tools</button>
+                <button onclick="filterTools('finance', this)" class="filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">Calculators & Finance</button>
+                <button onclick="filterTools('utilities', this)" class="filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">Utilities</button>
             </div>
         </div>
 
-        <div class="max-w-[1300px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div class="max-w-[1300px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" id="toolsGrid">
             
-            <a href="tools/merge-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/merge-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#e5322d] mb-4">
-                    <i class="fas fa-file-pdf main-icon"></i>
-                    <i class="fas fa-compress-arrows-alt sub-icon text-[#e5322d]"></i>
+                    <i class="fas fa-file-pdf main-icon"></i><i class="fas fa-compress-arrows-alt sub-icon text-[#e5322d]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Merge PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Combine PDFs in the order you want with the easiest PDF merger available.</p>
             </a>
 
-            <a href="tools/split-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/split-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#f0714b] mb-4">
-                    <i class="fas fa-file-pdf main-icon"></i>
-                    <i class="fas fa-cut sub-icon text-[#f0714b]"></i>
+                    <i class="fas fa-file-pdf main-icon"></i><i class="fas fa-cut sub-icon text-[#f0714b]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Split PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Separate one page or a whole set for easy conversion into independent PDF files.</p>
             </a>
 
-            <a href="tools/compress-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/compress-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#4bbb56] mb-4">
-                    <i class="fas fa-file-pdf main-icon"></i>
-                    <i class="fas fa-compress sub-icon text-[#4bbb56]"></i>
+                    <i class="fas fa-file-pdf main-icon"></i><i class="fas fa-compress sub-icon text-[#4bbb56]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Compress PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Reduce file size while optimizing for maximal PDF quality.</p>
             </a>
 
-            <a href="tools/word-to-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/word-to-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#3c78d8] mb-4">
-                    <i class="fas fa-file-word main-icon"></i>
-                    <i class="fas fa-arrow-right sub-icon text-[#3c78d8]"></i>
+                    <i class="fas fa-file-word main-icon"></i><i class="fas fa-arrow-right sub-icon text-[#3c78d8]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Word to PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Make DOC and DOCX files easy to read by converting them to PDF.</p>
             </a>
 
-            <a href="tools/ppt-to-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/ppt-to-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#ff8e36] mb-4">
-                    <i class="fas fa-file-powerpoint main-icon"></i>
-                    <i class="fas fa-arrow-right sub-icon text-[#ff8e36]"></i>
+                    <i class="fas fa-file-powerpoint main-icon"></i><i class="fas fa-arrow-right sub-icon text-[#ff8e36]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">PowerPoint to PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Make PPT and PPTX slideshows easy to view by converting them to PDF.</p>
             </a>
-            <a href="tools/resize-image.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/resize-image.html" data-category="image" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#f97316] mb-4">
-                    <i class="fas fa-image main-icon"></i>
-                    <i class="fas fa-expand-arrows-alt sub-icon text-[#f97316]"></i>
+                    <i class="fas fa-image main-icon"></i><i class="fas fa-expand-arrows-alt sub-icon text-[#f97316]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Resize Image</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Change the dimensions of any image in pixels without losing quality.</p>
             </a>
-            <a href="tools/crop-image.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/crop-image.html" data-category="image" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#14b8a6] mb-4">
-                    <i class="fas fa-crop-alt main-icon"></i>
-                    <i class="fas fa-arrows-alt sub-icon text-[#14b8a6]"></i>
+                    <i class="fas fa-crop-alt main-icon"></i><i class="fas fa-arrows-alt sub-icon text-[#14b8a6]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Crop Image</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Visually trim images, rotate, flip, or set specific aspect ratios.</p>
             </a>
-            <a href="tools/rotate-file.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/rotate-file.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#9333ea] mb-4">
-                    <i class="fas fa-sync-alt main-icon"></i>
-                    <i class="fas fa-file-pdf sub-icon text-[#9333ea]"></i>
+                    <i class="fas fa-sync-alt main-icon"></i><i class="fas fa-file-pdf sub-icon text-[#9333ea]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Rotate PDF & Image</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Rotate specific PDF pages or free-rotate any image easily.</p>
             </a>
-<a href="tools/image-extractor.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
-    <div class="icon-box text-[#0d9488] mb-4">
-        <i class="fas fa-globe main-icon"></i>
-        <i class="fas fa-images sub-icon text-[#0d9488]"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Link To Imager Download</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Extract and download all images from any public website URL.</p>
-</a>
 
-<a href="tools/video-extractor.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
-    <div class="icon-box text-[#0284c7] mb-4">
-        <i class="fas fa-globe main-icon"></i>
-        <i class="fas fa-video sub-icon text-[#0284c7]"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Video Extractor</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Extract and download public HTML5 videos from any webpage URL.</p>
-</a>
-            <a href="tools/aadhaar-resize.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/image-extractor.html" data-category="image" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
+                <div class="icon-box text-[#0d9488] mb-4">
+                    <i class="fas fa-globe main-icon"></i><i class="fas fa-images sub-icon text-[#0d9488]"></i>
+                </div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Link To Imager Download</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Extract and download all images from any public website URL.</p>
+            </a>
+
+            <a href="tools/video-extractor.html" data-category="image" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
+                <div class="icon-box text-[#0284c7] mb-4">
+                    <i class="fas fa-globe main-icon"></i><i class="fas fa-video sub-icon text-[#0284c7]"></i>
+                </div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Video Extractor</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Extract and download public HTML5 videos from any webpage URL.</p>
+            </a>
+
+            <a href="tools/aadhaar-resize.html" data-category="utilities" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#f0ad4e] mb-4">
-                    <i class="fas fa-id-card main-icon"></i>
-                    <i class="fas fa-crop sub-icon text-[#f0ad4e]"></i>
+                    <i class="fas fa-id-card main-icon"></i><i class="fas fa-crop sub-icon text-[#f0ad4e]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Aadhaar Resize</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Auto crop & compress your documents to exact government specifications.</p>
             </a>
 
-            <a href="tools/number-to-words.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/number-to-words.html" data-category="utilities" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#5bc0de] mb-4">
-                    <i class="fas fa-rupee-sign main-icon"></i>
-                    <i class="fas fa-font sub-icon text-[#5bc0de]"></i>
+                    <i class="fas fa-rupee-sign main-icon"></i><i class="fas fa-font sub-icon text-[#5bc0de]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Number to Words</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Convert numbers to text in English, Gujarati, and Hindi with Indian format.</p>
             </a>
-            <a href="tools/text-to-speech.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden group">
-    <div class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">PRO AI</div>
-    <div class="icon-box text-indigo-600 mb-4">
-        <i class="fas fa-volume-up main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">AI Voice Studio</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Turn text into lifelike speech instantly. Supports global languages, pacing, and pitch shifting.</p>
-</a>
-<a href="tools/fancy-text.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden group">
-    <div class="absolute top-0 right-0 bg-fuchsia-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">SOCIAL</div>
-    <div class="icon-box text-fuchsia-500 mb-4">
-        <i class="fas fa-font main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Fancy Text Generator</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Type your name and get 50+ stylish, copy-paste ready fonts for Instagram bios and gaming.</p>
-</a>
 
-           <a href="tools/font-converter.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/text-to-speech.html" data-category="ai" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden group">
+                <div class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">PRO AI</div>
+                <div class="icon-box text-indigo-600 mb-4"><i class="fas fa-volume-up main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">AI Voice Studio</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Turn text into lifelike speech instantly. Supports global languages, pacing, and pitch shifting.</p>
+            </a>
+
+            <a href="tools/fancy-text.html" data-category="utilities" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden group">
+                <div class="absolute top-0 right-0 bg-fuchsia-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">SOCIAL</div>
+                <div class="icon-box text-fuchsia-500 mb-4"><i class="fas fa-font main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Fancy Text Generator</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Type your name and get 50+ stylish, copy-paste ready fonts for Instagram bios and gaming.</p>
+            </a>
+
+            <a href="tools/font-converter.html" data-category="ai" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#20c997] mb-4">
-                    <i class="fas fa-globe-asia main-icon"></i>
-                    <i class="fas fa-language sub-icon text-[#20c997]"></i>
+                    <i class="fas fa-globe-asia main-icon"></i><i class="fas fa-language sub-icon text-[#20c997]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Universal Translator</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Auto-detect and translate text between 100+ worldwide languages instantly.</p>
             </a>
-            <a href="tools/notes-to-pdf.html" class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
-    <div class="text-[#ef4444] mb-4"><i class="fas fa-file-pdf text-2xl"></i></div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Notes to PDF</h3>
-    <p class="text-[13px] text-gray-500">Convert your typed notes directly into a beautifully formatted PDF document.</p>
-</a>
-<a href="tools/handwriting-to-text.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">AI POWERED</div>
-    
-    <div class="icon-box text-[#4f46e5] mb-4">
-        <i class="fas fa-image main-icon"></i>
-        <i class="fas fa-language sub-icon text-[#4f46e5]"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Image to Text (OCR)</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Extract text from handwriting, photos, and scanned documents using AI.</p>
-</a>
-            <a href="tools/grammar-fix.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">AI TOOL</div>
-    <div class="icon-box text-[#10b981] mb-4">
-        <i class="fas fa-spell-check main-icon"></i>
-        <i class="fas fa-magic sub-icon text-[#10b981]"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Grammar Fix (AI)</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Auto-correct your grammar and spelling mistakes instantly across multiple languages.</p>
-</a>
-<a href="tools/random-picker.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
-    <div class="icon-box text-[#8b5cf6] mb-4">
-        <i class="fas fa-dice main-icon"></i>
-        <i class="fas fa-gift sub-icon text-[#8b5cf6]"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Random Picker</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Spin the wheel and pick a random winner for giveaways and games.</p>
-</a>
-            <a href="tools/color-picker.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/notes-to-pdf.html" data-category="pdf" class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                <div class="text-[#ef4444] mb-4"><i class="fas fa-file-pdf text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Notes to PDF</h3>
+                <p class="text-[13px] text-gray-500">Convert your typed notes directly into a beautifully formatted PDF document.</p>
+            </a>
+
+            <a href="tools/handwriting-to-text.html" data-category="ai" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">AI POWERED</div>
+                <div class="icon-box text-[#4f46e5] mb-4">
+                    <i class="fas fa-image main-icon"></i><i class="fas fa-language sub-icon text-[#4f46e5]"></i>
+                </div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Image to Text (OCR)</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Extract text from handwriting, photos, and scanned documents using AI.</p>
+            </a>
+
+            <a href="tools/grammar-fix.html" data-category="ai" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">AI TOOL</div>
+                <div class="icon-box text-[#10b981] mb-4">
+                    <i class="fas fa-spell-check main-icon"></i><i class="fas fa-magic sub-icon text-[#10b981]"></i>
+                </div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Grammar Fix (AI)</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Auto-correct your grammar and spelling mistakes instantly across multiple languages.</p>
+            </a>
+
+            <a href="tools/random-picker.html" data-category="utilities" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
+                <div class="icon-box text-[#8b5cf6] mb-4">
+                    <i class="fas fa-dice main-icon"></i><i class="fas fa-gift sub-icon text-[#8b5cf6]"></i>
+                </div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Random Picker</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Spin the wheel and pick a random winner for giveaways and games.</p>
+            </a>
+
+            <a href="tools/color-picker.html" data-category="utilities" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#ec4899] mb-4">
-                    <i class="fas fa-eye-dropper main-icon"></i>
-                    <i class="fas fa-palette sub-icon text-[#ec4899]"></i>
+                    <i class="fas fa-eye-dropper main-icon"></i><i class="fas fa-palette sub-icon text-[#ec4899]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Color Picker</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Pick any color from your screen and get its Hex or RGB values.</p>
             </a>
-            <a href="tools/remove-bg.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/remove-bg.html" data-category="image" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#9c27b0] mb-4">
-                    <i class="fas fa-image main-icon"></i>
-                    <i class="fas fa-eraser sub-icon text-[#9c27b0]"></i>
+                    <i class="fas fa-image main-icon"></i><i class="fas fa-eraser sub-icon text-[#9c27b0]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Remove Background</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Remove backgrounds from images instantly with high-precision AI.</p>
             </a>
 
-            <a href="tools/pdf-to-jpg.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+            <a href="tools/pdf-to-jpg.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#f1c40f] mb-4">
-                    <i class="fas fa-file-pdf main-icon"></i>
-                    <i class="fas fa-image sub-icon text-[#f1c40f]"></i>
+                    <i class="fas fa-file-pdf main-icon"></i><i class="fas fa-image sub-icon text-[#f1c40f]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">PDF to JPG</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Convert each PDF page into a JPG or extract all images contained in a PDF.</p>
             </a>
-            <a href="tools/jpg-to-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/jpg-to-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#00bcd4] mb-4">
-                    <i class="fas fa-images main-icon"></i>
-                    <i class="fas fa-file-pdf sub-icon text-[#00bcd4]"></i>
+                    <i class="fas fa-images main-icon"></i><i class="fas fa-file-pdf sub-icon text-[#00bcd4]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">JPG to PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Convert your JPG, PNG, or JPEG images to a single PDF document instantly.</p>
             </a>
-            <a href="tools/excel-to-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/excel-to-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#10b981] mb-4">
-                    <i class="fas fa-file-excel main-icon"></i>
-                    <i class="fas fa-arrow-right sub-icon text-[#10b981]"></i>
+                    <i class="fas fa-file-excel main-icon"></i><i class="fas fa-arrow-right sub-icon text-[#10b981]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Excel to PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Convert your spreadsheets (XLSX, XLS, CSV) to beautiful, easy-to-read PDF documents.</p>
             </a>
-            <a href="tools/watermark-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/watermark-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#6366f1] mb-4">
-                    <i class="fas fa-stamp main-icon"></i>
-                    <i class="fas fa-pencil-alt sub-icon text-[#6366f1]"></i>
+                    <i class="fas fa-stamp main-icon"></i><i class="fas fa-pencil-alt sub-icon text-[#6366f1]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Watermark PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Stamp your PDF with custom text watermarks for document protection.</p>
             </a>
-            <a href="tools/lock-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/lock-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#475569] mb-4">
-                    <i class="fas fa-file-pdf main-icon"></i>
-                    <i class="fas fa-lock sub-icon text-[#475569]"></i>
+                    <i class="fas fa-file-pdf main-icon"></i><i class="fas fa-lock sub-icon text-[#475569]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Lock PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Add a secure password to your PDF files to protect sensitive information.</p>
             </a>
-            <a href="tools/unlock-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/unlock-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#e5322d] mb-4">
-                    <i class="fas fa-lock-open main-icon"></i>
-                    <i class="fas fa-unlock sub-icon text-[#e5322d]"></i>
+                    <i class="fas fa-lock-open main-icon"></i><i class="fas fa-unlock sub-icon text-[#e5322d]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Unlock PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Remove password protection from your PDF files instantly.</p>
             </a>
-            <a href="tools/image-to-text.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
-                <div class="icon-box text-[#3b82f6] mb-4">
-                    <i class="fas fa-font main-icon"></i>
-                    <i class="fas fa-camera sub-icon text-[#3b82f6]"></i>
-                </div>
-                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Image to Text (OCR)</h3>
-                <p class="text-[13px] text-gray-500 leading-relaxed">Instantly copy text from any image or scanned document.</p>
-            </a>
-            <a href="tools/excel-merge.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/excel-merge.html" data-category="utilities" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#10b981] mb-4">
-                    <i class="fas fa-file-excel main-icon"></i>
-                    <i class="fas fa-object-group sub-icon text-[#10b981]"></i>
+                    <i class="fas fa-file-excel main-icon"></i><i class="fas fa-object-group sub-icon text-[#10b981]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Merge Excel</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Combine multiple spreadsheet files into one master Excel file.</p>
             </a>
-            <a href="tools/qr-code-generator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/qr-code-generator.html" data-category="utilities" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#6366f1] mb-4">
-                    <i class="fas fa-qrcode main-icon"></i>
-                    <i class="fas fa-plus sub-icon text-[#6366f1]"></i>
+                    <i class="fas fa-qrcode main-icon"></i><i class="fas fa-plus sub-icon text-[#6366f1]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">QR Code Generator</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Create and download custom QR codes for any link or text.</p>
             </a>
-            <a href="tools/pdf-to-text.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/pdf-to-text.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#3b82f6] mb-4">
-                    <i class="fas fa-file-alt main-icon"></i>
-                    <i class="fas fa-font sub-icon text-[#3b82f6]"></i>
+                    <i class="fas fa-file-alt main-icon"></i><i class="fas fa-font sub-icon text-[#3b82f6]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">PDF to Text</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Extract text from PDF documents for easy editing.</p>
             </a>
-            <a href="tools/password-generator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/password-generator.html" data-category="utilities" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#8b5cf6] mb-4">
-                    <i class="fas fa-key main-icon"></i>
-                    <i class="fas fa-shield-alt sub-icon text-[#8b5cf6]"></i>
+                    <i class="fas fa-key main-icon"></i><i class="fas fa-shield-alt sub-icon text-[#8b5cf6]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Password Generator</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Create highly secure, random passwords to protect your online accounts.</p>
             </a>
-            <a href="tools/e-sign-pdf.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+
+            <a href="tools/e-sign-pdf.html" data-category="pdf" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
                 <div class="icon-box text-[#2563eb] mb-4">
-                    <i class="fas fa-file-signature main-icon"></i>
-                    <i class="fas fa-pen-nib sub-icon text-[#2563eb]"></i>
+                    <i class="fas fa-file-signature main-icon"></i><i class="fas fa-pen-nib sub-icon text-[#2563eb]"></i>
                 </div>
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">E-Sign PDF</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Draw your digital signature and stamp it on your PDF documents easily.</p>
             </a>
-            <a href="tools/emi-calculator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
-    <div class="icon-box text-blue-600 mb-4"><i class="fas fa-calculator text-2xl"></i></div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">EMI Calculator</h3>
-    <p class="text-[13px] text-gray-500">Calculate your monthly loan payments easily.</p>
-</a>
 
-<a href="tools/age-calculator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
-    <div class="icon-box text-pink-600 mb-4"><i class="fas fa-birthday-cake text-2xl"></i></div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Age Calculator</h3>
-    <p class="text-[13px] text-gray-500">Find your exact age in years, months, and days.</p>
-    
-</a>
+            <a href="tools/emi-calculator.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+                <div class="icon-box text-blue-600 mb-4"><i class="fas fa-calculator text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">EMI Calculator</h3>
+                <p class="text-[13px] text-gray-500">Calculate your monthly loan payments easily.</p>
+            </a>
 
-<a href="tools/gst-calculator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
-    <div class="icon-box text-orange-500 mb-4"><i class="fas fa-percent text-2xl"></i></div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">GST Calculator</h3>
-    <p class="text-[13px] text-gray-500">Calculate GST amount and total price easily.</p>
-</a>
-<a href="tools/percentage-calculator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
-    <div class="text-indigo-600 mb-4"><i class="fas fa-percent text-2xl"></i></div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Percentage Calculator</h3>
-    <p class="text-[13px] text-gray-500">Find percentages quickly and accurately.</p>
-</a>
-<a href="tools/social-seo-geo-guide.html" class="tool-card bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl hover:shadow-2xl transition relative overflow-hidden group block">
-    <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg z-10">NEW GUIDE</div>
-    <div class="icon-box text-emerald-400 mb-4 relative z-10">
-        <i class="fas fa-rocket main-icon"></i>
-    </div>
-    <h3 class="font-bold text-[18px] text-white mb-2 relative z-10">SEO & GEO Masterclass</h3>
-    <p class="text-[13px] text-slate-300 leading-relaxed relative z-10">Learn how to rank your content globally on Instagram, YouTube, and AI engines like ChatGPT.</p>
-    
-    <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
-</a>
-<a href="tools/scientific-calculator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
-    <div class="icon-box text-slate-800 mb-4">
-        <i class="fas fa-square-root-alt main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Scientific Calculator</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Advanced online calculator for math, trigonometry, logs, and more.</p>
-</a>
-<a href="tools/unit-converter.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
-    <div class="icon-box text-blue-600 mb-4">
-        <i class="fas fa-exchange-alt main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Unit Converter</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Convert Length, Weight, Area, and Temperature with absolute global accuracy.</p>
-</a>
-<a href="tools/roman-converter.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
-    <div class="icon-box text-amber-600 mb-4">
-        <i class="fas fa-landmark main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Roman Numerals</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Bidirectional translator. Convert numbers to Roman numerals and vice versa.</p>
-</a>
-<a href="tools/sip-calculator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">FINANCE</div>
-    <div class="icon-box text-emerald-600 mb-4">
-        <i class="fas fa-rupee-sign main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">SIP Calculator</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Calculate mutual fund returns and plan your wealth creation with compounding.</p>
-</a>
-<a href="tools/words-to-number.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="icon-box text-indigo-700 mb-4">
-        <i class="fas fa-spell-check main-icon"></i>
-        <i class="fas fa-hashtag sub-icon text-indigo-700"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Words to Number</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Convert text like "One million" into digits instantly. Supports Indian & International formats.</p>
-</a>
-<a href="tools/receipt-maker.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="absolute top-0 right-0 bg-teal-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">BUSINESS</div>
-    <div class="icon-box text-teal-700 mb-4">
-        <i class="fas fa-file-invoice-dollar main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Receipt Maker</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Generate customized business bills and receipts to print or save as PDF instantly.</p>
-</a>
-<a href="tools/assignment-helper.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">AI TOOL</div>
-    <div class="icon-box text-violet-600 mb-4">
-        <i class="fas fa-robot main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Assignment Helper</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">AI engine to instantly generate structured outlines and thesis ideas for essays.</p>
-</a>
-<a href="tools/cheque-generator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="absolute top-0 right-0 bg-blue-800 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">BANKING</div>
-    <div class="icon-box text-blue-800 mb-4">
-        <i class="fas fa-money-check-alt main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Cheque Writer</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Convert numerical amounts into standard text for writing secure bank cheques.</p>
-</a>
-<a href="tools/youtube-thumbnail.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">TRENDING</div>
-    <div class="icon-box text-red-600 mb-4">
-        <i class="fab fa-youtube main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">YT Thumbnail Saver</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Extract and download 4K/HD thumbnails directly from any YouTube video or Shorts link.</p>
-</a>
-<a href="tools/prompt-generator.html" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
-    <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">TRENDING</div>
-    <div class="icon-box text-indigo-600 mb-4">
-        <i class="fas fa-terminal main-icon text-2xl"></i>
-    </div>
-    <h3 class="font-bold text-[17px] text-gray-900 mb-2">Prompt Generator</h3>
-    <p class="text-[13px] text-gray-500 leading-relaxed">Master prompt engineering. Generate expert commands for ChatGPT and Midjourney instantly.</p>
-</a>
+            <a href="tools/age-calculator.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+                <div class="icon-box text-pink-600 mb-4"><i class="fas fa-birthday-cake text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Age Calculator</h3>
+                <p class="text-[13px] text-gray-500">Find your exact age in years, months, and days.</p>
+            </a>
 
-        
+            <a href="tools/gst-calculator.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
+                <div class="icon-box text-orange-500 mb-4"><i class="fas fa-percent text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">GST Calculator</h3>
+                <p class="text-[13px] text-gray-500">Calculate GST amount and total price easily.</p>
+            </a>
 
+            <a href="tools/percentage-calculator.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
+                <div class="text-indigo-600 mb-4"><i class="fas fa-percent text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Percentage Calculator</h3>
+                <p class="text-[13px] text-gray-500">Find percentages quickly and accurately.</p>
+            </a>
+
+            <a href="tools/social-seo-geo-guide.html" data-category="utilities" class="tool-card bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-6 border border-slate-700 shadow-xl hover:shadow-2xl transition relative overflow-hidden group block">
+                <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg z-10">NEW GUIDE</div>
+                <div class="icon-box text-emerald-400 mb-4 relative z-10"><i class="fas fa-rocket main-icon"></i></div>
+                <h3 class="font-bold text-[18px] text-white mb-2 relative z-10">SEO & GEO Masterclass</h3>
+                <p class="text-[13px] text-slate-300 leading-relaxed relative z-10">Learn how to rank your content globally on Instagram, YouTube, and AI engines like ChatGPT.</p>
+            </a>
+
+            <a href="tools/scientific-calculator.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
+                <div class="icon-box text-slate-800 mb-4"><i class="fas fa-square-root-alt main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Scientific Calculator</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Advanced online calculator for math, trigonometry, logs, and more.</p>
+            </a>
+
+            <a href="tools/unit-converter.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
+                <div class="icon-box text-blue-600 mb-4"><i class="fas fa-exchange-alt main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Unit Converter</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Convert Length, Weight, Area, and Temperature with absolute global accuracy.</p>
+            </a>
+
+            <a href="tools/roman-converter.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition">
+                <div class="icon-box text-amber-600 mb-4"><i class="fas fa-landmark main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Roman Numerals</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Bidirectional translator. Convert numbers to Roman numerals and vice versa.</p>
+            </a>
+
+            <a href="tools/sip-calculator.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">FINANCE</div>
+                <div class="icon-box text-emerald-600 mb-4"><i class="fas fa-rupee-sign main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">SIP Calculator</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Calculate mutual fund returns and plan your wealth creation with compounding.</p>
+            </a>
+
+            <a href="tools/words-to-number.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="icon-box text-indigo-700 mb-4"><i class="fas fa-spell-check main-icon"></i><i class="fas fa-hashtag sub-icon text-indigo-700"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Words to Number</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Convert text like "One million" into digits instantly. Supports Indian & International formats.</p>
+            </a>
+
+            <a href="tools/receipt-maker.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-teal-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">BUSINESS</div>
+                <div class="icon-box text-teal-700 mb-4"><i class="fas fa-file-invoice-dollar main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Receipt Maker</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Generate customized business bills and receipts to print or save as PDF instantly.</p>
+            </a>
+
+            <a href="tools/assignment-helper.html" data-category="ai" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">AI TOOL</div>
+                <div class="icon-box text-violet-600 mb-4"><i class="fas fa-robot main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Assignment Helper</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">AI engine to instantly generate structured outlines and thesis ideas for essays.</p>
+            </a>
+
+            <a href="tools/cheque-generator.html" data-category="finance" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-blue-800 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">BANKING</div>
+                <div class="icon-box text-blue-800 mb-4"><i class="fas fa-money-check-alt main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Cheque Writer</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Convert numerical amounts into standard text for writing secure bank cheques.</p>
+            </a>
+
+            <a href="tools/youtube-thumbnail.html" data-category="image" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">TRENDING</div>
+                <div class="icon-box text-red-600 mb-4"><i class="fab fa-youtube main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">YT Thumbnail Saver</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Extract and download 4K/HD thumbnails directly from any YouTube video or Shorts link.</p>
+            </a>
+
+            <a href="tools/prompt-generator.html" data-category="ai" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">TRENDING</div>
+                <div class="icon-box text-indigo-600 mb-4"><i class="fas fa-terminal main-icon text-2xl"></i></div>
+                <h3 class="font-bold text-[17px] text-gray-900 mb-2">Prompt Generator</h3>
+                <p class="text-[13px] text-gray-500 leading-relaxed">Master prompt engineering. Generate expert commands for ChatGPT and Midjourney instantly.</p>
+            </a>
         </div>
     </main>
 
@@ -490,5 +463,32 @@
         </div>
     </footer>
 
+    <script>
+        function filterTools(category, clickedBtn) {
+            // 1. બટનની ડીઝાઇન બદલો (Active State)
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.className = "filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition";
+            });
+            clickedBtn.className = "filter-btn active bg-gray-800 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm transition";
+
+            // 2. કાર્ડ્સ હાઇડ/શો કરો (Live Filter)
+            const cards = document.querySelectorAll('.tool-card');
+            cards.forEach(card => {
+                // પહેલાં એનિમેશન કાઢી નાખો
+                card.classList.remove('show-card');
+                
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                    // થોડો સમય (10ms) આપીને એનિમેશન એડ કરો જેથી સ્મૂથ લાગે
+                    setTimeout(() => {
+                        card.classList.add('show-card');
+                    }, 10);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
