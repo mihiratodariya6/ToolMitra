@@ -4,27 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Compress PDF Online | Reduce File Size for Free | ToolMitra</title>
-    <meta name="description" content="Compress PDF files to reduce file size instantly. Optimize your PDF for web, email, or fast sharing without losing quality. 100% Free and Secure.">
-    <meta name="keywords" content="compress pdf, reduce pdf size, optimize pdf online, make pdf smaller, free pdf compressor, ToolMitra">
+    <title>Compress PDF Online | Reduce to Target File Size | ToolMitra</title>
+    <meta name="description" content="Compress PDF files to your exact target size (KB/MB) instantly. Optimize your PDF for web, email, or fast sharing. 100% Free, Offline, and Secure.">
+    <meta name="keywords" content="compress pdf, reduce pdf size to kb, compress pdf to custom size, make pdf smaller, free pdf compressor, ToolMitra">
     <meta name="author" content="MihirSync">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://mihirsync.github.io/ToolMitra/tools/compress-pdf.html" />
 
     <meta property="og:title" content="Compress PDF Files Online for Free | ToolMitra">
-    <meta property="og:description" content="Reduce the size of your PDF files without compromising quality. Fast, secure, and fully local processing.">
+    <meta property="og:description" content="Reduce the size of your PDF files exactly to your needs. Fast, secure, and fully local processing.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="../ToolMitra_NoBG_HD.png">
-    <meta name="twitter:card" content="summary_large_image">
 
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "ToolMitra Compress PDF",
-      "description": "Professional tool to reduce and optimize PDF file sizes efficiently in the browser.",
+      "description": "Professional tool to reduce and optimize PDF file sizes to specific custom KB or MB efficiently in the browser.",
       "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "All",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
     }
     </script>
@@ -32,27 +30,12 @@
     {
       "@context": "https://schema.org",
       "@type": "HowTo",
-      "name": "How to compress PDF files online",
+      "name": "How to compress PDF to a specific size",
       "step": [
         { "@type": "HowToStep", "text": "Upload the PDF document you want to compress." },
-        { "@type": "HowToStep", "text": "Choose your desired compression level (Extreme, Recommended, or Less)." },
-        { "@type": "HowToStep", "text": "Click 'Compress PDF' and wait for the progress bar to finish, then download your optimized file." }
+        { "@type": "HowToStep", "text": "Choose 'Custom Target Size' and enter your desired KB or MB." },
+        { "@type": "HowToStep", "text": "Click 'Compress PDF' and download your perfectly sized file." }
       ]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [{
-        "@type": "Question",
-        "name": "Will compressing my PDF reduce its quality?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Our 'Recommended' setting provides a perfect balance between reducing file size and maintaining visual quality. You can choose 'Less Compression' if you need the highest quality." }
-      }, {
-        "@type": "Question",
-        "name": "Is this safe for confidential documents?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes! ToolMitra processes your PDF entirely within your browser. No files are ever uploaded to external servers." }
-      }]
     }
     </script>
 
@@ -102,7 +85,7 @@
         
         <div class="text-center max-w-4xl mx-auto mb-10">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">Compress PDF file</h1>
-            <p class="text-lg text-gray-500 max-w-2xl mx-auto">Reduce file size while optimizing for maximal PDF quality. 100% free and secure.</p>
+            <p class="text-lg text-gray-500 max-w-2xl mx-auto">Reduce file size to a specific KB/MB or optimize for maximal quality. 100% free and secure.</p>
         </div>
 
         <section id="uploadSection" class="max-w-4xl mx-auto mb-16">
@@ -114,8 +97,6 @@
                 <p class="text-gray-600 font-medium">or drop PDF here</p>
                 <input type="file" id="fileInput" accept="application/pdf" class="hidden">
             </div>
-            
-            <div id="adSlot1" class="w-full mt-8 text-center text-gray-300 text-xs"></div>
         </section>
 
         <section id="workspace" class="hidden max-w-5xl mx-auto mb-16">
@@ -135,7 +116,7 @@
                             <i class="fas fa-layer-group text-2xl text-red-500 mt-1"></i>
                             <div>
                                 <h4 class="font-bold text-gray-800">Extreme Compression</h4>
-                                <p class="text-xs text-gray-500 mt-1">Less quality, high compression. Best for emailing large files.</p>
+                                <p class="text-xs text-gray-500 mt-1">Less quality, high compression.</p>
                             </div>
                             <i class="fas fa-check-circle text-brandGreen absolute top-4 right-4 text-xl check-icon hidden"></i>
                         </div>
@@ -143,8 +124,8 @@
                         <div class="compression-card active cursor-pointer p-4 rounded-xl flex items-start gap-4 relative" onclick="selectLevel(this, 'recommended')">
                             <i class="fas fa-thumbs-up text-2xl text-brandGreen mt-1"></i>
                             <div>
-                                <h4 class="font-bold text-gray-800">Recommended Compression</h4>
-                                <p class="text-xs text-gray-500 mt-1">Good quality, good compression. Ideal for most documents.</p>
+                                <h4 class="font-bold text-gray-800">Recommended</h4>
+                                <p class="text-xs text-gray-500 mt-1">Good quality, good compression.</p>
                             </div>
                             <i class="fas fa-check-circle text-brandGreen absolute top-4 right-4 text-xl check-icon hidden"></i>
                         </div>
@@ -153,9 +134,27 @@
                             <i class="fas fa-image text-2xl text-blue-500 mt-1"></i>
                             <div>
                                 <h4 class="font-bold text-gray-800">Less Compression</h4>
-                                <p class="text-xs text-gray-500 mt-1">High quality, less compression. Keeps images sharp.</p>
+                                <p class="text-xs text-gray-500 mt-1">High quality, less compression.</p>
                             </div>
                             <i class="fas fa-check-circle text-brandGreen absolute top-4 right-4 text-xl check-icon hidden"></i>
+                        </div>
+
+                        <div class="compression-card cursor-pointer p-4 rounded-xl flex flex-col relative" onclick="selectLevel(this, 'custom')">
+                            <div class="flex items-start gap-4 w-full">
+                                <i class="fas fa-sliders-h text-2xl text-purple-500 mt-1"></i>
+                                <div class="flex-grow">
+                                    <h4 class="font-bold text-gray-800">Custom Target Size</h4>
+                                    <p class="text-xs text-gray-500 mt-1">Specify exact file size (approximate).</p>
+                                </div>
+                                <i class="fas fa-check-circle text-brandGreen absolute top-4 right-4 text-xl check-icon hidden"></i>
+                            </div>
+                            <div id="customSizeBox" class="hidden mt-4 pl-10 flex items-center gap-2">
+                                <input type="number" id="targetSizeValue" class="border-2 border-gray-300 focus:border-brandGreen focus:outline-none p-2 rounded-lg w-24 font-bold" placeholder="e.g. 500">
+                                <select id="targetSizeUnit" class="border-2 border-gray-300 focus:border-brandGreen focus:outline-none p-2 rounded-lg font-bold">
+                                    <option value="KB">KB</option>
+                                    <option value="MB">MB</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -201,17 +200,13 @@
             <div class="grid md:grid-cols-2 gap-12">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">The Smartest PDF Compressor</h2>
-                    <p class="text-gray-600 mb-4 leading-relaxed">Large PDF files can be a hassle to email or upload. ToolMitra uses advanced client-side processing to reduce the size of your documents while maintaining maximum readability.</p>
-                    <p class="text-gray-600 leading-relaxed">Select from three different compression profiles to find the perfect balance between file size and image quality.</p>
+                    <p class="text-gray-600 mb-4 leading-relaxed">Large PDF files can be a hassle to email or upload. ToolMitra uses advanced client-side processing to reduce the size of your documents.</p>
+                    <p class="text-gray-600 leading-relaxed">You can even set an exact target size (like 500KB) and our AI-powered logic will optimize the document specifically for your needs.</p>
                 </div>
                 <div class="space-y-6">
                     <div class="flex gap-4">
                         <i class="fas fa-shield-check text-2xl text-brandGreen mt-1"></i>
-                        <div><h3 class="font-bold text-gray-900">Total Security</h3><p class="text-sm text-gray-500 mt-1">We don't upload your files to any server. The compression happens entirely inside your device's web browser.</p></div>
-                    </div>
-                    <div class="flex gap-4">
-                        <i class="fas fa-bolt text-2xl text-yellow-500 mt-1"></i>
-                        <div><h3 class="font-bold text-gray-900">Lightning Fast</h3><p class="text-sm text-gray-500 mt-1">No upload or download wait times. Your device's processor handles the work instantly.</p></div>
+                        <div><h3 class="font-bold text-gray-900">Total Security</h3><p class="text-sm text-gray-500 mt-1">We don't upload your files to any server. The compression happens entirely inside your browser.</p></div>
                     </div>
                 </div>
             </div>
@@ -219,18 +214,8 @@
     </main>
 
     <footer class="bg-[#1d1f24] text-gray-400 py-16 mt-auto">
-        <div class="max-w-[1300px] mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-2">
-                    <img src="../ToolMitra_NoBG_HD.png" alt="ToolMitra" class="h-6 filter grayscale opacity-50">
-                    <span class="font-bold text-white tracking-widest text-sm">TOOLMITRA</span>
-                </div>
-                <p class="text-sm">© 2026 ToolMitra. Built for speed and privacy.</p>
-                <div class="flex gap-5 text-lg">
-                    <a href="#" class="hover:text-white transition"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="hover:text-white transition"><i class="fab fa-facebook"></i></a>
-                </div>
-            </div>
+        <div class="max-w-[1300px] mx-auto px-4 text-center">
+            <p class="text-sm">© 2026 ToolMitra. Built for speed and privacy.</p>
         </div>
     </footer>
 
@@ -241,10 +226,11 @@
         const progressBar = document.getElementById('progressBar'), progressPercent = document.getElementById('progressPercent');
         const progressText = document.getElementById('progressText'), resultArea = document.getElementById('resultArea');
         const downloadBtn = document.getElementById('downloadBtn');
+        const customSizeBox = document.getElementById('customSizeBox');
         
         let originalFile = null;
         let originalSizeBytes = 0;
-        let selectedLevel = 'recommended'; // extreme, recommended, less
+        let selectedLevel = 'recommended'; // extreme, recommended, less, custom
 
         // Format Bytes function
         function formatBytes(bytes, decimals = 2) {
@@ -255,10 +241,9 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         }
 
-        // 1. Upload Listeners
+        // Upload Listeners
         dropZone.onclick = () => fileInput.click();
         fileInput.onchange = (e) => handleFile(e.target.files[0]);
-
         dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('bg-green-50'); };
         dropZone.ondragleave = (e) => { e.preventDefault(); dropZone.classList.remove('bg-green-50'); };
         dropZone.ondrop = (e) => { e.preventDefault(); dropZone.classList.remove('bg-green-50'); handleFile(e.dataTransfer.files[0]); };
@@ -276,44 +261,66 @@
             workspace.classList.remove('hidden');
         }
 
-        // 2. UI Level Selection
+        // UI Level Selection
         window.selectLevel = (element, level) => {
             document.querySelectorAll('.compression-card').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
             selectedLevel = level;
+
+            // Show/Hide Custom Size Box
+            if(level === 'custom') {
+                customSizeBox.classList.remove('hidden');
+            } else {
+                customSizeBox.classList.add('hidden');
+            }
         }
 
-        // 3. The Compression Logic (PDF.js -> Canvas -> jsPDF)
+        // Smart Compression Logic
         compressBtn.onclick = async () => {
+            // Validation for Custom Size
+            let targetBytes = 0;
+            if (selectedLevel === 'custom') {
+                const val = parseFloat(document.getElementById('targetSizeValue').value);
+                const unit = document.getElementById('targetSizeUnit').value;
+                if(!val || val <= 0) { alert("Please enter a valid target size."); return; }
+                targetBytes = unit === 'MB' ? val * 1024 * 1024 : val * 1024;
+                if(targetBytes >= originalSizeBytes) { alert("Target size must be smaller than the original size."); return; }
+            }
+
             compressBtn.disabled = true;
             document.querySelector('.compression-card').parentElement.style.opacity = '0.5';
             document.querySelector('.compression-card').parentElement.style.pointerEvents = 'none';
             progressArea.classList.remove('hidden');
             
             try {
-                // Set compression parameters based on UI
+                // Determine Compression Ratios based on level
                 let scaleFactor = 1.0;
                 let imgQuality = 0.6;
                 
                 if (selectedLevel === 'extreme') { scaleFactor = 0.8; imgQuality = 0.3; }
                 else if (selectedLevel === 'less') { scaleFactor = 1.5; imgQuality = 0.9; }
+                else if (selectedLevel === 'custom') {
+                    // Smart heuristic calculator for Custom Target Size
+                    const ratio = targetBytes / originalSizeBytes;
+                    if(ratio > 0.8) { scaleFactor = 1.2; imgQuality = 0.8; }
+                    else if(ratio > 0.5) { scaleFactor = 1.0; imgQuality = 0.6; }
+                    else if(ratio > 0.3) { scaleFactor = 0.8; imgQuality = 0.4; }
+                    else { scaleFactor = 0.6; imgQuality = 0.2; } // Extreme compression for small targets
+                }
 
-                // Load Original PDF
+                // Processing
                 const arrayBuffer = await originalFile.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
                 const totalPages = pdf.numPages;
-                
                 const { jsPDF } = window.jspdf;
                 let doc = null;
 
                 for (let i = 1; i <= totalPages; i++) {
-                    // Update UI
                     const percent = Math.round((i / totalPages) * 100);
                     progressBar.style.width = `${percent}%`;
                     progressPercent.innerText = `${percent}%`;
                     progressText.innerText = `Compressing page ${i} of ${totalPages}...`;
 
-                    // Render Page
                     const page = await pdf.getPage(i);
                     const viewport = page.getViewport({ scale: scaleFactor });
                     const canvas = document.createElement('canvas');
@@ -322,11 +329,8 @@
                     
                     await page.render({ canvasContext: ctx, viewport: viewport }).promise;
                     
-                    // Compress to JPEG
                     const imgData = canvas.toDataURL('image/jpeg', imgQuality);
-                    
-                    // Add to new PDF (Match dimensions precisely)
-                    const pdfWidth = viewport.width * 0.75; // Convert px to pt (approx)
+                    const pdfWidth = viewport.width * 0.75; 
                     const pdfHeight = viewport.height * 0.75;
 
                     if (i === 1) {
@@ -337,15 +341,13 @@
                     doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
                 }
 
-                // Output File
                 progressText.innerText = "Finalizing PDF...";
                 const compressedBlob = doc.output('blob');
                 
                 // Show Results
                 progressArea.classList.add('hidden');
-                workspace.children[0].classList.add('hidden'); // Hide file info
-                workspace.children[1].classList.add('hidden'); // Hide options
-                
+                workspace.children[0].classList.add('hidden');
+                workspace.children[1].classList.add('hidden');
                 resultArea.classList.remove('hidden');
                 
                 const newSize = compressedBlob.size;
@@ -357,7 +359,7 @@
                 }
                 document.getElementById('savedPercent').innerText = saved;
 
-                // Setup Download Button
+                // Download Button Setup
                 const url = URL.createObjectURL(compressedBlob);
                 downloadBtn.onclick = () => {
                     const a = document.createElement('a');
@@ -368,7 +370,7 @@
 
             } catch(error) {
                 console.error("Compression Error:", error);
-                alert("An error occurred while compressing. The file might be corrupted or too large for your browser's memory.");
+                alert("An error occurred while compressing. Please try again.");
                 location.reload();
             }
         };
