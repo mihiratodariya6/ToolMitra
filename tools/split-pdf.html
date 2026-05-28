@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>Split PDF Files Online for Free - Extract Pages | ToolMitra</title>
-    <meta name="description" content="Split your PDF files instantly. Extract specific pages or separate a document into multiple files for free. Fast, secure, and no installation required.">
-    <meta name="keywords" content="split pdf, extract pdf pages, divide pdf, separate pdf pages online, free pdf splitter, ToolMitra pdf">
+    <meta name="description" content="Split your PDF files visually. Preview pages, extract specific pages, or separate a document into multiple files for free. Fast, secure, and no installation.">
+    <meta name="keywords" content="split pdf visually, extract pdf pages, preview pdf online, separate pdf pages, free pdf splitter, ToolMitra pdf">
     <meta name="author" content="MihirSync">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://mihirsync.github.io/ToolMitra/tools/split-pdf.html" />
 
-    <meta property="og:title" content="Split PDF Files Online for Free | ToolMitra">
-    <meta property="og:description" content="Extract pages or split a PDF document into multiple files instantly. 100% Free and Secure.">
+    <meta property="og:title" content="Split PDF Files Visually for Free | ToolMitra">
+    <meta property="og:description" content="Preview your PDF pages and click to extract them instantly. 100% Free and Secure.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="../ToolMitra_NoBG_HD.png">
 
@@ -24,7 +24,7 @@
       "url": "https://mihirsync.github.io/ToolMitra/tools/split-pdf.html",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "All",
-      "description": "A free, cloud-based tool to extract specific pages or divide a PDF document into multiple separate files securely.",
+      "description": "A free, cloud-based tool to visually preview and extract specific pages from a PDF document.",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
     }
     </script>
@@ -32,11 +32,11 @@
     {
       "@context": "https://schema.org",
       "@type": "HowTo",
-      "name": "How to split PDF files online",
+      "name": "How to split PDF files online visually",
       "step": [
         { "@type": "HowToStep", "text": "Upload the PDF document you want to split." },
-        { "@type": "HowToStep", "text": "Enter the specific page numbers or ranges you wish to extract." },
-        { "@type": "HowToStep", "text": "Click 'Split PDF' to separate the pages and download your new file." }
+        { "@type": "HowToStep", "text": "Preview all pages on your screen and click on the ones you want to extract." },
+        { "@type": "HowToStep", "text": "Click 'Extract Selected Pages' to download your new file." }
       ]
     }
     </script>
@@ -44,22 +44,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
     <script> tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { brandRed: '#e5322d', brandOrange: '#f0714b' } } } } </script>
-    <style> body { background-color: #f8f9fa; color: #333333; } </style>
+    <style> 
+        body { background-color: #f8f9fa; color: #333333; } 
+        .page-thumbnail { transition: all 0.2s ease-in-out; }
+        .page-selected { border-color: #f0714b !important; background-color: #fff3f0; transform: scale(0.98); }
+        .page-selected .check-icon { display: flex !important; }
+    </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
     <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <nav class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
-            
             <div class="flex items-center gap-4 md:gap-8">
                 <a href="../index.html" class="flex items-center gap-2 text-gray-500 hover:text-brandRed transition font-bold text-sm">
                     <i class="fas fa-arrow-left"></i> <span class="hidden sm:inline">Back</span>
                 </a>
-
                 <a href="../index.html" class="flex items-center gap-2">
                     <img src="../ToolMitra_NoBG_HD.png" alt="ToolMitra Logo" class="h-11 w-auto object-contain">
                     <span class="font-bold text-2xl text-gray-900">ToolMitra</span>
@@ -81,12 +86,12 @@
 
     <main class="flex-grow pt-12 pb-16 px-4">
         
-        <section class="text-center max-w-4xl mx-auto mb-16">
+        <section class="text-center max-w-5xl mx-auto mb-16">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
-                Split PDF file
+                Split PDF visually
             </h1>
             <p class="text-lg text-gray-500 mb-8 max-w-2xl mx-auto">
-                Separate one page or a whole set for easy conversion into independent PDF files.
+                Preview your document, click on the pages you want to keep, and extract them instantly.
             </p>
             
             <div id="dropZone" class="bg-brandOrange bg-opacity-10 border-2 border-dashed border-brandOrange rounded-3xl p-10 md:p-20 transition cursor-pointer flex flex-col items-center justify-center min-h-[320px] shadow-sm mb-6">
@@ -98,86 +103,84 @@
                 <input type="file" id="fileInput" accept="application/pdf" class="hidden">
             </div>
 
-            <div id="splitUI" class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hidden mb-6 text-left">
-                <div class="flex items-center gap-3 mb-6 bg-orange-50 p-4 rounded-lg border border-orange-100">
-                    <i class="fas fa-file-pdf text-brandOrange text-2xl"></i>
-                    <div class="overflow-hidden">
-                        <p id="fileName" class="font-bold text-gray-800 truncate"></p>
-                        <p id="pageCount" class="text-sm text-gray-500"></p>
+            <div id="workspaceUI" class="max-w-5xl mx-auto bg-white p-6 md:p-8 rounded-3xl shadow-lg border border-gray-200 hidden mb-6 text-left">
+                
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b border-gray-100 gap-4">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-file-pdf text-brandOrange text-3xl"></i>
+                        <div>
+                            <p id="fileName" class="font-bold text-gray-800 text-lg"></p>
+                            <p id="pageCount" class="text-sm text-gray-500 font-medium"></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="selectAllBtn" class="border border-gray-300 hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-lg text-sm transition">Select All</button>
+                        <button id="clearAllBtn" class="border border-gray-300 hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-lg text-sm transition">Clear</button>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-bold mb-2">Pages to Extract (e.g., 1-3, 5, 8-10):</label>
-                    <input type="text" id="pageRangeInput" placeholder="Enter page numbers or ranges" class="w-full border-2 border-gray-200 p-3 rounded-lg focus:outline-none focus:border-brandOrange transition">
-                    <p class="text-xs text-gray-500 mt-2">Leave blank to extract ALL pages as a single new PDF (not very useful!), or specify pages to keep.</p>
+                <p class="text-center text-sm text-gray-500 mb-4 font-bold"><i class="fas fa-hand-pointer text-brandOrange"></i> Click on the pages you want to extract.</p>
+
+                <div id="previewGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 max-h-[500px] overflow-y-auto p-4 bg-gray-50 rounded-xl border border-gray-200 shadow-inner relative">
+                    <div id="loadingPreview" class="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-90 z-10 hidden">
+                        <i class="fas fa-spinner fa-spin text-4xl text-brandOrange mb-3"></i>
+                        <p class="font-bold text-gray-700">Loading Previews...</p>
+                    </div>
                 </div>
 
-                <button id="splitActionBtn" class="w-full bg-brandOrange hover:bg-[#d65a36] text-white font-bold text-lg py-4 rounded-xl shadow-md transition transform hover:-translate-y-1">
-                    Split PDF Now <i class="fas fa-cut ml-2"></i>
-                </button>
-                <p id="statusMsg" class="text-center mt-3 text-sm font-bold hidden"></p>
-            </div>
-
-            <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8 text-sm md:text-base text-gray-600 font-medium">
-                <div class="flex items-center gap-2"><span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span> Upload file</div>
-                <i class="fas fa-chevron-right text-gray-300 hidden md:block"></i>
-                <div class="flex items-center gap-2"><span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span> Select pages</div>
-                <i class="fas fa-chevron-right text-gray-300 hidden md:block"></i>
-                <div class="flex items-center gap-2"><span class="bg-gray-200 text-gray-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">3</span> Split & Download</div>
+                <div class="mt-8 flex flex-col items-center">
+                    <button id="splitActionBtn" class="w-full md:w-auto md:min-w-[300px] bg-brandOrange hover:bg-[#d65a36] text-white font-bold text-xl py-4 px-8 rounded-xl shadow-lg transition transform hover:-translate-y-1">
+                        Extract <span id="selectedCountBadge" class="bg-white text-brandOrange px-2 py-0.5 rounded ml-1 mr-1">0</span> Pages <i class="fas fa-download ml-2"></i>
+                    </button>
+                    <p id="statusMsg" class="text-center mt-4 text-sm font-bold hidden"></p>
+                </div>
             </div>
         </section>
 
         <article class="max-w-5xl mx-auto bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-sm mb-16">
             <div class="grid md:grid-cols-2 gap-12">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">The Best Free PDF Splitter</h2>
-                    <p class="text-gray-600 mb-4 leading-relaxed">Need to remove unnecessary pages from a large document? ToolMitra lets you extract exactly what you need. Just type the page ranges and let our system do the heavy lifting.</p>
-                    <p class="text-gray-600 leading-relaxed">No installation, no account needed. Experience fast and secure document division right in your browser.</p>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Visual PDF Splitter</h2>
+                    <p class="text-gray-600 mb-4 leading-relaxed">No more guessing page numbers! ToolMitra generates instant visual thumbnails of your PDF document. Just click the pages you want to keep, and we will create a brand new PDF for you.</p>
                 </div>
                 <div class="space-y-6">
                     <div class="flex gap-4">
-                        <i class="fas fa-shield-check text-2xl text-green-500 mt-1"></i>
-                        <div><h3 class="font-bold text-gray-900">Total Security</h3><p class="text-sm text-gray-500 mt-1">We don't read your files. Splitting happens securely and privately.</p></div>
+                        <i class="fas fa-eye text-2xl text-blue-500 mt-1"></i>
+                        <div><h3 class="font-bold text-gray-900">Live Preview</h3><p class="text-sm text-gray-500 mt-1">See exactly what you are splitting before you download.</p></div>
                     </div>
                     <div class="flex gap-4">
-                        <i class="fas fa-rocket text-2xl text-blue-500 mt-1"></i>
-                        <div><h3 class="font-bold text-gray-900">Lightning Fast</h3><p class="text-sm text-gray-500 mt-1">Because the process runs locally, there are no upload/download delays.</p></div>
+                        <i class="fas fa-shield-check text-2xl text-green-500 mt-1"></i>
+                        <div><h3 class="font-bold text-gray-900">100% Private</h3><p class="text-sm text-gray-500 mt-1">Files are rendered and split directly inside your browser.</p></div>
                     </div>
                 </div>
             </div>
         </article>
-
     </main>
 
     <footer class="bg-[#1d1f24] text-gray-400 py-16 mt-auto">
-        <div class="max-w-[1300px] mx-auto px-4">
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
-                <div><h4 class="text-white font-bold mb-4 text-sm tracking-widest">PRODUCT</h4><ul class="space-y-3 text-sm"><li><a href="../index.html" class="hover:text-white transition">Home</a></li><li><a href="../index.html" class="hover:text-white transition">Tools</a></li></ul></div>
-                <div><h4 class="text-white font-bold mb-4 text-sm tracking-widest">RESOURCES</h4><ul class="space-y-3 text-sm"><li><a href="desktop.html" class="hover:text-white transition">Desktop App</a></li><li><a href="mobile.html" class="hover:text-white transition">Mobile App</a></li></ul></div>
-                <div><h4 class="text-white font-bold mb-4 text-sm tracking-widest">COMPANY</h4><ul class="space-y-3 text-sm"><li><a href="#" class="hover:text-white transition">Privacy Policy</a></li></ul></div>
-            </div>
-            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-                <p class="text-sm">© 2026 ToolMitra. All rights reserved.</p>
-            </div>
+        <div class="max-w-[1300px] mx-auto px-4 text-center">
+            <p class="text-sm">© 2026 ToolMitra. All rights reserved.</p>
         </div>
     </footer>
 
     <script>
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
-        const splitUI = document.getElementById('splitUI');
+        const workspaceUI = document.getElementById('workspaceUI');
         const fileNameUI = document.getElementById('fileName');
         const pageCountUI = document.getElementById('pageCount');
-        const pageRangeInput = document.getElementById('pageRangeInput');
+        const previewGrid = document.getElementById('previewGrid');
+        const loadingPreview = document.getElementById('loadingPreview');
         const splitActionBtn = document.getElementById('splitActionBtn');
         const statusMsg = document.getElementById('statusMsg');
-
-        let originalFile = null;
-        let originalPdfDoc = null;
+        const selectedCountBadge = document.getElementById('selectedCountBadge');
+        
+        let originalFileBuffer = null;
+        let originalFileName = "";
+        let selectedPages = new Set(); // Stores 0-based index of selected pages
         let totalPages = 0;
 
-        // 1. Upload Interactions
+        // --- 1. UPLOAD EVENT LISTENERS ---
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
 
@@ -189,109 +192,163 @@
             handleFile(e.dataTransfer.files[0]);
         });
 
-        // 2. Load File and Read Page Count
+        // --- 2. RENDER PDF PREVIEWS (The Magic Engine) ---
         async function handleFile(file) {
             if(!file || file.type !== 'application/pdf') {
                 alert("Please select a valid PDF file.");
                 return;
             }
 
-            originalFile = file;
+            originalFileName = file.name;
             fileNameUI.innerText = file.name;
-            pageCountUI.innerText = "Loading pages...";
-            
-            splitUI.classList.remove('hidden');
-            dropZone.classList.add('hidden'); // Hide dropzone to focus on options
+            dropZone.classList.add('hidden');
+            workspaceUI.classList.remove('hidden');
+            loadingPreview.classList.remove('hidden');
+            previewGrid.innerHTML = ''; // Clear old previews
+            previewGrid.appendChild(loadingPreview); // Re-append loader
 
             try {
-                const arrayBuffer = await file.arrayBuffer();
-                originalPdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                totalPages = originalPdfDoc.getPageCount();
-                pageCountUI.innerText = `${totalPages} pages total`;
-                pageRangeInput.placeholder = `e.g., 1-3, 5, 8-${totalPages}`;
-            } catch (error) {
-                pageCountUI.innerText = "Error reading PDF.";
-                console.error(error);
-            }
-        }
+                // Read file as ArrayBuffer
+                originalFileBuffer = await file.arrayBuffer();
+                
+                // Load via PDF.js to render images
+                const loadingTask = pdfjsLib.getDocument({data: originalFileBuffer});
+                const pdf = await loadingTask.promise;
+                totalPages = pdf.numPages;
+                pageCountUI.innerText = `${totalPages} Pages`;
+                
+                selectedPages.clear();
+                updateBadge();
 
-        // Helper: Parse string like "1-3, 5" into an array of zero-based page indices
-        function parseRange(rangeStr, maxPages) {
-            const pagesToKeep = new Set();
-            if(!rangeStr.trim()) {
-                // If empty, return all pages
-                for(let i = 0; i < maxPages; i++) pagesToKeep.add(i);
-                return Array.from(pagesToKeep);
-            }
+                // Render each page
+                for(let i = 1; i <= totalPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({scale: 0.5}); // Thumbnail scale
 
-            const parts = rangeStr.split(',');
-            for(let part of parts) {
-                part = part.trim();
-                if(part.includes('-')) {
-                    const [start, end] = part.split('-').map(Number);
-                    if(start && end && start <= end) {
-                        for(let i = start; i <= end; i++) {
-                            if(i > 0 && i <= maxPages) pagesToKeep.add(i - 1);
+                    // Create Thumbnail Container
+                    const pageDiv = document.createElement('div');
+                    pageDiv.className = "page-thumbnail relative cursor-pointer border-2 border-transparent bg-white rounded-lg shadow-sm hover:shadow-md flex flex-col items-center p-2 overflow-hidden";
+                    pageDiv.dataset.pageIndex = i - 1; // 0-based index for pdf-lib
+
+                    // Top Right Checkmark (Hidden by default)
+                    const checkIcon = document.createElement('div');
+                    checkIcon.className = "check-icon hidden absolute top-2 right-2 bg-brandOrange text-white w-6 h-6 rounded-full items-center justify-center font-bold shadow-md z-10";
+                    checkIcon.innerHTML = '<i class="fas fa-check text-sm"></i>';
+                    pageDiv.appendChild(checkIcon);
+
+                    // Canvas for PDF image
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    canvas.className = "max-w-full h-auto object-contain border border-gray-200 mb-2";
+
+                    const renderContext = { canvasContext: context, viewport: viewport };
+                    await page.render(renderContext).promise;
+
+                    // Page Number Label
+                    const pageLabel = document.createElement('span');
+                    pageLabel.className = "text-xs font-bold text-gray-500";
+                    pageLabel.innerText = `Page ${i}`;
+
+                    pageDiv.appendChild(canvas);
+                    pageDiv.appendChild(pageLabel);
+
+                    // Click event to toggle selection
+                    pageDiv.addEventListener('click', function() {
+                        this.classList.toggle('page-selected');
+                        const pIdx = parseInt(this.dataset.pageIndex);
+                        if(selectedPages.has(pIdx)) {
+                            selectedPages.delete(pIdx);
+                        } else {
+                            selectedPages.add(pIdx);
                         }
-                    }
-                } else {
-                    const num = Number(part);
-                    if(num && num > 0 && num <= maxPages) pagesToKeep.add(num - 1);
+                        updateBadge();
+                    });
+
+                    previewGrid.appendChild(pageDiv);
                 }
+
+            } catch (error) {
+                console.error("Error rendering PDF:", error);
+                alert("Could not load PDF previews. The file might be corrupted or protected.");
+            } finally {
+                loadingPreview.classList.add('hidden');
             }
-            return Array.from(pagesToKeep).sort((a,b)=>a-b);
         }
 
-        // 3. SPLIT ACTION
-        splitActionBtn.addEventListener('click', async () => {
-            if(!originalPdfDoc) return;
+        function updateBadge() {
+            selectedCountBadge.innerText = selectedPages.size;
+            if(selectedPages.size > 0) {
+                splitActionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                splitActionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
 
-            const indicesToExtract = parseRange(pageRangeInput.value, totalPages);
-            
-            if(indicesToExtract.length === 0) {
-                alert("Invalid page range. Please check your input.");
+        // Select All / Clear All Buttons
+        document.getElementById('selectAllBtn').addEventListener('click', () => {
+            document.querySelectorAll('.page-thumbnail').forEach(el => {
+                el.classList.add('page-selected');
+                selectedPages.add(parseInt(el.dataset.pageIndex));
+            });
+            updateBadge();
+        });
+
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            document.querySelectorAll('.page-thumbnail').forEach(el => el.classList.remove('page-selected'));
+            selectedPages.clear();
+            updateBadge();
+        });
+
+        // --- 3. ACTUAL SPLIT LOGIC (Using pdf-lib) ---
+        splitActionBtn.addEventListener('click', async () => {
+            if(selectedPages.size === 0) {
+                alert("Please click on at least one page to extract.");
                 return;
             }
 
             splitActionBtn.disabled = true;
-            splitActionBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Splitting...';
             statusMsg.classList.remove('hidden');
-            statusMsg.innerText = "Extracting pages securely...";
-            statusMsg.className = "text-center mt-3 text-sm font-bold text-blue-600 block";
+            statusMsg.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Extracting your pages...';
+            statusMsg.className = "text-center mt-4 text-sm font-bold text-blue-600";
 
             try {
+                // Load original PDF
                 const { PDFDocument } = PDFLib;
+                const pdfDoc = await PDFDocument.load(originalFileBuffer);
                 const newPdf = await PDFDocument.create();
                 
-                const copiedPages = await newPdf.copyPages(originalPdfDoc, indicesToExtract);
+                // Get sorted indices
+                const indicesToExtract = Array.from(selectedPages).sort((a,b) => a-b);
+                
+                // Copy selected pages
+                const copiedPages = await newPdf.copyPages(pdfDoc, indicesToExtract);
                 copiedPages.forEach(page => newPdf.addPage(page));
 
+                // Save & Download
                 const pdfBytes = await newPdf.save();
                 const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
 
-                // Auto Download
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `ToolMitra_Split_${originalFile.name}`;
+                a.download = `ToolMitra_Extracted_${originalFileName}`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
 
-                statusMsg.innerText = `Success! Extracted ${indicesToExtract.length} pages.`;
-                statusMsg.className = "text-center mt-3 text-sm font-bold text-green-600 block";
-                splitActionBtn.innerHTML = 'Split Another File <i class="fas fa-redo ml-2"></i>';
-                splitActionBtn.disabled = false;
-
-                // Reset logic after a delay
-                splitActionBtn.onclick = () => location.reload(); // Quick reset by reloading page
+                statusMsg.innerText = `Success! Downloaded ${selectedPages.size} pages.`;
+                statusMsg.className = "text-center mt-4 text-sm font-bold text-green-600";
+                
+                setTimeout(() => { location.reload(); }, 3000); // Reset after 3 seconds
 
             } catch(error) {
                 console.error(error);
                 statusMsg.innerText = "Oops! Error while splitting.";
-                statusMsg.className = "text-center mt-3 text-sm font-bold text-red-600 block";
+                statusMsg.className = "text-center mt-4 text-sm font-bold text-red-600";
+            } finally {
                 splitActionBtn.disabled = false;
-                splitActionBtn.innerHTML = 'Try Again';
             }
         });
     </script>
