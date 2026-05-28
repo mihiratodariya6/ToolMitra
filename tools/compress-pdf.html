@@ -3,292 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compress PDF - ToolMitra</title>
+    
+    <title>Compress PDF Online | Reduce File Size for Free | ToolMitra</title>
+    <meta name="description" content="Compress PDF files to reduce file size instantly. Optimize your PDF for web, email, or fast sharing without losing quality. 100% Free and Secure.">
+    <meta name="keywords" content="compress pdf, reduce pdf size, optimize pdf online, make pdf smaller, free pdf compressor, ToolMitra">
+    <meta name="author" content="MihirSync">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://mihirsync.github.io/ToolMitra/tools/compress-pdf.html" />
+
+    <meta property="og:title" content="Compress PDF Files Online for Free | ToolMitra">
+    <meta property="og:description" content="Reduce the size of your PDF files without compromising quality. Fast, secure, and fully local processing.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="../ToolMitra_NoBG_HD.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Compress PDF",
+      "description": "Professional tool to reduce and optimize PDF file sizes efficiently in the browser.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "How to compress PDF files online",
+      "step": [
+        { "@type": "HowToStep", "text": "Upload the PDF document you want to compress." },
+        { "@type": "HowToStep", "text": "Choose your desired compression level (Extreme, Recommended, or Less)." },
+        { "@type": "HowToStep", "text": "Click 'Compress PDF' and wait for the progress bar to finish, then download your optimized file." }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Will compressing my PDF reduce its quality?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Our 'Recommended' setting provides a perfect balance between reducing file size and maintaining visual quality. You can choose 'Less Compression' if you need the highest quality." }
+      }, {
+        "@type": "Question",
+        "name": "Is this safe for confidential documents?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes! ToolMitra processes your PDF entirely within your browser. No files are ever uploaded to external servers." }
+      }]
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: { brandGreen: '#4bbb56' }
-                }
-            }
-        }
-    </script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script> tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { brandRed: '#e5322d', brandOrange: '#f0714b', brandGreen: '#4bbb56' } } } } </script>
     <style>
         body { background-color: #f8f9fa; color: #333333; }
-        .upload-area { border: 2px dashed #d1d5db; transition: all 0.3s ease; }
-        .upload-area.dragover { border-color: #4bbb56; background-color: #f2fbf3; }
+        .compression-card { transition: all 0.2s ease; border: 2px solid transparent; }
+        .compression-card:hover { border-color: #bbf7d0; background-color: #f0fdf4; }
+        .compression-card.active { border-color: #4bbb56; background-color: #f0fdf4; box-shadow: 0 4px 6px -1px rgba(75, 187, 86, 0.1); }
+        .compression-card.active .check-icon { display: block; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
-            <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
-                <i class="fas fa-heart text-[#e5322d] text-2xl"></i>
-                <span class="font-bold text-2xl tracking-tight text-gray-900">ToolMitra</span>
-            </a>
-            <a href="../index.html" class="text-sm font-semibold text-gray-600 hover:text-brandGreen flex items-center gap-2">
-                <i class="fas fa-arrow-left"></i> Back to All Tools
-            </a>
-        </div>
-    </nav>
-
-    <div class="bg-white border-b border-gray-100 pt-10 pb-8">
-        <div class="max-w-3xl mx-auto text-center px-4">
-            <div class="w-16 h-16 mx-auto bg-green-50 text-brandGreen rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-sm">
-                <i class="fas fa-compress"></i>
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <nav class="max-w-[1400px] mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-4 md:gap-8">
+                <a href="../index.html" class="flex items-center gap-2 text-gray-500 hover:text-brandGreen transition font-bold text-sm">
+                    <i class="fas fa-arrow-left"></i> <span class="hidden sm:inline">Back</span>
+                </a>
+                <a href="../index.html" class="flex items-center gap-2">
+                    <img src="../ToolMitra_NoBG_HD.png" alt="ToolMitra Logo" class="h-11 w-auto object-contain">
+                    <span class="font-bold text-2xl text-gray-900">ToolMitra</span>
+                </a>
             </div>
-            <h1 class="text-[32px] font-bold text-gray-900 mb-2">Extreme PDF Compressor</h1>
-            <p class="text-gray-500 text-[16px]">Shrink PDF to extreme small sizes (e.g., 10KB-50KB). Note: May cause blurriness.</p>
-        </div>
-    </div>
+            <div class="hidden lg:flex space-x-8 text-[13px] font-bold text-gray-700 tracking-wide items-center">
+                <a href="merge-pdf.html" class="hover:text-brandRed transition">MERGE PDF</a>
+                <a href="split-pdf.html" class="hover:text-brandOrange transition">SPLIT PDF</a>
+                <a href="compress-pdf.html" class="text-brandGreen border-b-2 border-brandGreen pb-1">COMPRESS PDF</a>
+                <a href="../index.html" class="hover:text-brandRed transition">ALL TOOLS</a>
+            </div>
+            <div class="flex items-center ml-auto lg:ml-0">
+                <a href="#" class="bg-brandGreen hover:bg-green-700 text-white px-5 py-2 rounded-lg text-sm font-bold transition shadow-md">Sign up</a>
+            </div>
+        </nav>
+    </header>
 
-    <main class="flex-grow py-8 px-4">
-        <div class="max-w-4xl mx-auto">
-            
-            <div id="dropZone" class="upload-area bg-white rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[300px]" onclick="document.getElementById('fileInput').click()">
-                <i class="fas fa-file-upload text-5xl text-gray-300 mb-4"></i>
-                <h3 class="text-xl font-bold text-gray-700 mb-2">Select a PDF file</h3>
-                <p class="text-gray-500 text-sm mb-6">or drop PDF here</p>
-                <button class="bg-brandGreen hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg transition-colors text-lg shadow-md">
+    <main class="flex-grow pt-12 pb-16 px-4">
+        
+        <div class="text-center max-w-4xl mx-auto mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">Compress PDF file</h1>
+            <p class="text-lg text-gray-500 max-w-2xl mx-auto">Reduce file size while optimizing for maximal PDF quality. 100% free and secure.</p>
+        </div>
+
+        <section id="uploadSection" class="max-w-4xl mx-auto mb-16">
+            <div id="dropZone" class="bg-brandGreen bg-opacity-10 border-2 border-dashed border-brandGreen rounded-3xl p-10 md:p-20 transition cursor-pointer flex flex-col items-center justify-center min-h-[320px] shadow-sm hover:bg-opacity-20">
+                <i class="fas fa-compress-arrows-alt text-6xl text-brandGreen mb-6"></i>
+                <button class="bg-brandGreen hover:bg-green-700 text-white font-bold text-xl px-12 py-5 rounded-xl shadow-lg transition transform hover:scale-105 mb-4 pointer-events-none">
                     Select PDF file
                 </button>
-                <input type="file" id="fileInput" class="hidden" accept="application/pdf">
+                <p class="text-gray-600 font-medium">or drop PDF here</p>
+                <input type="file" id="fileInput" accept="application/pdf" class="hidden">
             </div>
+            
+            <div id="adSlot1" class="w-full mt-8 text-center text-gray-300 text-xs"></div>
+        </section>
 
-            <div id="workspaceSection" class="hidden mt-4">
+        <section id="workspace" class="hidden max-w-5xl mx-auto mb-16">
+            <div class="grid md:grid-cols-2 gap-8">
                 
-                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-6 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <i class="fas fa-file-pdf text-4xl text-brandGreen"></i>
-                        <div>
-                            <h3 id="fileName" class="font-bold text-gray-800 text-lg truncate max-w-xs md:max-w-md">filename.pdf</h3>
-                            <p class="text-sm text-gray-500">Original Size: <span id="originalSize" class="font-bold">0 MB</span></p>
-                        </div>
-                    </div>
-                    <button onclick="resetTool()" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-trash-alt text-xl"></i></button>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
+                    <i class="fas fa-file-pdf text-brandGreen text-6xl mb-4"></i>
+                    <h3 id="fileName" class="font-bold text-xl text-gray-900 mb-2 truncate w-full px-4">document.pdf</h3>
+                    <p class="text-gray-500 font-medium bg-gray-100 px-4 py-1 rounded-full">Original Size: <span id="fileSize" class="font-bold text-gray-800">0 MB</span></p>
                 </div>
 
-                <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm mb-6">
-                    <h3 class="font-bold text-gray-800 text-lg mb-2">Target Compression Size</h3>
-                    <p class="text-sm text-gray-500 mb-6">Enter the maximum size you want for your compressed PDF.</p>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative">
+                    <h3 class="font-bold text-xl text-gray-900 mb-6 border-b pb-4">Compression Level</h3>
                     
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="flex-1">
-                            <input type="number" id="targetSize" placeholder="e.g. 50" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-brandGreen text-lg font-semibold text-gray-700">
+                    <div class="space-y-3">
+                        <div class="compression-card cursor-pointer p-4 rounded-xl flex items-start gap-4 relative" onclick="selectLevel(this, 'extreme')">
+                            <i class="fas fa-layer-group text-2xl text-red-500 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Extreme Compression</h4>
+                                <p class="text-xs text-gray-500 mt-1">Less quality, high compression. Best for emailing large files.</p>
+                            </div>
+                            <i class="fas fa-check-circle text-brandGreen absolute top-4 right-4 text-xl check-icon hidden"></i>
                         </div>
-                        <div class="w-1/3">
-                            <select id="sizeUnit" class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-brandGreen text-lg font-semibold text-gray-700 bg-white cursor-pointer">
-                                <option value="KB">KB</option>
-                                <option value="MB">MB</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="bg-orange-50 border border-orange-200 p-4 rounded-lg flex items-start gap-3">
-                        <i class="fas fa-exclamation-triangle text-orange-500 mt-1"></i>
-                        <p class="text-xs text-orange-700 font-medium leading-relaxed">
-                            <strong>Extreme Compression Warning:</strong> To reach very small sizes like 10KB - 50KB, we convert all pages to compressed images. The text will become an image and may look blurry.
-                        </p>
-                    </div>
-                </div>
 
-                <div class="text-center bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                    <button id="compressBtn" onclick="compressPdf()" class="bg-brandGreen hover:bg-green-600 text-white font-bold py-4 px-10 rounded-lg transition-colors text-xl shadow-lg inline-flex items-center gap-3 w-full sm:w-auto">
-                        <i class="fas fa-compress"></i> Compress PDF
+                        <div class="compression-card active cursor-pointer p-4 rounded-xl flex items-start gap-4 relative" onclick="selectLevel(this, 'recommended')">
+                            <i class="fas fa-thumbs-up text-2xl text-brandGreen mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Recommended Compression</h4>
+                                <p class="text-xs text-gray-500 mt-1">Good quality, good compression. Ideal for most documents.</p>
+                            </div>
+                            <i class="fas fa-check-circle text-brandGreen absolute top-4 right-4 text-xl check-icon hidden"></i>
+                        </div>
+
+                        <div class="compression-card cursor-pointer p-4 rounded-xl flex items-start gap-4 relative" onclick="selectLevel(this, 'less')">
+                            <i class="fas fa-image text-2xl text-blue-500 mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Less Compression</h4>
+                                <p class="text-xs text-gray-500 mt-1">High quality, less compression. Keeps images sharp.</p>
+                            </div>
+                            <i class="fas fa-check-circle text-brandGreen absolute top-4 right-4 text-xl check-icon hidden"></i>
+                        </div>
+                    </div>
+
+                    <button id="compressBtn" class="w-full mt-6 bg-brandGreen hover:bg-green-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg transition transform hover:-translate-y-1">
+                        Compress PDF <i class="fas fa-compress ml-2"></i>
                     </button>
-                    
-                    <div id="progressSection" class="hidden mt-6 text-left max-w-md mx-auto">
-                        <div class="flex justify-between text-sm mb-1 text-gray-600 font-semibold">
-                            <span id="progressText">Processing pages...</span>
-                            <span id="progressPercent">0%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div id="progressBar" class="bg-brandGreen h-2.5 rounded-full" style="width: 0%"></div>
-                        </div>
+                </div>
+            </div>
+
+            <div id="progressArea" class="hidden mt-8 bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center">
+                <h3 id="progressText" class="font-bold text-xl text-gray-800 mb-4">Compressing your file...</h3>
+                <div class="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
+                    <div id="progressBar" class="bg-brandGreen h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p id="progressPercent" class="text-sm font-bold text-brandGreen mb-4">0%</p>
+                <p class="text-xs text-gray-500"><i class="fas fa-lock text-brandGreen"></i> Processing securely in your browser</p>
+            </div>
+
+            <div id="resultArea" class="hidden mt-8 bg-green-50 p-8 rounded-3xl border border-green-200 text-center">
+                <i class="fas fa-check-circle text-6xl text-brandGreen mb-4"></i>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">PDF has been compressed!</h2>
+                <div class="flex justify-center items-center gap-4 text-lg font-medium text-gray-700 my-6">
+                    <span class="line-through text-red-500" id="oldSizeDisplay">0 MB</span>
+                    <i class="fas fa-arrow-right text-gray-400"></i>
+                    <span class="text-brandGreen font-bold text-2xl" id="newSizeDisplay">0 MB</span>
+                </div>
+                <div class="inline-block bg-brandGreen text-white px-4 py-1 rounded-full text-sm font-bold mb-6">
+                    You saved <span id="savedPercent">0</span>%
+                </div>
+                <br>
+                <button id="downloadBtn" class="bg-gray-900 hover:bg-black text-white font-bold text-xl px-12 py-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                    Download Compressed PDF <i class="fas fa-download ml-2"></i>
+                </button>
+                <div class="mt-4">
+                    <button onclick="location.reload()" class="text-gray-500 font-bold hover:text-brandGreen transition text-sm">
+                        <i class="fas fa-redo"></i> Compress another file
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <article class="max-w-5xl mx-auto bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-sm mb-16">
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">The Smartest PDF Compressor</h2>
+                    <p class="text-gray-600 mb-4 leading-relaxed">Large PDF files can be a hassle to email or upload. ToolMitra uses advanced client-side processing to reduce the size of your documents while maintaining maximum readability.</p>
+                    <p class="text-gray-600 leading-relaxed">Select from three different compression profiles to find the perfect balance between file size and image quality.</p>
+                </div>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <i class="fas fa-shield-check text-2xl text-brandGreen mt-1"></i>
+                        <div><h3 class="font-bold text-gray-900">Total Security</h3><p class="text-sm text-gray-500 mt-1">We don't upload your files to any server. The compression happens entirely inside your device's web browser.</p></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <i class="fas fa-bolt text-2xl text-yellow-500 mt-1"></i>
+                        <div><h3 class="font-bold text-gray-900">Lightning Fast</h3><p class="text-sm text-gray-500 mt-1">No upload or download wait times. Your device's processor handles the work instantly.</p></div>
                     </div>
                 </div>
             </div>
-
-            <div id="downloadSection" class="hidden mt-8 text-center bg-white p-10 rounded-xl border border-gray-200 shadow-sm">
-                <i class="fas fa-check-circle text-5xl text-brandGreen mb-4"></i>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">PDF has been compressed!</h2>
-                <div class="flex items-center justify-center gap-4 mb-6 text-gray-600">
-                    <span class="line-through opacity-70" id="oldSizeTxt">0 MB</span>
-                    <i class="fas fa-arrow-right text-brandGreen"></i>
-                    <span id="newSize" class="font-bold text-brandGreen text-xl">0 MB</span>
-                </div>
-                
-                <a id="downloadLink" href="#" download="ToolMitra_Compressed.pdf" class="bg-brandGreen hover:bg-green-600 text-white font-bold py-4 px-10 rounded-lg transition-colors text-xl shadow-lg inline-flex items-center gap-3">
-                    <i class="fas fa-download"></i> Download Compressed PDF
-                </a>
-                <div class="mt-6">
-                    <button onclick="resetTool()" class="text-gray-500 hover:text-gray-700 font-semibold underline text-sm">Compress another PDF</button>
-                </div>
-            </div>
-
-        </div>
+        </article>
     </main>
 
+    <footer class="bg-[#1d1f24] text-gray-400 py-16 mt-auto">
+        <div class="max-w-[1300px] mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <img src="../ToolMitra_NoBG_HD.png" alt="ToolMitra" class="h-6 filter grayscale opacity-50">
+                    <span class="font-bold text-white tracking-widest text-sm">TOOLMITRA</span>
+                </div>
+                <p class="text-sm">© 2026 ToolMitra. Built for speed and privacy.</p>
+                <div class="flex gap-5 text-lg">
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        let currentPdfData = null;
-        let originalSizeInBytes = 0;
+        const dropZone = document.getElementById('dropZone'), fileInput = document.getElementById('fileInput');
+        const uploadSection = document.getElementById('uploadSection'), workspace = document.getElementById('workspace');
+        const compressBtn = document.getElementById('compressBtn'), progressArea = document.getElementById('progressArea');
+        const progressBar = document.getElementById('progressBar'), progressPercent = document.getElementById('progressPercent');
+        const progressText = document.getElementById('progressText'), resultArea = document.getElementById('resultArea');
+        const downloadBtn = document.getElementById('downloadBtn');
         
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
+        let originalFile = null;
+        let originalSizeBytes = 0;
+        let selectedLevel = 'recommended'; // extreme, recommended, less
 
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover')); 
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            handleFile(e.dataTransfer.files[0]);
-        });
-        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-
+        // Format Bytes function
         function formatBytes(bytes, decimals = 2) {
             if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
+            const k = 1024, dm = decimals < 0 ? 0 : decimals;
             const sizes = ['Bytes', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         }
 
-        async function handleFile(file) {
-            if (!file || file.type !== "application/pdf") {
-                alert("Please upload a valid PDF file.");
-                return;
-            }
+        // 1. Upload Listeners
+        dropZone.onclick = () => fileInput.click();
+        fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
-            originalSizeInBytes = file.size;
-            const arrayBuffer = await file.arrayBuffer();
-            currentPdfData = new Uint8Array(arrayBuffer);
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('bg-green-50'); };
+        dropZone.ondragleave = (e) => { e.preventDefault(); dropZone.classList.remove('bg-green-50'); };
+        dropZone.ondrop = (e) => { e.preventDefault(); dropZone.classList.remove('bg-green-50'); handleFile(e.dataTransfer.files[0]); };
+
+        function handleFile(file) {
+            if(!file || file.type !== 'application/pdf') { alert("Please select a valid PDF file."); return; }
+            originalFile = file;
+            originalSizeBytes = file.size;
             
             document.getElementById('fileName').innerText = file.name;
-            const formattedSize = formatBytes(originalSizeInBytes);
-            document.getElementById('originalSize').innerText = formattedSize;
-            document.getElementById('oldSizeTxt').innerText = formattedSize;
-
-            dropZone.classList.add('hidden');
-            document.getElementById('workspaceSection').classList.remove('hidden');
+            document.getElementById('fileSize').innerText = formatBytes(file.size);
+            document.getElementById('oldSizeDisplay').innerText = formatBytes(file.size);
+            
+            uploadSection.classList.add('hidden');
+            workspace.classList.remove('hidden');
         }
 
-        async function compressPdf() {
-            let targetVal = parseFloat(document.getElementById('targetSize').value);
-            let targetUnit = document.getElementById('sizeUnit').value;
+        // 2. UI Level Selection
+        window.selectLevel = (element, level) => {
+            document.querySelectorAll('.compression-card').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            selectedLevel = level;
+        }
 
-            if(!targetVal || targetVal <= 0) {
-                alert("Please enter a valid target size.");
-                return;
-            }
-
-            const compressBtn = document.getElementById('compressBtn');
-            const progressSection = document.getElementById('progressSection');
-            const progressBar = document.getElementById('progressBar');
-            const progressPercent = document.getElementById('progressPercent');
+        // 3. The Compression Logic (PDF.js -> Canvas -> jsPDF)
+        compressBtn.onclick = async () => {
+            compressBtn.disabled = true;
+            document.querySelector('.compression-card').parentElement.style.opacity = '0.5';
+            document.querySelector('.compression-card').parentElement.style.pointerEvents = 'none';
+            progressArea.classList.remove('hidden');
             
-            compressBtn.classList.add('hidden');
-            progressSection.classList.remove('hidden');
-
             try {
-                // Calculate target bytes
-                const targetBytes = targetUnit === 'MB' ? targetVal * 1024 * 1024 : targetVal * 1024;
+                // Set compression parameters based on UI
+                let scaleFactor = 1.0;
+                let imgQuality = 0.6;
                 
-                // Determine compression intensity (Resolution Scale and JPEG Quality)
-                let imgScale = 1.0;
-                let imgQuality = 0.8;
+                if (selectedLevel === 'extreme') { scaleFactor = 0.8; imgQuality = 0.3; }
+                else if (selectedLevel === 'less') { scaleFactor = 1.5; imgQuality = 0.9; }
+
+                // Load Original PDF
+                const arrayBuffer = await originalFile.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+                const totalPages = pdf.numPages;
                 
-                // If user wants Extreme compression (e.g., less than 20% of original size or tiny KB)
-                if (targetBytes < originalSizeInBytes * 0.5) { imgScale = 0.8; imgQuality = 0.5; }
-                if (targetBytes < originalSizeInBytes * 0.2) { imgScale = 0.5; imgQuality = 0.3; }
-                if (targetBytes <= 100000) { imgScale = 0.4; imgQuality = 0.2; } // Under 100KB -> Extreme Blur
-                if (targetBytes <= 30000) { imgScale = 0.25; imgQuality = 0.1; } // Under 30KB -> Super Extreme Blur
+                const { jsPDF } = window.jspdf;
+                let doc = null;
 
-                // 1. Load original PDF with PDF.js
-                const loadingTask = pdfjsLib.getDocument({ data: currentPdfData.slice(0) });
-                const pdfjsDoc = await loadingTask.promise;
-                const totalPages = pdfjsDoc.numPages;
-
-                // 2. Create NEW blank PDF with PDF-Lib
-                const { PDFDocument } = PDFLib;
-                const newPdf = await PDFDocument.create();
-
-                // 3. Loop through pages, convert to low-quality JPEG, add to new PDF
                 for (let i = 1; i <= totalPages; i++) {
-                    // Update Progress UI
-                    let pct = Math.round((i / totalPages) * 100);
-                    progressBar.style.width = `${pct}%`;
-                    progressPercent.innerText = `${pct}%`;
+                    // Update UI
+                    const percent = Math.round((i / totalPages) * 100);
+                    progressBar.style.width = `${percent}%`;
+                    progressPercent.innerText = `${percent}%`;
+                    progressText.innerText = `Compressing page ${i} of ${totalPages}...`;
 
-                    const page = await pdfjsDoc.getPage(i);
-                    const originalViewport = page.getViewport({ scale: 1.0 }); // Original size for the PDF page
-                    const renderViewport = page.getViewport({ scale: imgScale }); // Scaled down for image capture
-
-                    // Render to hidden canvas
+                    // Render Page
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: scaleFactor });
                     const canvas = document.createElement('canvas');
-                    canvas.width = renderViewport.width;
-                    canvas.height = renderViewport.height;
                     const ctx = canvas.getContext('2d');
-
-                    await page.render({ canvasContext: ctx, viewport: renderViewport }).promise;
-
-                    // Convert canvas to highly compressed JPEG data
-                    const jpegDataUrl = canvas.toDataURL('image/jpeg', imgQuality);
+                    canvas.width = viewport.width; canvas.height = viewport.height;
                     
-                    // Fetch bytes from data URL
-                    const response = await fetch(jpegDataUrl);
-                    const jpegBytes = await response.arrayBuffer();
-
-                    // Embed JPEG in new PDF
-                    const embeddedImage = await newPdf.embedJpg(jpegBytes);
-                    const newPage = newPdf.addPage([originalViewport.width, originalViewport.height]);
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
                     
-                    newPage.drawImage(embeddedImage, {
-                        x: 0,
-                        y: 0,
-                        width: originalViewport.width,
-                        height: originalViewport.height,
-                    });
+                    // Compress to JPEG
+                    const imgData = canvas.toDataURL('image/jpeg', imgQuality);
+                    
+                    // Add to new PDF (Match dimensions precisely)
+                    const pdfWidth = viewport.width * 0.75; // Convert px to pt (approx)
+                    const pdfHeight = viewport.height * 0.75;
+
+                    if (i === 1) {
+                        doc = new jsPDF({ format: [pdfWidth, pdfHeight], unit: 'pt' });
+                    } else {
+                        doc.addPage([pdfWidth, pdfHeight], 'p');
+                    }
+                    doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
                 }
 
-                // 4. Save and generate download link
-                const compressedPdfBytes = await newPdf.save();
-                const blob = new Blob([compressedPdfBytes], { type: "application/pdf" });
-                const url = URL.createObjectURL(blob);
+                // Output File
+                progressText.innerText = "Finalizing PDF...";
+                const compressedBlob = doc.output('blob');
                 
-                document.getElementById('newSize').innerText = formatBytes(blob.size);
-                document.getElementById('downloadLink').href = url;
+                // Show Results
+                progressArea.classList.add('hidden');
+                workspace.children[0].classList.add('hidden'); // Hide file info
+                workspace.children[1].classList.add('hidden'); // Hide options
                 
-                document.getElementById('workspaceSection').classList.add('hidden');
-                document.getElementById('downloadSection').classList.remove('hidden');
+                resultArea.classList.remove('hidden');
+                
+                const newSize = compressedBlob.size;
+                document.getElementById('newSizeDisplay').innerText = formatBytes(newSize);
+                
+                let saved = 0;
+                if(originalSizeBytes > newSize) {
+                    saved = Math.round(((originalSizeBytes - newSize) / originalSizeBytes) * 100);
+                }
+                document.getElementById('savedPercent').innerText = saved;
 
-            } catch (error) {
-                console.error(error);
-                alert("Error compressing PDF. See console.");
-            } finally {
-                compressBtn.classList.remove('hidden');
-                progressSection.classList.add('hidden');
-                progressBar.style.width = `0%`;
+                // Setup Download Button
+                const url = URL.createObjectURL(compressedBlob);
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `ToolMitra_Compressed_${originalFile.name}`;
+                    a.click();
+                };
+
+            } catch(error) {
+                console.error("Compression Error:", error);
+                alert("An error occurred while compressing. The file might be corrupted or too large for your browser's memory.");
+                location.reload();
             }
-        }
-
-        function resetTool() {
-            currentPdfData = null;
-            fileInput.value = "";
-            document.getElementById('targetSize').value = "";
-            document.getElementById('workspaceSection').classList.add('hidden');
-            document.getElementById('downloadSection').classList.add('hidden');
-            document.getElementById('progressSection').classList.add('hidden');
-            dropZone.classList.remove('hidden');
-        }
+        };
     </script>
 </body>
 </html>
