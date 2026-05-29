@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Split PDF Online | Extract Pages Visually | ToolMitra</title>
+    <title>Free Split PDF Online - Extract Pages Visually | ToolMitra</title>
     <meta name="description" content="Split your PDF files visually. Preview pages, extract specific pages, or separate documents instantly. Free, secure, and professional PDF splitter by ToolMitra.">
     <meta name="keywords" content="split pdf, extract pdf pages, separate pdf, visual pdf splitter, free pdf tool, ToolMitra">
+    <meta name="author" content="MihirSync">
+    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://mihirsync.github.io/ToolMitra/tools/split-pdf.html" />
 
     <meta property="og:title" content="Split PDF Files Visually for Free | ToolMitra">
     <meta property="og:description" content="Preview your PDF pages and click to extract them instantly. 100% Free and Secure.">
+    <meta property="og:type" content="website">
     <meta property="og:image" content="../ToolMitra_NoBG_HD.png">
-
+    <meta name="twitter:card" content="summary_large_image">
+    
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "ToolMitra Split PDF",
-      "description": "Professional PDF splitter with visual page preview and instant extraction.",
-      "applicationCategory": "UtilitiesApplication"
+      "description": "A professional-grade online PDF splitter that provides a visual interface to preview pages and extract specific segments of a document instantly without server interaction.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
     }
     </script>
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -30,17 +37,31 @@
       "step": [
         { "@type": "HowToStep", "text": "Upload the PDF document you want to split." },
         { "@type": "HowToStep", "text": "Preview all pages on your screen and click on the ones you want to extract." },
-        { "@type": "HowToStep", "text": "Click 'Extract Pages' to download your new file." }
+        { "@type": "HowToStep", "text": "Click 'Extract Pages' to merge the selected pages and download your new PDF file." }
       ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Is this tool safe for confidential PDF documents?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. ToolMitra uses client-side browser technology to read and split PDFs. Your documents are never uploaded to any server, guaranteeing absolute privacy." }
+      }, {
+        "@type": "Question",
+        "name": "Can I extract specific pages?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, our visual interface allows you to click on any combination of pages you wish to extract, and our engine will combine those pages into a new PDF." }
+      }]
     }
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
-    
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     
     <script> tailwind.config = { theme: { extend: { colors: { brandRed: '#e5322d', brandOrange: '#f0714b' } } } } </script>
@@ -119,7 +140,7 @@
                         <button id="extractBtn" class="w-full bg-brandOrange hover:bg-[#d65a36] text-white font-bold text-lg py-4 rounded-xl shadow-lg transition transform hover:-translate-y-1 opacity-50 cursor-not-allowed">
                             Extract PDF <i class="fas fa-download ml-1"></i>
                         </button>
-                        <p id="statusMsg" class="text-center mt-3 text-xs font-bold hidden"></p>
+                        <p id="statusMsg" class="text-center mt-3 text-xs font-bold text-blue-600 hidden"></p>
                     </div>
                 </div>
 
@@ -136,7 +157,7 @@
                     </div>
 
                     <div id="previewGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 overflow-y-auto max-h-[700px] p-2">
-                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -172,9 +193,8 @@
         let originalFileBuffer = null;
         let originalFileName = "";
         let selectedPages = new Set();
-        let pdfLibDoc = null; // Stored to avoid reloading during extraction
+        let pdfLibDoc = null; 
 
-        // 1. Upload Listeners
         dropZone.onclick = () => fileInput.click();
         fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
@@ -182,7 +202,6 @@
         dropZone.ondragleave = (e) => { e.preventDefault(); dropZone.classList.remove('bg-orange-50'); };
         dropZone.ondrop = (e) => { e.preventDefault(); dropZone.classList.remove('bg-orange-50'); handleFile(e.dataTransfer.files[0]); };
 
-        // 2. Render Engine
         async function handleFile(file) {
             if(!file || file.type !== 'application/pdf') { alert("Please select a valid PDF file."); return; }
 
@@ -196,22 +215,16 @@
 
             try {
                 originalFileBuffer = await file.arrayBuffer();
-                
-                // Load for Actual Splitting later
                 pdfLibDoc = await PDFLib.PDFDocument.load(originalFileBuffer);
-                
-                // Load for Preview Graphics
                 const pdfjsDoc = await pdfjsLib.getDocument({data: originalFileBuffer}).promise;
-                const totalPages = pdfjsDoc.numPages;
-                document.getElementById('pageCount').innerText = `${totalPages} Pages`;
+                document.getElementById('pageCount').innerText = `${pdfjsDoc.numPages} Pages`;
                 
                 selectedPages.clear();
                 updateExtractBtn();
 
-                for(let i = 1; i <= totalPages; i++) {
+                for(let i = 1; i <= pdfjsDoc.numPages; i++) {
                     const page = await pdfjsDoc.getPage(i);
-                    const viewport = page.getViewport({scale: 0.3}); // Higher quality thumbnail
-                    
+                    const viewport = page.getViewport({scale: 0.3});
                     const canvas = document.createElement('canvas');
                     canvas.height = viewport.height; canvas.width = viewport.width;
                     canvas.className = "w-full h-auto object-contain bg-white rounded shadow-sm border border-gray-200 mb-2";
@@ -220,7 +233,6 @@
                     const div = document.createElement('div');
                     div.className = "page-thumb bg-gray-50 p-2 rounded-xl flex flex-col items-center shadow-sm";
                     
-                    // Checkmark badge
                     const checkBadge = document.createElement('div');
                     checkBadge.className = "check-icon absolute top-3 right-3 bg-brandOrange text-white w-7 h-7 rounded-full items-center justify-center shadow-md z-10 font-bold";
                     checkBadge.innerHTML = '<i class="fas fa-check"></i>';
@@ -234,7 +246,7 @@
                     div.appendChild(pageLabel);
 
                     div.onclick = function() {
-                        const pIdx = i - 1; // 0-based index for pdf-lib
+                        const pIdx = i - 1;
                         if(selectedPages.has(pIdx)) {
                             selectedPages.delete(pIdx); this.classList.remove('selected');
                         } else {
@@ -275,7 +287,6 @@
             updateExtractBtn();
         };
 
-        // 3. Extraction Engine
         extractBtn.onclick = async () => {
             if(selectedPages.size === 0 || !pdfLibDoc) return;
 
