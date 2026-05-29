@@ -3,7 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merge Excel Files - ToolMitra</title>
+    
+    <title>Merge Excel Files Online - Combine XLSX & CSV | ToolMitra</title>
+    <meta name="description" content="Combine multiple Excel spreadsheets (XLSX, XLS, CSV) into a single file instantly. Free, fast, and 100% secure local browser processing.">
+    <meta name="keywords" content="merge excel files, combine excel sheets, merge csv online, excel merger free, join excel files, ToolMitra">
+    <meta name="author" content="ToolMitra">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://mihirsync.github.io/ToolMitra/tools/merge-excel.html" />
+
+    <meta property="og:title" content="Merge Excel Files Online for Free | ToolMitra">
+    <meta property="og:description" content="Combine multiple Excel spreadsheets into a single file easily and securely without uploading to servers.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="../ToolMitra_NoBG_HD.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "ToolMitra Excel Merger",
+      "description": "A powerful browser-based data utility to combine and merge multiple Excel (XLSX, XLS) and CSV files into a single master spreadsheet securely.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "How to merge multiple Excel files into one",
+      "step": [
+        { "@type": "HowToStep", "text": "Click 'Select Files' to upload two or more Excel (XLSX) or CSV files." },
+        { "@type": "HowToStep", "text": "Wait a few seconds while the tool locally combines the data rows." },
+        { "@type": "HowToStep", "text": "Click 'Download Merged Excel' to save your combined master spreadsheet." }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Is my Excel data secure when merging?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, completely secure. The merging process uses client-side JavaScript. Your files are never uploaded to any external server." }
+      }, {
+        "@type": "Question",
+        "name": "What happens to the headers when merging multiple Excel files?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Our tool automatically keeps the header from the first file and safely appends the data rows from the subsequent files below it." }
+      }]
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -74,6 +128,9 @@
                 <button onclick="downloadMergedFile()" class="bg-brandEmerald hover:bg-emerald-600 text-white font-bold py-4 px-10 rounded-lg transition-colors text-xl shadow-lg">
                     Download Merged Excel
                 </button>
+                <div class="mt-6">
+                    <button onclick="resetTool()" class="text-gray-500 hover:text-gray-700 font-semibold underline text-sm">Merge another file</button>
+                </div>
             </div>
         </div>
     </main>
