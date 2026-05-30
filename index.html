@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToolMitra - Every Tool You Need</title>
+    
+    <title>ToolMitra - Every Tool You Need | PDF, Image & AI Utilities</title>
+    <meta name="description" content="ToolMitra is your 100% free, all-in-one digital toolbox. Merge PDFs, compress images, generate AI voiceovers, calculate finances, and much more.">
+    <meta name="keywords" content="free online tools, pdf tools, image converter, ai tools online, finance calculators, ToolMitra">
+    <meta name="author" content="MihirSync">
+    <meta name="robots" content="index, follow">
+    
+    <meta property="og:title" content="ToolMitra - Your Digital Toolbox">
+    <meta property="og:description" content="Every tool you need to use PDFs, manage numbers, and media, at your fingertips. All are 100% FREE!">
+    <meta property="og:image" content="ToolMitra_NoBG_HD.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,7 +33,7 @@
         }
     </script>
     <style>
-        body { background-color: #f8f9fa; color: #333333; margin: 0; padding: 0; }
+        body { background-color: #f8f9fa; color: #333333; margin: 0; padding: 0; scroll-behavior: smooth; }
         .tool-card {
             transition: all 0.3s ease;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -87,6 +96,12 @@
                 Every tool you need to use PDFs, manage numbers, and Indian utilities, at your fingertips. All are 100% FREE and easy to use! Merge, split, compress, and convert with just a few clicks.
             </p>
             
+            <div class="max-w-2xl mx-auto mb-8 relative group">
+                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400 group-focus-within:text-brandRed transition-colors"></i>
+                </div>
+                <input type="text" id="searchInput" class="w-full pl-12 pr-4 py-4 rounded-full border-2 border-gray-200 focus:border-brandRed focus:ring-0 outline-none transition shadow-sm text-lg text-gray-700 placeholder-gray-400" placeholder="Search for tools (e.g. 'PDF', 'Resize', 'AI')...">
+            </div>
             <div class="flex flex-wrap justify-center gap-2 mb-10" id="categoryFilters">
                 <button onclick="filterTools('all', this)" class="filter-btn active bg-gray-800 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm transition">All</button>
                 <button onclick="filterTools('pdf', this)" class="filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition">PDF Tools</button>
@@ -231,13 +246,14 @@
                 <h3 class="font-bold text-[17px] text-gray-900 mb-2">Image to Text (OCR)</h3>
                 <p class="text-[13px] text-gray-500 leading-relaxed">Extract text from handwriting, photos, and scanned documents using AI.</p>
             </a>
+            
             <a href="tools/mov-to-mp4.html" data-category="image" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block">
-    <div class="icon-box text-blue-600 mb-4">
-        <i class="fas fa-video main-icon"></i><i class="fas fa-exchange-alt sub-icon"></i>
-    </div>
-    <h3 class="font-bold text-[17px] mb-2">MOV to MP4</h3>
-    <p class="text-[13px] text-gray-500">Bulk convert your MOV videos to MP4 format instantly.</p>
-</a>
+                <div class="icon-box text-blue-600 mb-4">
+                    <i class="fas fa-video main-icon"></i><i class="fas fa-exchange-alt sub-icon"></i>
+                </div>
+                <h3 class="font-bold text-[17px] mb-2">MOV to MP4</h3>
+                <p class="text-[13px] text-gray-500">Bulk convert your MOV videos to MP4 format instantly.</p>
+            </a>
 
             <a href="tools/grammar-fix.html" data-category="ai" class="tool-card bg-white rounded-xl p-6 border border-gray-100 block shadow-sm hover:shadow-md transition relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">AI TOOL</div>
@@ -578,23 +594,28 @@
     </footer>
 
     <script>
-        function filterTools(category, clickedBtn) {
-            // 1. બટનની ડીઝાઇન બદલો (Active State)
-            const buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(btn => {
-                btn.className = "filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition";
-            });
-            clickedBtn.className = "filter-btn active bg-gray-800 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm transition";
+        // Store current active category filter globally
+        let currentCategoryFilter = 'all';
 
-            // 2. કાર્ડ્સ હાઇડ/શો કરો (Live Filter)
+        // 1. Unified Filter Function (Runs for both Search & Buttons)
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             const cards = document.querySelectorAll('.tool-card');
+
             cards.forEach(card => {
-                // પહેલાં એનિમેશન કાઢી નાખો
                 card.classList.remove('show-card');
                 
-                if (category === 'all' || card.getAttribute('data-category') === category) {
+                // Get Card Details
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                const desc = card.querySelector('p').innerText.toLowerCase();
+                const cardCategory = card.getAttribute('data-category');
+
+                // Logic checks
+                const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
+                const matchesCategory = (currentCategoryFilter === 'all' || cardCategory === currentCategoryFilter);
+
+                if (matchesSearch && matchesCategory) {
                     card.style.display = 'block';
-                    // થોડો સમય (10ms) આપીને એનિમેશન એડ કરો જેથી સ્મૂથ લાગે
                     setTimeout(() => {
                         card.classList.add('show-card');
                     }, 10);
@@ -603,6 +624,25 @@
                 }
             });
         }
+
+        // 2. Button Click Handler
+        function filterTools(category, clickedBtn) {
+            currentCategoryFilter = category;
+
+            // Update UI Active State for Buttons
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.className = "filter-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded-full text-sm font-semibold transition";
+            });
+            clickedBtn.className = "filter-btn active bg-gray-800 text-white px-5 py-2 rounded-full text-sm font-semibold shadow-sm transition";
+
+            // Run main filter engine
+            applyFilters();
+        }
+
+        // 3. Search Bar Event Listener
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+
     </script>
 </body>
 </html>
